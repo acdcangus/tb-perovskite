@@ -1,7 +1,8 @@
 # Shift current / Bulk Photovoltaic Effect の理論定式化メモ（Phase 2 / Theme F, F2 draft v1）
 
 **作成:** 2026-05-23（F2）
-**ステータス:** ドラフト第一版（Cowork レビュー待ち。**F3 実装は本 doc 承認後**）
+**ステータス:** **Cowork F2 review (2026-05-23 12:00) で APPROVED → F3 実装 GO**。
+symmetry breaker = [001] 極性変位 (P4mm)、SK 距離スケーリング = Harrison η=2.0 で確定。
 **目的:** 既存 TB エンジン + velocity operator（A2）から、ハライドペロブスカイトの
 shift current 伝導度 σ⁽²⁾_abc(ω)（bulk photovoltaic effect, BPVE）を計算する定式化。
 
@@ -58,26 +59,31 @@ Passos 2018 は **velocity gauge** での任意次非線形伝導度を、位置
    - F3 ではまず (A)、検証で (B) と比較。
 4. 退化・対角項 `n=m` は除外（intra-band は別途 Drude/injection 項、shift current には不要）。
 
-## 4. 対称性と symmetry breaker（**重要・directive への補正**）
+## 4. 対称性と symmetry breaker（**確定方針; Cowork F2 review 2026-05-23 12:00 承認**）
 shift current σ⁽²⁾_abc は **3階極性テンソル** → **空間反転対称下で恒等的にゼロ**。
-- **立方 Pm-3m: σ⁽²⁾ = 0**（中心対称）。
-- ⚠️ **directive (1055) §1.2 の推奨「(I) uniaxial strain [001]」は不十分**:
-  cubic Pm-3m に一軸歪みを加えても **正方晶 P4/mmm（依然 中心対称）**になるだけで、
-  **反転対称は破れず σ⁽²⁾ は依然ゼロ**。Tan & Rappe 2016 が扱った系は元々**強誘電/極性**
-  （非中心対称）であり、純粋な一軸歪みでの inversion breaking ではない点に注意。
-- **正しい symmetry breaker（CsPbX₃ を非中心対称化）**:
-  - **(III) 極性変位（推奨）**: B カチオン（Pb）または A（Cs）を halide ケージに対し [001]
-    方向に δ だけ off-center（強誘電的歪み, → P4mm）。**1 スカラ δ で系統スキャン可能**、
-    確実に反転対称を破る。Slater-Koster ホッピングは結合長変化で修正（§下記）。
-  - **(II) 反転を破る八面体傾斜**: 特定の tilt パターン（例: 非中心対称な a⁰a⁰c⁺ 以外）。
-    Theme B 旧計画の規模。極性変位より複雑。
-  - → **本 draft は (III) 極性変位 δ を主 symmetry breaker として推奨**。F3 で δ スキャン。
-- **SK ホッピングの歪み修正（出典付き）**: 結合長 `d` 依存は Harrison/Slater-Koster 距離スケーリング
-  `t(d) = t(d_0)·(d_0/d)^{η_l}`（η_l は軌道対依存の指数; 例: Harrison η=2 for s-p-d 系の標準値、
-  または材料別フィット）。**この η_l は出典が必要**（Kashikar/Nestoklon は固定結合長で η を与えて
-  いない）→ **Cowork 確認事項**（後述 §未解決）。極性変位では Pb-I_z 上下の結合長が ±δ 非対称に
-  なり、これが反転対称を破る。
 
+| 操作 | 結晶系 | 反転中心 | σ⁽²⁾ |
+|---|---|---|---|
+| 無歪み Pm-3m | cubic | あり | **= 0** |
+| [001] uniaxial strain | P4/mmm | **あり** | **= 0**（依然消失）|
+| **[001] 極性変位（Pb off-center）** | **P4mm** | **なし** | **≠ 0** ✓（採用）|
+| octahedral tilt（非中心対称） | 各種 | tilt 依存 | tilt 依存 |
+
+- **directive (1055) §1.2 の「uniaxial strain」は撤回**（Cowork 承認）: cubic→正方晶 P4/mmm は
+  **依然 中心対称** → σ⁽²⁾=0 のまま。
+- **主 symmetry breaker（確定）= (III) [001] 極性変位 δ**: B カチオン（Pb）を halide ケージに対し
+  [001] に δ [Å] off-center（→ P4mm, 非中心対称）。**1 スカラ δ で系統スキャン**、確実に反転対称を破る。
+  Tan & Rappe 2016 も強誘電/極性配置で扱っており文献整合。
+  - F3 API: `polar_displacement_z: float = 0.0`（Å, default 0 = 中心対称 → σ⁽²⁾=0 を単体テストで保証）。
+- (I) uniaxial strain / (II) octahedral tilt は**比較として記載のみ、本プロジェクトでは採用せず**。
+- **SK ホッピングの歪み修正（出典確定）**: 結合長 `d` 依存は **Harrison universal scaling
+  `t(d) = t(d_0)·(d_0/d)^{η}`、η = 2.0（default）**。
+  出典: W. A. Harrison, *Electronic Structure and the Properties of Solids* (Dover, 1989), Eq.(20-5)
+  — s,p 系の普遍値は d⁻²（Kashikar/Nestoklon は s,p 基底で d 軌道なしのため d⁻² で十分）。
+  感度: η ∈ {1.5, 2.0, 2.5} を CsPbI₃ で 1 回 sensitivity check → `results/shift_current/eta_sensitivity.md`。
+  極性変位 δ で Pb-I_z(+z) 結合は `a/2-δ`、(-z) は `a/2+δ` と非対称になり、Harrison scaling 経由で
+  ホッピングが非対称化 → 反転対称が破れる。
+  <!-- 旧記述（出典要・撤回）: -->
 ## 5. 検証アンカー（F4 テスト用）
 1. **中心対称で消失**: 無歪み立方（δ=0）で σ⁽²⁾_abc ≈ 0（数値積分誤差以内）。**最重要・
    ハルシネーションproof**（対称性は厳密に保証されるべき）。
@@ -103,11 +109,9 @@ TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**�
 - 計算結果に再現性メタデータ付与（`_meta.py`）。既存 205 テスト破壊なし（純拡張）。
 
 ## 8. 未解決・要判断（Cowork へ）
-1. **symmetry breaker**: directive 推奨の uniaxial strain は中心対称を破らず σ⁽²⁾=0 のまま。
-   **極性変位 (III) に変更**してよいか（物理的に必須）。あるいは元々非中心対称な低対称相を使うか。
-2. **SK 距離スケーリング指数 η_l の出典**: 歪み下の hopping 修正に必要だが Kashikar/Nestoklon は
-   固定結合長。Harrison 標準値（s,p,d で d⁻²等）を採用してよいか、材料別フィットが要るか。
-   → 出典確定まで F3 実装は保留（推測しない）。
+1. ~~symmetry breaker~~ → **解決（Cowork F2 review 承認）**: [001] 極性変位 (P4mm) を採用。§4 参照。
+2. ~~SK 距離スケーリング指数 η_l の出典~~ → **解決（Cowork F2 review）**: Harrison universal
+   η=2.0（Harrison 1989 Eq.20-5, s,p 系の d⁻²）を default、感度 η∈{1.5,2.0,2.5}。§4 参照。
 3. ~~Young & Rappe / Tan & Rappe / Fregoso PDF~~ → **全て取得・検証済み**（correction #2 の正 ID）。
    検証アンカー（MAPbI₃ ピーク）の具体値読み取りは F4 で実施。
 

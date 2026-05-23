@@ -26,3 +26,6 @@ results/**/*.npy
 # --- OS / editor ---
 .DS_Store
 *.swp
+
+# Derived PDF text extractions (regenerate via scripts/pdf_to_text.py)
+references/texts/

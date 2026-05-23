@@ -80,6 +80,28 @@ g_e の単一曲線は普遍 P=6.8 を仮定した帰結だった。TB-derived P
 → 結論: **g_e 普遍性は「P がほぼ一定」という近似の上に成り立つ**。P の材料依存（特に X=I で大）を
 入れると補正が要る。これは論文で「普遍関係の適用限界」として議論できる。
 
+論文用考察（Cowork review #5 提案, 英文）:
+> "The apparent universality of g_e arises because P varies only modestly (~40%)
+> across the CsBX3 family while Eg varies by a factor of ~2.6. The compensation is
+> partial: a stricter test with TB-derived material-specific P shows that the
+> single-curve fit to g_e(Eg) is an approximation valid to within Δg_e ~ 0.5. For
+> the hole factor g_h, the additional dependence on Δ amplifies material-specific
+> deviations because Δ varies by an order of magnitude (Pb 1.5 → Ge 0.21 eV),
+> making the universal curve inadequate for lead-free systems."
+
+### Blount 1962 統一クロス検証（手法論の柱）
+g因子 atomistic Roth-Lax の過小評価（〜3×）と光学 f-sum の ~20% 取得は、いずれも TB の
+velocity operator `v≈∂H/∂k` が **intra-atomic position-matrix 成分を欠く**（E. I. Blount,
+*Solid State Phys.* **13**, 305 (1962); *Phys. Rev.* **126**, 1636 (1962)）ことに起因する同一の限界。
+論文では以下を明記する（Methods/Discussion, Cowork review #5 提案）:
+> "Our TB results display two systematic underestimates: the Roth-Lax g-factor from
+> dH/dk is ~3x too small relative to the k.p formula, and the optical f-sum rule is
+> satisfied at only ~20%. Both originate from the same source -- the velocity
+> operator in a localized basis omits the intra-atomic position-matrix contribution
+> (Blount 1962). We therefore emphasize relative trends and spectral-shape /
+> band-edge features (robust under this limitation), keeping absolute magnitudes as
+> documented diagnostics rather than predictions."
+
 ## 6. 学会・論文化の見通し
 - **新規性確認（独立検証, 2026-05-23）:** 2025年11月の g因子レビュー arXiv:2511.02956
   (Rodina, Semina, Ivchenko) を全文確認した結果、**鉛フリー（Sn/Ge）ハライドペロブスカイトの

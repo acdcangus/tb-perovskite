@@ -246,3 +246,7 @@ A5 で考察。これ以上の単独推測はせず、この方針で A4 に進�
 - N. E. Kopteva et al., *Layer-dependent Landé g-factors ... 2D RP lead halide perovskites*, arXiv:2605.15807 (2026). — ベンチマーク。
 - M. O. Nestoklon, arXiv:2012.14705 (2020) / *Comput. Mater. Sci.* **196**, 110535 (2021). — ベース TB パラメータ。
 - L. M. Roth, B. Lax, S. Zwerdling, *Phys. Rev.* **114**, 90 (1959). — Roth-Lax g因子公式（原典）。
+- E. I. Blount, *Solid State Physics* **13**, 305 (1962); および E. I. Blount,
+  *Phys. Rev.* **126**, 1636 (1962). — TB/局在基底における position operator の正準分解と
+  intra-atomic 項。本実装の `∂H/∂k` 速度演算子が inter-atomic 成分のみを含み、g因子（atomistic
+  Roth-Lax）の絶対値を系統的に過小評価する原因。光学 f-sum の不足（`optical-formulation.md` §6）と同根。

@@ -88,14 +88,16 @@ def compute_dielectric(hamiltonian_fn: Callable[[np.ndarray], np.ndarray],
         # 1/E_cv^2 belongs *inside* the sum (evaluated at the transition energy,
         # where the delta function pins hbar*omega = E_cv). Placing 1/omega^2
         # outside would create a spurious sub-gap 1/omega^2 tail.
-        inv_E2 = 1.0 / (Ediff * Ediff)  # (Nc,No)
+        inv_E2 = (1.0 / (Ediff * Ediff)).ravel()      # (T,)
+        trans = Ediff.ravel()                          # (T,) transition energies
+        # Lorentzian over the full omega grid, shared by all 3 directions.
+        diff = trans[:, None] - omega_grid[None, :]    # (T, Nw)
+        L = (smearing_eta / np.pi) / (diff * diff + smearing_eta * smearing_eta)
         for a in range(3):
             dH = dHdk_fn(k, a)
-            M = emp.conj().T @ dH @ occ           # M[c,v] = <c|dH|v>
-            w2 = np.abs(M) ** 2 * inv_E2          # (Nc,No)
-            for iw, E in enumerate(omega_grid):
-                L = _lorentzian(Ediff - E, smearing_eta)  # (Nc,No)
-                eps_i[a, iw] += np.sum(w2 * L)
+            M = emp.conj().T @ dH @ occ                # M[c,v] = <c|dH|v>
+            w = (np.abs(M) ** 2).ravel() * inv_E2      # (T,)
+            eps_i[a] += w @ L                          # (Nw,)
     eps_i *= PI_E2_OVER_EPS0 / (Nk * V)
 
     eps_i_avg = eps_i.mean(axis=0)

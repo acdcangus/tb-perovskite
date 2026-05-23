@@ -122,3 +122,7 @@ f-sum と絶対強度は二次（TB 固有の限界として明記）。改竄�
   tight-binding GW-BSE study*, arXiv:1908.09436 (2019). — TB-GW-BSE 参考。
 - J. E. Sipe, A. I. Shkrebtii, *Phys. Rev. B* **61**, 5337 (2000). — 線形・非線形応答の
   k 空間表式（リポ未収録、Cowork 取得中）。
+- E. I. Blount, *Solid State Physics* **13**, 305 (1962); E. I. Blount, *Phys. Rev.*
+  **126**, 1636 (1962). — 局在基底の position operator の正準分解。TB velocity operator
+  `∂H/∂k` が intra-atomic 電流を欠くため f-sum rule を完全には満たさない（§6）原因。
+  g因子の atomistic Roth-Lax 過小評価（`g-factor-formulation.md`）と同根の TB 不完全性。

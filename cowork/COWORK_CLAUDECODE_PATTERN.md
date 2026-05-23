@@ -285,6 +285,133 @@ Cowork 側:
 
 ---
 
+## 5 分自律巡回ループ（Claude Code を「叩き起こす」3 層）
+
+**動機（2026-05-24 追加）:** 2026-05-23 17:40 UTC 以降、Claude Code セッションが約 4 時間沈黙した事例が発生。Cowork supervisor は 15 分粒度で commit と progress/ を verify していたが、Claude Code 側で何も動いていなかったため、Cowork からの nudge directive・低圧 status check ともに応答が得られなかった。**「Claude Code を外部から強制的に起こす」仕組みが必要**との結論。
+
+以下の 3 層構成で堅牢化します。**外側に行くほど強い**（OS レベルが最強）。
+
+### 層 1（外側 / OS レベル）— Windows Task Scheduler が 5 分ごとに `claude --continue` を起動
+
+Claude Code セッションがクラッシュ・LLM コール無限ループ・端末を閉じてしまった等で完全に止まっても、**OS 側から強制的に再起動して巡回プロンプトを流し込む**。これが真の「自律 5 分巡回」。
+
+#### PowerShell スクリプト（保存場所: `<project_root>/scripts/cowork_5min_poll.ps1`）
+
+```powershell
+# cowork_5min_poll.ps1
+# 5 分ごとに Claude Code を起こして cowork/progress/ の新着確認と次タスクの実行を促す。
+# Windows Task Scheduler から起動される想定。
+
+$ProjectRoot = "C:\Users\kteru\tb-perovskite"
+$LogDir      = Join-Path $ProjectRoot "cowork\polling_logs"
+$LogFile     = Join-Path $LogDir ("poll_" + (Get-Date -Format "yyyy-MM-dd") + ".log")
+
+if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
+
+# 多重起動防止: 既に巡回中なら skip
+$LockFile = Join-Path $LogDir ".poll.lock"
+if (Test-Path $LockFile) {
+    $lockAge = (Get-Date) - (Get-Item $LockFile).LastWriteTime
+    if ($lockAge.TotalMinutes -lt 4) {
+        Add-Content $LogFile "$(Get-Date -Format o) skip (lock age $($lockAge.TotalMinutes) min)"
+        exit 0
+    }
+}
+New-Item -ItemType File -Path $LockFile -Force | Out-Null
+
+try {
+    Set-Location $ProjectRoot
+
+    # 巡回プロンプト本体（変更時は §「巡回プロンプト本体」を更新）
+    $Prompt = @"
+[自動巡回 $(Get-Date -Format o)] cowork/progress/ の過去 10 分以内の新着 (特に *_directive_*.md / *_code_review.md / *_question.md / BLOCKED_*.md) を確認してください。
+
+1. 新着 directive があれば内容を要約して即実行。
+2. 何も無く、現在の作業が継続中なら "$(Get-Date -Format HHmm) checked, continuing <topic>" の 1 行を cowork/progress/$(Get-Date -Format 'yyyy-MM-dd')_poll.log に追記して作業に戻る。
+3. 何も無く、現在やることが無ければ cowork/next_directive.md の優先順位に従って次タスクを開始。
+4. このターンは最大 3 分以内で切り上げる（巡回は軽量に）。
+"@
+
+    # claude --continue で既存セッションに接続。-p で 1-shot 実行。
+    # 出力は log に追記、エラーは握りつぶさない。
+    claude --continue -p $Prompt --output-format text *>&1 | Tee-Object -Append -FilePath $LogFile
+    Add-Content $LogFile "$(Get-Date -Format o) poll completed (exit=$LASTEXITCODE)"
+} finally {
+    Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+}
+```
+
+#### Task Scheduler 登録（PowerShell から 1 回だけ実行）
+
+```powershell
+# Run as Administrator
+$Action  = New-ScheduledTaskAction -Execute "powershell.exe" `
+    -Argument "-NoProfile -ExecutionPolicy Bypass -File C:\Users\kteru\tb-perovskite\scripts\cowork_5min_poll.ps1"
+$Trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
+    -RepetitionInterval (New-TimeSpan -Minutes 5)
+$Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable `
+    -DontStopIfGoingOnBatteries -AllowStartIfOnBatteries `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 4)
+Register-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll" `
+    -Action $Action -Trigger $Trigger -Settings $Settings -RunLevel Highest
+```
+
+#### 停止 / 一時無効化
+
+```powershell
+# PI が手作業で集中したいとき
+Disable-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll"
+# 再開
+Enable-ScheduledTask  -TaskName "Cowork-ClaudeCode-5min-poll"
+# 完全削除
+Unregister-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll" -Confirm:$false
+```
+
+#### 注意点
+
+- **API トークン消費**: 巡回 1 回 ≒ 5-30k tok（軽量）。1 日 288 回で ~3-8M tok。Pro/Max プラン推奨
+- **多重起動防止**: スクリプトに lock ファイル機構を入れた（前回起動から 4 分以内なら skip）
+- **PC スリープ中は動かない**: Task Scheduler の `Wake the computer to run this task` を有効にすると深夜も動くが、PC 電源を考慮
+
+### 層 2（中間 / セッション内ループ）— Claude Code が自身に課す習慣
+
+層 1 が外側から叩き起こすのと並行して、**Claude Code 自身も「5 分ごとに立ち止まる」習慣**を持つ。長い batch 計算・複雑な実装中でも、5 分の経過を検知したら 1 度 progress/ を確認する。
+
+実装方針:
+
+- **長い計算スクリプトを実行する時** は、`scripts/<name>.py` の主ループに `if (now - last_check).total_seconds() > 300: check_cowork_progress()` を組み込む
+- **複雑な実装中** は、ファイル編集 5-10 個ごとに一度 `git log -1` と `ls cowork/progress/` を確認
+- **`claude --continue -p` で起動された時** は、層 1 の巡回プロンプトに従って軽量に処理して戻る
+
+### 層 3（最内 / 巡回プロンプト本体）— 軽量・冪等
+
+層 1 のスクリプトが流す巡回プロンプトの設計指針:
+
+- **冪等**: 何度呼ばれても副作用が増えない（コミット重複・ファイル重複作成を避ける）
+- **軽量**: 新着ゼロなら 30 秒以内で完了、新着ありでも 3 分以内
+- **明示的に「割り込まない」場合の挙動を定義**: 現在の作業が進行中なら「checked at HH:MM, no action」と 1 行 log を残して継続
+- **未着手時のフォールバック**: 何もすることが無ければ `next_directive.md` の優先順位に従う
+
+巡回プロンプトの完全版は層 1 のスクリプト中に含めてある。
+
+### 期待される動き（再発防止）
+
+| 状況 | 旧パターン | **5 分巡回パターン** |
+|---|---|---|
+| Claude Code 通常稼働 | サブタスク完了ごとに progress/ 確認 | 同左 + 5 分ごとに OS から軽量 nudge |
+| Claude Code が長い計算中 | progress/ 確認は計算完了後 | 計算中も 5 分ごとに進捗 log を吐き、Cowork に生存通知 |
+| Claude Code がクラッシュ | PI が起床まで沈黙継続 | **5 分以内に OS が再起動、巡回プロンプトで復旧** |
+| Claude Code が LLM 無限ループ | PI が気付くまで沈黙 | **OS が新セッションを起動、進行不能なら BLOCKED log を残して安全停止** |
+| 端末ウィンドウを閉じた | 沈黙 | **OS から再起動** |
+
+### 既存 supervisor (15 分) との関係
+
+- supervisor (15 分) は **Cowork 側 / 監督役 / レビュー & directive**
+- 5 分巡回 (OS) は **Claude Code 側 / 実装役 / 生存確認 & 続行**
+- 両者は独立に動く。supervisor が新規 directive を書く → 5 分以内に Claude Code が拾う（旧パターンでは最悪 15 分待ちだったのが大幅短縮）
+
+---
+
 ## ユーザーが介入すべきタイミング
 
 1. **大きな方向転換**：テーマ追加・削除、優先度シフト

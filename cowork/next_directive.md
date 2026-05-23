@@ -7,6 +7,15 @@
 
 ---
 
+## §-1. 自律 5 分巡回ループ（2026-05-24 導入）
+
+詳細は `cowork/COWORK_CLAUDECODE_PATTERN.md` §「5 分自律巡回ループ」。本 directive を読む時は
+**「層 1（OS スケジューラ = `scripts/cowork_5min_poll.ps1`）が 5 分ごとに巡回プロンプトを流し込んでいる」前提**。
+長時間 Production scan では層 2（スクリプト主ループの `_check_cowork_progress` フック）も併用する。
+背景: 2026-05-23 17:40→21:45 UTC の ~4h 沈黙の再発防止（`cowork/progress/2026-05-23_2225_BLOCKED_session_stalled.md`）。
+
+---
+
 ## 🌙 PI 不在中の作業優先順位（最重要）
 
 PI が起きるまでに、以下を可能な限り進めてください。**順序通り**ですが、ブロックされたら次に進んで OK：

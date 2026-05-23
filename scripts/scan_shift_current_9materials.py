@@ -40,6 +40,43 @@ from perovskite_tb import shift_current as sc                       # noqa: E402
 from perovskite_tb import models_kashikar as mk                     # noqa: E402
 from perovskite_tb.io_params import get_material, load_parameter_file  # noqa: E402
 
+# --- Cowork 5-min autonomous-polling hook (layer 2) -------------------------- #
+# Long Production scans call _check_cowork_progress() in their main loop so that
+# (a) a liveness line lands in cowork/polling_logs every 5 min and (b) a new
+# directive is detected within 5 min.  Detection only -- never stops the scan
+# (stopping would abort a Production run). See cowork/PRODUCTION_RULES.md and
+# cowork/progress/2026-05-24_0655_autonomous_5min_polling_directive.md (X3a).
+import datetime as _dt                                             # noqa: E402
+from pathlib import Path                                           # noqa: E402
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_LAST_POLL = _dt.datetime.now()
+
+
+def _check_cowork_progress(project_root: Path = PROJECT_ROOT) -> None:
+    """Every ~5 min: log liveness and warn on new cowork/ directives (no stop)."""
+    global _LAST_POLL
+    now = _dt.datetime.now()
+    if (now - _LAST_POLL).total_seconds() < 300:
+        return
+    _LAST_POLL = now
+    progress = project_root / "cowork" / "progress"
+    logdir = project_root / "cowork" / "polling_logs"
+    if not progress.is_dir():
+        return
+    cutoff = now - _dt.timedelta(minutes=10)
+    new = [p.name for p in progress.glob("*.md")
+           if _dt.datetime.fromtimestamp(p.stat().st_mtime) > cutoff
+           and any(t in p.name for t in ("directive_", "code_review", "question", "BLOCKED"))]
+    try:
+        logdir.mkdir(parents=True, exist_ok=True)
+        with open(logdir / f"poll_{now:%Y-%m-%d}.log", "a") as fh:
+            fh.write(f"{now:%H:%M} scan alive" + (f" | NEW: {new}" if new else "") + "\n")
+    except OSError:
+        pass
+    if new:
+        print(f"[cowork-poll {now:%H:%M}] new directive(s): {new}", flush=True)
+
 KAS13 = "data/parameters/kashikar2021_cubic_13orb.json"
 MATERIALS = ["CsGeCl3", "CsGeBr3", "CsGeI3",
              "CsSnCl3", "CsSnBr3", "CsSnI3",
@@ -132,6 +169,7 @@ def run_scan(outdir, n_kpts=48, eta=0.10, deltas=(0.10, 0.15, 0.20)):
         peak = results[(mat, 0.15)][np.argmax(np.abs(results[(mat, 0.15)]))]
         print(f"{mat}: gap_at_R={gaps[mat]:.3f} eV  sigma_zzz peak(delta=0.15)={peak:+.3e}",
               flush=True)
+        _check_cowork_progress()    # layer-2 5-min poll hook (liveness + new directives)
 
     # CSV: omega + each (material, delta) column
     cols = ["omega_eV"] + [f"{m}_d{d}" for m in MATERIALS for d in deltas]

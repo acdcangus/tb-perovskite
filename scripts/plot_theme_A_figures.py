@@ -67,7 +67,11 @@ def fig1(rows):
                           mec="k") for b in ("Ge", "Sn", "Pb")]
     axh.add_artist(axh.legend(handles=handles, title="B", fontsize=8, loc="lower right"))
     fig.tight_layout()
-    fig.savefig(f"{OUTDIR}/fig1_g_factor_universality.pdf"); plt.close(fig)
+    # PDF for publication (gitignored by repo *.pdf rule, regenerate via this script)
+    # + PNG committed for in-repo viewing / report embedding (repo figure convention).
+    fig.savefig(f"{OUTDIR}/fig1_g_factor_universality.pdf")
+    fig.savefig(f"{OUTDIR}/fig1_g_factor_universality.png", dpi=150)
+    plt.close(fig)
 
 
 def fig2(rows):
@@ -85,7 +89,9 @@ def fig2(rows):
                for b in ("Ge", "Sn", "Pb")]
     ax.legend(handles=handles, title="B", fontsize=8)
     fig.tight_layout()
-    fig.savefig(f"{OUTDIR}/fig2_gh_deviation_vs_delta.pdf"); plt.close(fig)
+    fig.savefig(f"{OUTDIR}/fig2_gh_deviation_vs_delta.pdf")
+    fig.savefig(f"{OUTDIR}/fig2_gh_deviation_vs_delta.png", dpi=150)
+    plt.close(fig)
 
 
 if __name__ == "__main__":

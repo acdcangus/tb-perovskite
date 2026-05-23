@@ -21,6 +21,7 @@
 | **Theme A: Landé g 因子 9 材料マップ** | ✅ 完了（Production bundle 化済み） |
 | **Phase 1.5: 光学応答 ε(ω) Kubo-Greenwood** | ✅ 完了（Production bundle 化済み） |
 | **Theme F: shift current / BPVE** | ✅ 完了（F1–F6, Production bundle 化済み） |
+| **Theme I: 有効質量マップ + 励起子 E_b** | ✅ 有効質量マップ完了（E_b 絶対値は ε_∞ 較正待ち） |
 
 **`pytest`: 228 passed.** JSON 入力 → CLI でバンド図生成まで一通り動作。
 全21図 + 物性（g 因子・光学・shift current）を再現性メタデータ付きで出力済み。

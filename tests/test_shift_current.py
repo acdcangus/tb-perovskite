@@ -97,6 +97,25 @@ def test_polar_displacement_turns_on_and_scales(cspbi3):
     assert 1.5 < peaks[0.10] / peaks[0.05] < 3.0
 
 
+def test_polar_sign_reverses_under_displacement_flip(cspbi3):
+    """F4-2 (multi-band sanity check vs Tan & Rappe 2016, npj Comput Mater 2:16026):
+    flipping the [001] Pb displacement delta -> -delta applies a spatial inversion,
+    so sigma_zzz(-delta) = -sigma_zzz(+delta) exactly (their statement: 'changing
+    the sign of delta changes the direction of the shift current'). Independent
+    multi-band confirmation of the sign, complementing the 2-band Rice-Mele/Fregoso
+    closed-form check."""
+    p, a, basis = cspbi3
+    omega = np.linspace(2.0, 4.5, 12)
+    out = {}
+    for delta in (-0.12, 0.12):
+        Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=delta)
+        out[delta] = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=4,
+                                          smearing_eta=0.10, direction=2, d2Hdk_fn=d2Hp)
+    scale = np.max(np.abs(out[0.12]))
+    assert scale > 1e-3
+    assert np.max(np.abs(out[-0.12] + out[0.12])) < 1e-9 * max(scale, 1.0)
+
+
 def test_cubic_all_diagonal_components_vanish(cspbi3):
     """F4-4: in the centrosymmetric cubic phase (delta=0), sigma_xxx = sigma_yyy =
     sigma_zzz = 0 (rank-3 polar tensor forbidden by inversion)."""

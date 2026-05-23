@@ -1,8 +1,10 @@
-# Shift current / Bulk Photovoltaic Effect の理論定式化メモ（Phase 2 / Theme F, F2 draft v1）
+# Shift current / Bulk Photovoltaic Effect の理論定式化メモ（Phase 2 / Theme F, F4 更新 v2）
 
-**作成:** 2026-05-23（F2）
-**ステータス:** **Cowork F2 review (2026-05-23 12:00) で APPROVED → F3 実装 GO**。
-symmetry breaker = [001] 極性変位 (P4mm)、SK 距離スケーリング = Harrison η=2.0 で確定。
+**作成:** 2026-05-23（F2）／**更新:** 2026-05-23（F4-3/F4-2 完了）
+**ステータス:** **F4-3（Rice-Mele 閉形式）+ F4-2（Tan & Rappe 多バンド sanity）で符号・実装確定**。
+F3 実装に欠落していた TB 第2微分項 `w^{ab}`（Fregoso Eq.(C2)）を追加（§3, §5-A）→ 旧 F3 σ_zzz は
+符号逆・~2.4× 過小だったため破棄・置換。symmetry breaker = [001] 極性変位 (P4mm)、SK 距離スケーリング
+= Harrison η=2.0。残: F5（9 材料 × δ, Production, 絶対 μA/V² 較正）。
 **目的:** 既存 TB エンジン + velocity operator（A2）から、ハライドペロブスカイトの
 shift current 伝導度 σ⁽²⁾_abc(ω)（bulk photovoltaic effect, BPVE）を計算する定式化。
 
@@ -53,10 +55,21 @@ Passos 2018 は **velocity gauge** での任意次非線形伝導度を、位置
 （`r = i∂_k + ξ`, ξ=Berry connection）と covariant derivative `D_k = ∂_k - iξ` で定式化。要点:
 1. `p^a_{mn} = ⟨m|∂_{k_a}H(k)|n⟩`（= velocity matrix element, `velocity.py`）。**解析的 ∂H/∂k**。
 2. off-diagonal Berry connection `r^a_{mn}` は §2 の式で固有ベクトルと ∂H/∂k から直接。
-3. covariant derivative `r^b_{nm;c}`:
-   - **(A) k 有限差分**: `∂_{k_c}r^b_{nm}` を MP グリッド上の中心差分で（Tan & Rappe 2016 Methods 流; 要 gauge 固定 or covariant 差分）。
-   - **(B) 解析的（sum-over-states）**: `∂_{k_c}r^b_{nm}` を別バンド和で展開（Passos 2018 の covariant derivative 公式）。数値的に安定だが実装重。
-   - F3 ではまず (A)、検証で (B) と比較。
+3. covariant derivative `r^b_{nm;c}`: **採用 = (B) 解析的 sum-over-states**（velocity gauge,
+   Kramers 退化を退化中間状態スキップで処理 → δ=0 の中心対称消失が機械精度で成立）。
+   - **★ TB では Fregoso 2017 Eq.(C2) の第2微分項 `w^{ab}_nm = ⟨n|∂²H/∂k_a∂k_b|m⟩` が必須**
+     （`shift_current.py::shift_current_integrand_aaa`）:
+     ```
+     r^a_{nm;b} = -(1/(iω_nm))[ (v^a_nm Δ^b + v^b_nm Δ^a)/ω_nm − w^{ab}_nm
+                              + Σ_{p≠n,m}(v^a_np v^b_pm/ω_pm − v^b_np v^a_pm/ω_np) ]
+     ```
+     Fregoso が明記（Eq.(C2) 直後）するとおり、連続模型 `H=p²/2m+V` では `w^{ab}_nm=δ_nm δ_ab/m`
+     が**対角**で off-diagonal 寄与なし（= Sipe-Shkrebtii の標準形）。**TB では ∂²H/∂k² が
+     off-diagonal を持つ**ため w 項が効き、これを落とすと 2-band では σ が**恒等的に 0**になる
+     （F4-3 で検出した F3 の bug; §5-A 参照）。→ builder は `d2Hdk_fn`（解析的 ∂²H/∂k²）も返す。
+   - virtual sum は `R[i,j]=v_ij/(E_i−E_j)`（対角・縮退ペア 0）で `Va@R − R@Va` にベクトル化、
+     明示 (v,c,p) ループと機械精度一致を確認済み。
+   - (A) k 有限差分は補助（gauge 固定要）。F4-1 として length-gauge 同値性確認は符号衝突時のみの tiebreaker に格下げ（Cowork 1540 承認）。
 4. 退化・対角項 `n=m` は除外（intra-band は別途 Drude/injection 項、shift current には不要）。
 
 ## 4. 対称性と symmetry breaker（**確定方針; Cowork F2 review 2026-05-23 12:00 承認**）
@@ -84,15 +97,35 @@ shift current σ⁽²⁾_abc は **3階極性テンソル** → **空間反転�
   極性変位 δ で Pb-I_z(+z) 結合は `a/2-δ`、(-z) は `a/2+δ` と非対称になり、Harrison scaling 経由で
   ホッピングが非対称化 → 反転対称が破れる。
   <!-- 旧記述（出典要・撤回）: -->
-## 5. 検証アンカー（F4 テスト用）
-1. **中心対称で消失**: 無歪み立方（δ=0）で σ⁽²⁾_abc ≈ 0（数値積分誤差以内）。**最重要・
-   ハルシネーションproof**（対称性は厳密に保証されるべき）。
-2. **極性変位で発現**: δ>0 で σ⁽²⁾_{zzz}(ω) ≠ 0、δ→0 で連続的に 0 へ。
-3. **ピーク位置 = バンド端近傍**: σ⁽²⁾ の立ち上がりが直接ギャップ ~Eg。
-4. **Tan & Rappe 2016 MAPbI₃**（**PDF 取得済み** `doi_10.1038_npjcompumats.2016.26.pdf`）:
-   shift current ピーク位置（~2-3 eV）・振幅（~10-100 μA/V²）を ±0.1 eV / order-of-magnitude で
-   照合。**具体値は F4 で本文/図から精密に読み取り確定**（実装後）。
-5. **sum rule / gauge 不変性**: velocity gauge (Passos) と length gauge の一致確認（Passos 2018 の主題）。
+## 5. 検証アンカー（F4; ★ = 完了）
+1. ✅ **中心対称で消失**: 無歪み立方（δ=0）で σ⁽²⁾_abc ≈ 4.9e-15（機械精度）。3 方向（xxx/yyy/zzz）
+   とも消失（`test_cubic_all_diagonal_components_vanish`）。**最重要・ハルシネーションproof**。
+2. ✅ **極性変位で発現・|δ| で増大**: δ>0 で σ_{zzz}(ω)≠0、δ→0 で連続的に 0、|σ| が |δ| とほぼ線形
+   増大（`test_polar_displacement_turns_on_and_scales`）。
+3. **ピーク位置 = バンド端近傍**: σ⁽²⁾ の立ち上がりが直接ギャップ ~Eg（n_kpts 収束は F5 Production で確定）。
+
+### ★ F4-3（Rice-Mele 解析閉形式; 符号・prefactor 確定）— **完了**
+**A.** 2-band Rice-Mele 模型（Fregoso 2017 Eq.(D2): `H=t cos(ka/2)σx − δ sin(ka/2)σy + Δσz`）の
+per-k 積分核を **Fregoso Eq.(D15) `Im[r^z_cv r^z_vc;z]=a³tδΔ/(32E³)` と全 k で rel<1e-7 一致**
+（符号・magnitude とも）。`tests/test_shift_current_rice_mele.py`。
+**B.** **w 項を落とすと 2-band 積分核は 0**（continuum 形が TB で誤り＝F3 の bug を検出・テスト化）。
+**C.** δ=0 または Δ=0（反転対称）で消失。**D.** full σ_zzz(ω) は **t,δ,Δ>0 で負**（Fregoso Eq.(D16) 符号一致）、
+ピークは下側バンド端 ω≈2E_min。→ **符号・prefactor は in-repo 一次閉形式で確定**。
+
+### ★ F4-2（Tan & Rappe 2016 多バンド sanity check）— **完了（qualitative 一致）**
+出典: `doi_10.1038_npjcompumats.2016.26.pdf`（Tan, Zheng, Young, Wang, Liu, Rappe, npj Comput Mater
+2:16026; レビュー）。同論文の 1D SSH/Rice-Mele 模型 Eq.(14) `H=Σ[Δ(−1)^j c†c + (t+(−1)^jδ)c†c_{j+1}]`
+の定性則を多バンド Nestoklon-polar CsPbI₃ で確認:
+- **δ=0 or Δ=0 で σ 消失**（反転対称）— 一致。
+- **δ→−δ で σ_zzz 符号反転**（"changing the sign of δ changes the direction of the shift current"）
+  — 多バンドで σ_zzz(−δ)=−σ_zzz(+δ) を**機械精度**で確認（`test_polar_sign_reverses_under_displacement_flip`）。
+- **|δ| 増大で |σ| 増大**（Fig.3）— 一致。
+- 物理的起源: s↔p の spσ 結合は符号交替（Eq.14 の δ）— Nestoklon の Pb-s/I-p SK 結合に対応。
+注: MAPbI₃ vs CsPbI₃-polar は別構造・別手法（DFT vs 経験 TB, 相対単位）のため**絶対振幅の比較は不可**、
+符号・対称則・|δ| スケーリングの**定性照合**にとどめる（Cowork 1655 §2.5 の方針どおり）。
+
+4. **(F4-1, 格下げ)** length gauge 同値性: F4-3/F4-2 で符号確定済みのため tiebreaker のみ（未実施）。
+5. **絶対 μA/V² 較正**: Eq.(D12) の e³/ℏ⁴ prefactor 付与は F5 で実施（現状は積分核の自然単位＝相対）。
 
 ## 6. 既知の限界（Blount 1962 統一ナラティブの継続）
 TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**（E. I. Blount, *Solid State Phys.*
@@ -113,7 +146,10 @@ TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**�
 2. ~~SK 距離スケーリング指数 η_l の出典~~ → **解決（Cowork F2 review）**: Harrison universal
    η=2.0（Harrison 1989 Eq.20-5, s,p 系の d⁻²）を default、感度 η∈{1.5,2.0,2.5}。§4 参照。
 3. ~~Young & Rappe / Tan & Rappe / Fregoso PDF~~ → **全て取得・検証済み**（correction #2 の正 ID）。
-   検証アンカー（MAPbI₃ ピーク）の具体値読み取りは F4 で実施。
+4. ~~covariant derivative の符号・prefactor（Aversa-Sipe 1995 入手不可）~~ → **解決（F4-3）**:
+   Fregoso 2017 Eq.(C2)（in-repo 一次出典）の TB 形（w 項込み）を実装し、Rice-Mele 閉形式 Eq.(D15)/(D16)
+   と機械精度一致で符号・prefactor 確定。Aversa-Sipe 1995 原典は不要に。
+5. **残（F5）**: 絶対 μA/V² 較正（Eq.(D12) prefactor）、k グリッド収束（shift current は遅い）、9 材料スキャン。
 
 ## 参考文献（出典; 取得状況明記）
 - **D. J. Passos, G. B. Ventura, J. M. V. P. Lopes, J. M. B. Lopes dos Santos**, "Nonlinear optical
@@ -130,6 +166,7 @@ TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**�
   (2016); DOI:10.1038/npjcompumats.2016.26（**取得・検証済み**, `doi_10.1038_npjcompumats.2016.26.pdf`）。
   — polar materials の shift current レビュー・**検証アンカー（MAPbI₃, F4 で精密照合）**。
 - B. M. Fregoso, T. Morimoto, J. E. Moore, *Phys. Rev. B* **96**, 075421 (2017); arXiv:**1701.00172**.
-  — shift vector の幾何学的解釈・gauge invariance（**取得・検証済み**）。
+  — shift vector の幾何学的解釈・gauge invariance（**取得・検証済み**）。**★ 本実装の一次出典**:
+  Eq.(C2)（TB 用 generalized derivative, w 項込み）・Eq.(D2/D15/D16)（Rice-Mele 閉形式, F4-3 照合）。
 - E. I. Blount, *Solid State Phys.* **13**, 305 (1962); *Phys. Rev.* **126**, 1636 (1962). — 統一限界。
 - S. Rajpurohit et al., arXiv:2105.11310. — bulk photovoltaic 背景（既収集）。

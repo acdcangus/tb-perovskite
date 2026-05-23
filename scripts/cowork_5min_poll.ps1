@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Teruhisa Kotani
+# Copyright (c) 2026 tk
 # cowork_5min_poll.ps1
 # -----------------------------------------------------------------------------
 # 5 分ごとに Claude Code を起こして cowork/progress/ の新着確認と次タスクの

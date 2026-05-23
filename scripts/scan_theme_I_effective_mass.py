@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2026 Teruhisa Kotani
+# Copyright (c) 2026 tk
 """Theme I (Y1-a): TB band-edge effective-mass map for the 9 cubic CsBX3.
 
 Per-axis m_e/m_h (x,y,z) + average + anisotropy ratio at the R-point direct-gap

@@ -125,3 +125,25 @@
 
 最新更新: 2026-05-23
 次回確認予定: 2026-05-30
+
+---
+
+## 更新履歴
+
+### 2026-05-23 09:00 — Theme A 報告書（A1-A5）完了後の緊急再確認
+
+**契機:** Claude Code が Theme A 完了し報告書 `reports/theme_A_g_factor.md` を提出。Cowork で念のため再検索。
+
+**追加確認した文献:**
+- **arXiv:2511.02956 (Rodina, Semina, Ivchenko, 2025-11)** "Electron and hole g factors in semiconductors and nanostructures (Review)" — 取得して `references/pdfs/` に追加
+  - 内容確認: 鉛系ハライドペロブスカイト APbX₃ (A=Cs,MA,FA; X=Cl,Br,I) は扱う
+  - **Sn / Ge / 鉛フリーの記述ゼロ**（pdftotext 全文 grep で確認）
+  - **CsSnX₃ / CsGeX₃ への言及なし**
+
+**判定:** Theme A の新規性は **2025/11 のレビュー後も堅持**。本研究は鉛フリー g 因子の最初の系統的計算予測。
+
+**主結果の独立検証:**
+- Cowork 紙計算で CSV 主要 3 点 (CsPbI₃, CsSnI₃, CsGeI₃) を独立確認 → g_h 計算式と一致
+- 物理的考察「Δ→0 で g_h 補正項消滅」は数式から自明に正しい
+
+**次回確認予定:** 2026-05-25（月）自動巡回

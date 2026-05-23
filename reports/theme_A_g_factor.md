@@ -30,6 +30,14 @@ g_e は Eg のみに依存。B サイトに依らず一本の曲線に乗る。�
 g_h は Eg と Δ に依存。Sn/Ge は伝導帯 SOC Δ が Pb より小さく、**g_h が Pb 普遍曲線から
 +0.5〜+1.9 上方乖離**。乖離最大: CsGeI₃ +1.86, CsSnI₃ +1.81。Δ±20% でも傾向は頑健。
 
+**乖離の定義（明確化, Cowork review #3 §2）:**
+> Δg_h ≡ g_h(材料固有 Δ_B) − g_h(普遍 Δ ≈ 1.5 eV)
+> = 鉛フリーの伝導帯 SOC が、Pb で確立した Kirstein 普遍則（暗に Δ_Pb≈1.5 を仮定）から
+>   正孔 g因子をどれだけ引き離すかの指標。
+この定義により「Pb で確立した普遍則が Sn/Ge では破れる」主張が誤解されない。
+g_h = 2 − (4/3)(P²/C)[1/Eg − 1/(Eg+Δ)] の補正項は Δ→0 で消滅（→ g_h→+2）するため、
+弱 SOC 材料が +2 寄りになるのは数式から自明。
+
 ### 3.3 未測定物性の予測値（実験確認待ち）
 全9材料の (g_e, g_h, Eg) は `results/g_factors/g_factor_9material.csv`。
 鉛フリー候補トップ: **CsSnI₃ (g_e=+4.56, Eg=1.30 eV, NIR)**, **CsGeI₃ (g_e=+3.39, g_h=+1.41, Eg=1.60 eV)**。
@@ -48,6 +56,12 @@ g_h は Eg と Δ に依存。Sn/Ge は伝導帯 SOC Δ が Pb より小さく�
   g因子設計には B サイト SOC を独立変数として扱う必要がある。**
 
 ## 6. 学会・論文化の見通し
+- **新規性確認（独立検証, 2026-05-23）:** 2025年11月の g因子レビュー arXiv:2511.02956
+  (Rodina, Semina, Ivchenko) を全文確認した結果、**鉛フリー（Sn/Ge）ハライドペロブスカイトの
+  g因子の記述はゼロ**。Theme A の新規性は堅持（Cowork novelty check, `progress/..._0900_..`）。
+  英語注記: "An independent novelty check against the November 2025 g-factor review
+  (arXiv:2511.02956) confirms that lead-free halide perovskites remain unexplored in the
+  universal Landé g-factor literature."
 - **Letter 規模で成立**: 「鉛フリーハライドペロブスカイトにおける正孔 g因子の普遍関係破れ」。
 - 候補: Phys. Rev. B (Letter/Regular), npj Comput. Mater., J. Phys. Chem. Lett.。
 - 磁気光学（最近のホット）と接続: g因子は時間分解 Faraday/Kerr の観測量。鉛フリー × 磁気光学は新規。
@@ -55,6 +69,10 @@ g_h は Eg と Δ に依存。Sn/Ge は伝導帯 SOC Δ が Pb より小さく�
 - 「面白くない/要注意」: g_e の普遍性は P 普遍を仮定した帰結（材料別 P で再検証要）。
 
 ## 7. 限界・残課題
+- **CsPbI₃ g_h 絶対値ズレ調査（A5補強, docs/g-factor-analysis.md §1.1）:** k·p −0.12〜+0.03 vs
+  Table S2 −0.33。切り分け: Eg を 1.652 にすると −0.117（~0.15 説明）、残差 ~0.21 は
+  「単一等方 2バンド P が電子(P=6.80)と正孔(P=7.13)を同時再現できない」近似限界。改竄せず記録。
+  主結果（g_h の Sn/Ge 相対乖離）はこの絶対値ズレに鈍感だが、絶対値に ±0.2 系統不確かさを明記。
 - Sn/Ge の Δ は Kashikar 3λ 由来（±20%）。文献の直接 Δ が望ましい（Cowork task #18）。
 - g_e の材料別 P 補正（TB 速度から）は未実施 → g_e 普遍性の真の検証に必要。
 - g_h 絶対値の精密化（多重項/remote）と atomistic 法の Wannier ベース改良は将来 Phase。

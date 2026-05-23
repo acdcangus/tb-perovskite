@@ -11,7 +11,7 @@
 ### A-1. Slater-Koster 二中心積分 (`tests/test_slater_koster.py`)
 - 軸方向 `(1,0,0)` の行列要素を Slater-Koster (1954) Table I から**手計算**した値と照合
   （s-s, s-p, s-d, p-p, p-d, d-d）。
-- 基本関係 `E_{αβ}(\mathbf d) = E_{βα}(-\mathbf d)` を全軌道対（100通り）で確認。
+- 基本関係 `E_αβ(d) = E_βα(−d)` を全軌道対（100通り）で確認。
 - s\* が s と同じ角度形を持つことを確認。
 
 ### A-2. スピン軌道相互作用 (`tests/test_soc.py`)

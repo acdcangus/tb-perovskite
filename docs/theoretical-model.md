@@ -50,7 +50,7 @@ H_{\alpha\beta}(\mathbf{k}) = \sum_{\mathbf{R}} t_{\alpha\beta}(\mathbf{R})\,
   e^{i\mathbf{k}\cdot(\mathbf{R}+\boldsymbol{\tau}_\beta-\boldsymbol{\tau}_\alpha)},
 $$
 固有値はゲージ不変。B を原点に置くと Kashikar の簡約因子
-`S_d = 2i\sin(k_d a/2)`, `C_d = 2\cos(k_d a/2)` を厳密に再現する。
+`S_d = 2i·sin(k_d a/2)`, `C_d = 2·cos(k_d a/2)` を厳密に再現する。
 
 ---
 
@@ -63,13 +63,15 @@ $$
 
 ### 相互作用
 - **B–X 最近接**（距離 `a/2`）: s-pσ, p-pσ, p-pπ。
-  軸 `d` 上のハライドについて
-  `⟨B-s|H|X_d-p_d⟩ = t^{BX}_{sp}\,S_d`,
-  `⟨B-p_i|H|X_d-p_i⟩ = (t^{BX}_{pp\sigma}\text{ if }i{=}d\text{ else }t^{BX}_{pp\pi})\,C_d`。
-- **B–B 第二近接**（距離 `a`, 単純立方）: s-s, s-pσ, p-pσ, p-pπ。分散関数（Eq.8）
-  $$h_1 = 2t^{BB}_{ss}\sum_d\cos(k_d a),\quad
-    h_{2,3,4} = 2t^{BB}_{pp\sigma}\cos(k_{d} a) + 2t^{BB}_{pp\pi}\sum_{e\neq d}\cos(k_e a),$$
-  s–p 結合は `2i\,t^{BB}_{sp\sigma}\sin(k_d a)`（full-`a` 位相、R点で消える）。
+  軸 `d`（∈{x,y,z}）上のハライド `X_d` について（`S_d=2i sin(k_d a/2)`, `C_d=2cos(k_d a/2)`）
+  - ⟨B-s | H | X_d-p_d⟩ = t^{BX}_{sp} · S_d
+  - ⟨B-p_i | H | X_d-p_i⟩ = t^{BX}_{ppσ} · C_d （i = d のとき）, t^{BX}_{ppπ} · C_d （i ≠ d のとき）
+- **B–B 第二近接**（距離 `a`, 単純立方）: s-s, s-pσ, p-pσ, p-pπ。対角分散関数（Eq.8）は
+  各軸 d に対し
+  $$h_1 = 2t^{BB}_{ss}\sum_{d}\cos(k_d a),\qquad
+    h_{d} = 2t^{BB}_{pp\sigma}\cos(k_d a) + 2t^{BB}_{pp\pi}\!\!\sum_{e\neq d}\cos(k_e a),$$
+  （h_2,h_3,h_4 が d=x,y,z に対応）。s–p 結合は ⟨B-s|H|B-p_d⟩ = 2i·t^{BB}_{spσ}·sin(k_d a)
+  （full-`a` 位相のため R 点で消え、B-p 三重項が混成しない）。
 - **X–X**: 無視（X-p ブロックはオンサイト対角 `ε^X_p`、Eq.7）。
 
 ### R点固有値（解析式, Eq.9）— 実装検証の要
@@ -89,7 +91,7 @@ VBM は `E₄`（反結合 s–X）、CBM は `E₃`（B-p 三重項）。本実
 
 ### 4軌道最小モデル
 B-{s,p} のみ（X-p を実効 B–B に繰り込む）。SOC なしギャップ閉形式
-`E_g = ε_p - ε_s - 2t_{pp\sigma} - 4t_{pp\pi} + 6t_{ss}`（Kashikar §III.C, Table IV）。
+`E_g = ε_p − ε_s − 2t_{ppσ} − 4t_{ppπ} + 6t_{ss}`（Kashikar §III.C, Table IV）。
 
 ---
 
@@ -110,7 +112,7 @@ cation=Pb, anion=I の2種。単位胞 4 原子 × 10 軌道 × 2 スピン = **
 `s*s*σ = sₐ*… = pᵤ d_a … = 0`（実装では該当キー欠落時に 0）。
 
 ### スピン軌道相互作用
-オンサイト `λ\mathbf{L}\cdot\mathbf{S}` を **両副格子の p 軌道**に課す。
+オンサイト `λ L·S` を **両副格子の p 軌道**に課す。
 パラメータは `Δ_a/3`（I）と `Δ_c/3`（Pb）。Chadi/Jancu 規約で **p 分裂 = 3λ = Δ**
 （[numerical-methods.md](numerical-methods.md) §2）。
 

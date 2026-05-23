@@ -266,6 +266,8 @@ def shift_current_integrand_aaa(E: np.ndarray, Va: np.ndarray, Waa: np.ndarray,
 
     v = slice(0, n_occ)
     c = slice(n_occ, Nb)
+    # sign bookkeeping: wvc = E_v - E_c < 0 (occupied below unoccupied);
+    #                   wcv = E_c - E_v > 0 (the positive transition energy).
     wvc = E[v, None] - E[None, c]                      # E_v - E_c  (<0)
     wcv = -wvc                                         # E_c - E_v  (>0)
     Delta = vdiag[v, None] - vdiag[None, c]            # Delta^a_vc
@@ -280,14 +282,16 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
                       omega_grid: np.ndarray, n_kpts: int = 8,
                       smearing_eta: float = 0.05, deg_tol: float = 1e-5,
                       direction: int = 2,
-                      d2Hdk_fn: Callable | None = None) -> np.ndarray:
+                      d2Hdk_fn: Callable | None = None,
+                      allow_continuum_form: bool = False) -> np.ndarray:
     """Diagonal shift-current conductivity sigma_aaa(omega) -- velocity-gauge, TB form.
 
     ``direction`` selects the Cartesian polarisation/current axis a (0=x,1=y,2=z;
     default z).  ``d2Hdk_fn(k, alpha)`` must return d^2H/dk_alpha^2 (REQUIRED for the
     tight-binding generalized derivative; see ``shift_current_integrand_aaa`` and
-    Fregoso 2017 Eq.(C2)).  If omitted the second-derivative term is dropped (w=0),
-    which is WRONG for tight-binding and only kept for back-compat regression.
+    Fregoso 2017 Eq.(C2)).  Omitting it drops the second-derivative term (w=0), which
+    is WRONG for tight-binding -- so this raises ValueError unless the caller opts in
+    with ``allow_continuum_form=True`` (kept only for the continuum-regression check).
 
         sigma_aaa(w) = (1/N_k) sum_k sum_{v in occ, c in unocc}
                           Im[ r^a_cv r^a_{vc;a} ] * Lorentzian(w_cv - w)
@@ -311,6 +315,11 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
     incompleteness (same as g-factor / optical); *symmetry, sign, spectral shape*
     are robust.
     """
+    if d2Hdk_fn is None and not allow_continuum_form:
+        raise ValueError(
+            "d2Hdk_fn (d^2H/dk^2) is required for the tight-binding shift current "
+            "(Fregoso 2017 Eq.(C2) off-diagonal w-term). Pass it, or set "
+            "allow_continuum_form=True only for the documented continuum regression.")
     from .optical import monkhorst_pack
     kred = monkhorst_pack(n_kpts)
     kcart = kred * (2.0 * np.pi / a)

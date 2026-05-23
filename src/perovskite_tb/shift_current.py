@@ -208,8 +208,12 @@ def shift_current_zzz_abelian_deprecated(H_fn: Callable, dHdk_fn: Callable, a: f
 
 def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
                       omega_grid: np.ndarray, n_kpts: int = 8,
-                      smearing_eta: float = 0.05, deg_tol: float = 1e-5) -> np.ndarray:
-    """Shift-current conductivity sigma_zzz(omega) -- velocity-gauge sum-over-states.
+                      smearing_eta: float = 0.05, deg_tol: float = 1e-5,
+                      direction: int = 2) -> np.ndarray:
+    """Diagonal shift-current conductivity sigma_aaa(omega) -- velocity-gauge sum-over-states.
+
+    ``direction`` selects the Cartesian polarisation/current axis a (0=x,1=y,2=z;
+    default z). Computes sigma_{aaa} = sum Im[r^a_cv r^a_{vc;a}] delta(w_cv-w).
 
     Recommended method (Cowork review cowork/progress/2026-05-23_1300_code_review.md,
     option B). Avoids the k-derivative gauge fixing and handles the Kramers (SOC)
@@ -252,7 +256,7 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
 
     for k in kcart:
         E, U = _eig(H_fn(k))
-        Vz = U.conj().T @ (dHdk_fn(k, 2)) @ U          # Vz[n,m] = <n|dH/dk_z|m>
+        Vz = U.conj().T @ (dHdk_fn(k, direction)) @ U  # Vz[n,m] = <n|dH/dk_a|m>
         Nb = E.shape[0]
         # interband Berry connection r^z[n,m] = i Vz[n,m]/(E[m]-E[n]); set to 0 on the
         # diagonal AND for degenerate pairs (|E[m]-E[n]| < deg_tol). Zeroing degenerate

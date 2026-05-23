@@ -87,3 +87,31 @@ def test_polar_displacement_turns_on_and_scales(cspbi3):
     assert peaks[0.10] > peaks[0.05]                       # grows with delta
     # approximately linear: sigma(0.1)/sigma(0.05) ~ 2 (allow 1.5-3)
     assert 1.5 < peaks[0.10] / peaks[0.05] < 3.0
+
+
+def test_cubic_all_diagonal_components_vanish(cspbi3):
+    """F4-4: in the centrosymmetric cubic phase (delta=0), sigma_xxx = sigma_yyy =
+    sigma_zzz = 0 (rank-3 polar tensor forbidden by inversion)."""
+    p, a, basis = cspbi3
+    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
+    omega = np.linspace(1.0, 4.0, 20)
+    for direction in (0, 1, 2):
+        sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
+                                   smearing_eta=0.08, direction=direction)
+        assert np.max(np.abs(sig)) < 1e-10, f"dir={direction}: {np.max(np.abs(sig)):.2e}"
+
+
+def test_p4mm_only_polar_axis_nonzero(cspbi3):
+    """F4-4: under [001] polar displacement (P4mm), sigma_zzz != 0 but sigma_xxx,
+    sigma_yyy ~ 0 (4mm symmetry forbids x-/y-polarised diagonal shift current)."""
+    p, a, basis = cspbi3
+    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.15)
+    omega = np.linspace(1.0, 4.5, 25)
+    s_zzz = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
+                                               smearing_eta=0.08, direction=2)))
+    s_xxx = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
+                                               smearing_eta=0.08, direction=0)))
+    s_yyy = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
+                                               smearing_eta=0.08, direction=1)))
+    assert s_zzz > 1e-3
+    assert s_xxx < 1e-9 and s_yyy < 1e-9, f"xxx={s_xxx:.2e}, yyy={s_yyy:.2e}"

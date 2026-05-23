@@ -176,6 +176,44 @@ Table S2 は **修正パラメータセット（Table S1）**で計算されて�
 
 ---
 
+## 8. A2 実装結果と再現困難な物理（2026-05-23 追記）
+
+velocity operator `dH/dk`（解析微分）を実装し、有限差分と一致を確認（`tests/test_velocity.py`, 21 通過）。
+その上で Roth-Lax の atomistic g因子（`src/perovskite_tb/g_factor.py::compute_g_factor`）を
+CsPbI₃（experiment_corrected, R点）で検証した結果：
+
+| 量 | 本実装（atomistic Roth-Lax） | k·p 公式（計算 Eg,Δ + 普遍 P=6.8） | Nestoklon Table S2 |
+|---|---|---|---|
+| g_e | **+1.06** | +3.24 | +3.23 |
+| g_h | **+0.45** | −0.30 | −0.33 |
+| 立方等方性 g_xx=g_yy=g_zz | ✅ (差 ~1e-15) | — | ✅ |
+
+**確認できたこと:**
+- 立方等方性は厳密に再現（実装の構造・対称性は正しい）。
+- TB 速度行列要素は十分大きい: `|⟨CBM|∂_z H|VBM⟩| = 2.97 eV·Å`、全方向・二重項和 √Σ=7.76。
+  CBM の Z 成分が √(1/3)（Eq.S1b の sinθ）であることと整合（2.97 ≈ sinθ·P, P≈5.1 eV·Å）。
+- **k·p 普遍式は anchor を再現**（g_e: 計算 Eg,Δ で +3.24 vs Table S2 +3.23）。
+
+**再現困難な物理（値は改竄しない）:**
+atomistic Roth-Lax（TB `∂H/∂k` 経由）の **|g_e| が Table S2 を大きく下回る（1.06 vs 3.23）**。
+原因の候補：
+1. **イントラアトミック軌道角運動量の欠落**: オンサイト SOC は k 非依存のため `∂H/∂k` に現れず、
+   原子内 p 軌道の軌道モーメント（⟨p_x|L_z|p_y⟩ 型）が速度演算子に入らない。TB g因子・
+   軌道磁化で知られる「不完全基底／intra-atomic current」問題。Nestoklon 2023 も
+   「halide p-band の記述が次近接なしでは困難で、相互作用が overestimate」と注記（本文 Methods）。
+2. **準縮退多重項の摂動論**: CB(Γ₆⁻) と he/le(Γ₈⁻) は Δ≈1.5 eV 離れるが、Roth-Lax の単純2次
+   摂動では多重項構造（Clebsch 係数）を取りこぼす可能性。k·p は (4/3) などの角度係数を陽に含む。
+
+→ **Cowork へレビュー希望（progress の review_request 参照）**: Roth-Lax 軌道項に intra-atomic
+   L を加える定式化（例: 速度演算子へのオンサイト軌道角運動量項 `(i/ℏ)[H_atomic, r]` の追加、
+   または position operator の Berry 接続項）が、TB で g因子を正しく出す標準手順か。
+   Nestoklon の bulk ETB g因子の具体的計算式（Ref.9 SI の手続き）の確認も依頼したい。
+
+**当面の実用方針（A4 スキャン）:** atomistic g の絶対値が未検証のため、9材料スキャンは
+**k·p 公式（材料ごとに計算した Eg, Δ ＋ 普遍 P, Δg_e）**を主出力とし、atomistic 値は
+（intra-atomic 項の決着後の）参考列として併記する。ただし**現実的な Eg が全9材料で必要**
+（Kashikar の mBJ Eg は小さすぎて k·p g が過大）→ §5.2 の Comp. Mat. Sci. 196 パラメータ入手が要。
+
 ## 参考文献（出典）
 - E. Kirstein et al., *The Landé factors of electrons and holes in lead halide perovskites: universal dependence on the band gap*, arXiv:2112.15384 (2021). — Eq.(5),(6), 普遍パラメータ, 実験値表。
 - M. O. Nestoklon et al., *Tailoring the electron and hole Landé factors in lead halide perovskite nanocrystals...*, arXiv:2305.10586 (2023). — ETB(Peierls+Zeeman) 法, k·p SI Eq.(S3),(S7), Table S1/S2。

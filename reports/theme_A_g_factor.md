@@ -54,6 +54,14 @@ g因子を「k·p 公式 + **TB-derived Δ (Eq.9) + TB-derived P (速度演算�
   s,p(4.11) より大きく 6.8 に近い。原因 = 利用可能パラメータが**バンド構造フィット（g因子非調整）**
   のため（Nestoklon の g 調整 Table S1 は pp_sigma が大きく P も大きいはずだが paywall）。
 
+**A7 逆抽出チェック（`scripts/plot_ge_universality.py`, `results/g_factors/ge_universality.png`）:**
+Pb 系の (ETB) g_e を再現する「逆 Kane P」は **3 ハロゲンとも 6.80 で一定** → g_e 普遍性の前提
+（P 一定）を裏付け。一方 **TB-derived P (4.1〜5.3) は 25〜40% 過小**（Blount 不完全性が P に現れた形）。
+∴ g_e 普遍性自体は妥当（有効 P 一定）だが、band-fit TB Hamiltonian の P はそれを再現せず系統的に
+小さい → 絶対予測には普遍 P（or g 調整パラメータ）が必要。
+（注: Pb 逆 P=6.8 は Table S2 g_e 自体が普遍 P=6.8 と整合するため半ば自己無撞着。非自明な結論は
+「TB-derived P が一貫して過小」の方。）
+
 → **これで Theme A は完全に TB ベース**: "We extract from our TB Hamiltonian both the
 conduction-band SO splitting Δ (analytic R-point eigenvalues, Kashikar Eq.9) and the Kane
 momentum P (analytic velocity operator), and substitute them into the k·p universal formula,

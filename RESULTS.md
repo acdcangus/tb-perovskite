@@ -1,10 +1,10 @@
 # 進捗・再現結果サマリ (RESULTS)
 
-> このファイルは作業状況と「論文値の再現結果」を一目で分かるようにまとめたものです。
-> 携帯からでも確認できるよう、コミットごとに更新します。
+> 作業状況と「論文値の再現結果」を一目で分かるようにまとめたファイルです。
+> コミットごとに更新します（携帯からの確認用）。
 
-**最終更新:** 2026-05-23（作業開始時点）
-**作業ブランチ:** main（こまめに commit & push）
+**最終更新:** 2026-05-23
+**作業ブランチ:** main
 
 ---
 
@@ -12,56 +12,85 @@
 
 | フェーズ | 状態 |
 |---|---|
-| 論文サーベイ（TBアルゴリズム・パラメータ抽出） | 進行中 |
-| パラメータ JSON 化（出典付き） | 着手予定 |
-| TB 計算エンジン実装 | 着手予定 |
-| 論文値の再現テスト (V&V) | 着手予定 |
-| ドキュメント整備 (docs/) | 着手予定 |
-| バンド構造プロット出力 | 着手予定 |
+| 論文サーベイ（TBアルゴリズム・パラメータ抽出） | ✅ 完了 |
+| パラメータ JSON 化（出典付き） | ✅ 完了 |
+| TB 計算エンジン実装（Kashikar 13/4軌道, Nestoklon sp³/sp³d⁵s\*） | ✅ 完了 |
+| 論文値の再現テスト (V&V) | ✅ 完了（**163 テスト全通過**） |
+| バンド構造プロット出力 | ✅ 完了（全12図） |
+| ドキュメント整備 (docs/) | 🔄 進行中 |
+
+**`pytest`: 163 passed.** JSON 入力 → CLI でバンド図生成まで一通り動作。
 
 ---
 
-## 2. 採用する論文とモデル（出典の明示）
+## 2. ★ 論文値の再現結果（最重要）
 
-ハルシネーション防止のため、すべてのモデル式・パラメータは以下の論文に出典を持ちます。
+### Nestoklon (arXiv:2012.14705) 立方晶 CsPbI₃ — 実験/DFT値を厳密再現
 
-1. **Kashikar, Gupta, Nanda (2021)** "A Generic Slater-Koster Description of the
-   Electronic Structure of Centrosymmetric Halide Perovskites", arXiv:2101.08562.
-   → 立方晶 CsBX₃ 全9種の 13軌道・4軌道 SK-TB モデルとパラメータ表。
-   **R点の固有値の解析式 (Eq. 9)** があり、実装の厳密検証に使える。
+| 検証項目 | 論文値 | 本実装 | 差 | 判定 |
+|---|---|---|---|---|
+| sp³ R点ギャップ (DFT) | 1.017 eV | 1.0182 eV | 1.2 meV | ✅ |
+| sp³d⁵s\* R点ギャップ (DFT) | 1.017 eV | **1.0166 eV** | 0.4 meV | ✅ |
+| sp³d⁵s\* 伝導帯 SO 分裂 (R点) | 1.48 eV | **1.469 eV** | 11 meV | ✅ |
+| 実験補正 R点ギャップ | 1.65 eV | **1.6500 eV** | ~0 | ✅ |
+| 実験補正 M点ギャップ | 2.75 eV | **2.7549 eV** | 5 meV | ✅ |
+| 直接ギャップが R 点 | (そう) | R点で直接 | — | ✅ |
 
-2. **Nestoklon (2021)** "Tight-binding description of inorganic lead halide
-   perovskites in cubic phase", arXiv:2012.14705.
-   → 立方晶 CsPbI₃ の sp³ / sp³d⁵s\* ETB パラメータ (Table I)。
-   DFT バンドギャップ 1.017 eV、実験補正 1.65 eV (R点) / 2.75 eV (M点)、
-   伝導帯 SO 分裂 1.48 eV など **明示された数値**で検証可能。
+→ Jancu sp³d⁵s\* モデル（八面体ジオメトリ + d, s\* 軌道 + SOC）の実装が
+**論文の数値を meV 精度で再現**。バンド図も Nestoklon Fig.2 と一致
+（深い I-s 帯 ~-13.4 eV、Pb-s 結合帯 ~-7.7 eV、Pb-p 伝導帯、d/s\* 高エネルギー帯）。
 
-（補助）3. Ashhab et al. (2017) arXiv:1703.03574 — 鉛ハライドペロブスカイトの TB モデル。
+### Kashikar (arXiv:2101.08562) 立方晶 CsBX₃ 全9種 — 解析式で厳密検証
+
+| 検証項目 | 判定 |
+|---|---|
+| 13軌道 H(R) の固有値 = 解析式 Eq.(9)（全9材料） | ✅ 機械精度 ~1e-15 |
+| 伝導帯 SO 分裂 (R点) = 3λ（全9材料） | ✅ |
+| 4軌道 ギャップ閉形式 = 数値対角化 | ✅ |
+| 立方ハライドペロブスカイトの直接ギャップ@R | ✅ |
+
+CsBX₃ 9種の R点直接ギャップ（13軌道, SOC込み, eV）:
+
+| | Cl | Br | I |
+|---|---|---|---|
+| **Ge** | 1.767 | 1.031 | 0.640 |
+| **Sn** | 1.056 | 0.383 | 0.175 |
+| **Pb** | 2.127 | 1.100 | 0.630 |
+
+（Cl→Br→I でギャップ減少、Sn 系が最小、という論文の傾向を再現。
+CsPbI₃ の伝導帯 SO 分裂 1.50 eV は Nestoklon の 1.48 eV とも整合。）
 
 ---
 
-## 3. 論文値の再現結果
+## 3. 成果物の場所
 
-> ここに、テストで確認できた「論文の数値 vs 本実装の計算値」を表で随時追記します。
+- **パラメータ（出典付き JSON）**: `data/parameters/`（`SOURCES.md` に出典・検証アンカー）
+- **バンド図**: `results/kashikar13/`（9材料）, `results/kashikar4/`（9材料）,
+  `results/nestoklon/`（CsPbI₃ × 3セット）。各図に再現性メタデータ JSON が付属。
+- **コード**: `src/perovskite_tb/`
+- **テスト**: `tests/`（`pytest` で実行）
+- **使い方**: `README.md`、設計は `.steering/20260523-initial-implementation/`
 
-（まだ計算結果はありません。実装・検証が進み次第ここに記載します。）
+### 再現コマンド例
+```bash
+pip install -r requirements.txt
+PYTHONPATH=src python -m perovskite_tb gap --params data/parameters/kashikar2021_cubic_13orb.json --material all
+PYTHONPATH=src python -m perovskite_tb band --params data/parameters/nestoklon2021_CsPbI3.json --parameter-set experiment_corrected --out results/nestoklon/CsPbI3.png
+PYTHONPATH=src python -m pytest -q
+```
 
 ---
 
 ## 4. 参照論文の取り込み状況
 
-- `references/pdfs/` に 49 本の arXiv 論文（自動収集）。`references/references.md` に一覧。
-- うち 3 本（arxiv_2209.13267 / 2302.13773 / 2501.06503）は**ダウンロードが途中で切れた破損ファイル**で
-  現時点では読めません（"Stream has ended unexpectedly"）。自動収集で再取得され次第、再確認します。
-  - 特に **2501.06503**（"DFT-Leveraged Tight-binding Insights into Inorganic Halide Perovskites"）は
-    関連性が高いため、再取得後に優先確認します。
+- `references/pdfs/` に 49 本（自動収集）。一覧は `references/references.md`。
+- うち 3 本（arxiv_2209.13267 / 2302.13773 / 2501.06503）は**ダウンロード破損**で未読。
+  自動収集で再取得され次第、再確認します（特に 2501.06503 = DFT-leveraged TB は要確認）。
 
 ---
 
-## 5. 次にやること
+## 5. 残タスク
 
-1. パラメータ表を出典付き JSON 化（`data/parameters/`）。
-2. Slater-Koster 二中心積分エンジン + Kashikar 13/4 軌道モデルを実装。
-3. Eq. 9 を再現する単体テストを通す。
-4. Nestoklon モデルを実装し、1.017 / 1.65 / 2.75 / 1.48 eV を再現確認。
-5. docs/ の永続ドキュメントを整備（自己レビュー2回で承認）。
+1. `docs/` 永続ドキュメント9本の整備（自己レビュー2回で承認）。
+2. 破損 PDF の再取得・確認、新規論文の定期チェック。
+3. （任意）2D/層状ペロブスカイトや他モデルへの拡張。

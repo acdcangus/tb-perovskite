@@ -1,0 +1,45 @@
+{
+  "timestamp_utc": "2026-05-23T00:51:33.769004+00:00",
+  "git_commit": "7a9787c4da82083e9d54bbcfef30b21236f8179e-dirty",
+  "package_version": "0.1.0",
+  "python": "3.14.5",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+  "model_id": "nestoklon2021_CsPbI3",
+  "model_kind": "empirical_tight_binding_jancu_spds",
+  "material": "PbI",
+  "parameter_set": "sp3",
+  "lattice_constant_a": 6.289,
+  "params": {
+    "E_s_a": -13.387,
+    "E_s_c": -5.885,
+    "E_p_a": -2.31,
+    "E_p_c": 1.774,
+    "ss_sigma": 0.003,
+    "sa_pc_sigma": 0.627,
+    "sc_pa_sigma": 1.048,
+    "pp_sigma": -1.376,
+    "pp_pi": 0.635,
+    "Delta_a_over_3": 0.3,
+    "Delta_c_over_3": 0.433
+  },
+  "kpath_segments": [
+    "M",
+    "R",
+    "G",
+    "X",
+    "M",
+    "G"
+  ],
+  "n_per_segment": 120,
+  "n_filled": 26,
+  "fundamental_gap": {
+    "vbm": -0.0010675594048137897,
+    "cbm": 1.0171708792668746,
+    "gap": 1.0182384386716883,
+    "vbm_distance": 0.4995377092685313,
+    "cbm_distance": 0.4995377092685313,
+    "direct": true
+  }
+}

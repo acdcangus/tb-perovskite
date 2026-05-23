@@ -99,6 +99,22 @@ def compute_dielectric(hamiltonian_fn, dHdk_fn, k_grid, omega_grid,
 3. 検証対象: Apergi は 2D ハイブリッド、Cho は層状。**3D 無機立方の独立粒子 ε(ω) の
    直接の論文アンカー**が弱い → 「吸収端=ギャップ」+ f-sum + KK を主検証とする方針で良いか。
 
+## 6. B2/B3 実装結果（2026-05-23 追記）
+
+`src/perovskite_tb/optical.py` 実装、`tests/test_optical.py`（4テスト）通過。CsPbI₃
+（Nestoklon expt, `results/optical/CsPbI3_dielectric.png`）で:
+- **吸収端 = ギャップ**: ε_2, α はギャップ 1.65 eV 以下でほぼ 0、直上で急峻に立ち上がる。✅
+  （`1/E_cv²` を和の内側に置くのが要点。外側 `1/ω²` だと低エネルギーに偽の裾が出る。）
+- **立方等方** ε_xx=ε_yy=ε_zz（~1e-9）。✅
+- **Kramers-Kronig** ε_r 有限、ε_r(低ω)=ε_∞~1.9。
+
+**f-sum rule の TB 不完全性（重要・正直な記録）:** ∫ω ε_i dω は期待値の **~20% 程度**しか
+得られない（ω→40 eV まで取っても ratio~0.21）。これは **velocity operator `∂H/∂k` が
+inter-atomic（ホッピング）成分のみで、intra-atomic 電流を欠く**ため（Blount 1962）。
+**g因子の atomistic Roth-Lax 過小評価と同じ不完全性**であり、一貫している。
+→ **絶対強度・ε_∞ は過小**。検証は **吸収端=ギャップ・立方等方・KK・スペクトル形状（相対）**を主とし、
+f-sum と絶対強度は二次（TB 固有の限界として明記）。改竄せず ratio を記録。
+
 ## 参考文献（出典）
 - S. Apergi, G. Brocks, S. Tao, *Calculating the Circular Dichroism of Chiral Halide
   Perovskites: A Tight-Binding Approach*, arXiv:2309.14002 (2023). — Eq.(2),(3),(4)。

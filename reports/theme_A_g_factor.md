@@ -42,6 +42,23 @@ g_h = 2 − (4/3)(P²/C)[1/Eg − 1/(Eg+Δ)] の補正項は Δ→0 で消滅（
 全9材料の (g_e, g_h, Eg) は `results/g_factors/g_factor_9material.csv`。
 鉛フリー候補トップ: **CsSnI₃ (g_e=+4.56, Eg=1.30 eV, NIR)**, **CsGeI₃ (g_e=+3.39, g_h=+1.41, Eg=1.60 eV)**。
 
+### 3.4 TB から導いた Kane パラメータ P（A6, 完全 TB ベース化）
+g因子を「k·p 公式 + **TB-derived Δ (Eq.9) + TB-derived P (速度演算子)**」で出すことで、
+**9材料の g因子を TB Hamiltonian の物理量のみから予測**（`results/g_factors/kane_parameters.csv`）。
+
+- **CB の cation-p_z 重み sin²θ = 1/3**（全材料・両モデル）→ Nestoklon Eq.S1b の解析的
+  Bloch 構造 (sinθ=√(1/3)) と一致。抽出法の妥当性を裏付け。
+- **TB-derived bare P (eV·Å)**: Kashikar 13軌道 4.1〜5.9（普遍 6.8 の 60〜87%）、
+  Nestoklon sp³d⁵s\* CsPbI₃ = **5.44**（普遍の 80%, |5.44−6.8|=1.36<1.5 ✓）。
+- **系統的過小評価**: TB-derived P < 普遍 6.8。軌道基底が豊富な sp³d⁵s\*(5.44) は最小 Kashikar
+  s,p(4.11) より大きく 6.8 に近い。原因 = 利用可能パラメータが**バンド構造フィット（g因子非調整）**
+  のため（Nestoklon の g 調整 Table S1 は pp_sigma が大きく P も大きいはずだが paywall）。
+
+→ **これで Theme A は完全に TB ベース**: "We extract from our TB Hamiltonian both the
+conduction-band SO splitting Δ (analytic R-point eigenvalues, Kashikar Eq.9) and the Kane
+momentum P (analytic velocity operator), and substitute them into the k·p universal formula,
+giving the first TB-based g-factor prediction for Sn- and Ge-based halide perovskites."
+
 ## 4. 論文値との比較・整合性
 - **電子 g_e: Nestoklon Table S2 を meV 再現**（CsPbCl₃ 0.95, CsPbBr₃ 1.77, CsPbI₃ 3.23）。✅
 - **正孔 g_h: Cl/Br 良好、I で過小**（CsPbI₃ −0.12 vs −0.33）。2バンド k·p の既知限界。
@@ -54,6 +71,14 @@ g_h = 2 − (4/3)(P²/C)[1/Eg − 1/(Eg+Δ)] の補正項は Δ→0 で消滅（
   Pb の重い SOC（Δ≈1.5）が Sn(0.45)/Ge(0.21)で大幅減 → 補正項が小さく g_h→+2 寄り。
 - **含意: 鉛フリーペロブスカイトでは「Eg を見れば g がわかる」普遍則が正孔で破れる。
   g因子設計には B サイト SOC を独立変数として扱う必要がある。**
+
+### g_e 普遍性は「真の普遍」か「見かけ」か（A6 の含意）
+g_e の単一曲線は普遍 P=6.8 を仮定した帰結だった。TB-derived P は材料で 4.1〜5.9 と
+**~40% の変動**を示す（P/P_univ = 0.60〜0.87）。したがって g_e の「単一曲線」は
+**厳密には見かけ**で、材料別 P を入れると曲線から散らばる。ただし TB-derived P は band-fit 由来で
+系統的に過小（Pb で 6.8 を再現しない）ため、絶対値は普遍 P の方が実験に合う。
+→ 結論: **g_e 普遍性は「P がほぼ一定」という近似の上に成り立つ**。P の材料依存（特に X=I で大）を
+入れると補正が要る。これは論文で「普遍関係の適用限界」として議論できる。
 
 ## 6. 学会・論文化の見通し
 - **新規性確認（独立検証, 2026-05-23）:** 2025年11月の g因子レビュー arXiv:2511.02956

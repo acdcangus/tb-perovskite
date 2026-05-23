@@ -1,0 +1,28 @@
+# --- Large reference data (provenance kept in references/references.md via arXiv IDs) ---
+references/pdfs/
+*.pdf
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+
+# --- Generated large results (figures/data kept selectively; see data-management.md) ---
+results/**/*.npz
+results/**/*.npy
+
+# --- OS / editor ---
+.DS_Store
+*.swp

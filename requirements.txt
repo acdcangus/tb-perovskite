@@ -1,0 +1,8 @@
+# Runtime dependencies for perovskite-tb
+# Pinned-by-minimum; see docs/data-management.md for the exact reproducibility policy.
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+
+# Development / verification
+pytest>=7.0

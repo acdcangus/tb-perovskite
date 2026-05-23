@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Teruhisa Kotani
 """Shift-current bulk photovoltaic effect (BPVE) for halide perovskites.
 
 Implements the shift-current conductivity sigma^(2)_abc(omega) (Young & Rappe 2012,

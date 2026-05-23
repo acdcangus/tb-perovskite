@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Teruhisa Kotani
 """Wannier-Mott exciton binding energy from TB effective masses + optical eps.
 
 Theme I.  Combines two existing ingredients:

@@ -1,6 +1,5 @@
-# SPDX-License-Identifier: NOASSERTION
-# (No LICENSE file in this repo yet; replace with the project's identifier once
-#  declared. Flagged to PI in the X1 completion note.)
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Teruhisa Kotani
 # cowork_5min_poll.ps1
 # -----------------------------------------------------------------------------
 # 5 分ごとに Claude Code を起こして cowork/progress/ の新着確認と次タスクの

@@ -1,0 +1,12 @@
+material,model,P_raw_eVA,sin2theta,P_bare_eVA,P_universal_eVA,P_bare/P_universal
+CsGeCl3,kashikar13,2.552,0.333,4.421,6.8,0.65
+CsGeBr3,kashikar13,3.212,0.333,5.562,6.8,0.818
+CsGeI3,kashikar13,2.523,0.333,4.37,6.8,0.643
+CsSnCl3,kashikar13,2.518,0.333,4.362,6.8,0.641
+CsSnBr3,kashikar13,2.746,0.333,4.756,6.8,0.699
+CsSnI3,kashikar13,3.423,0.333,5.929,6.8,0.872
+CsPbCl3,kashikar13,2.557,0.333,4.429,6.8,0.651
+CsPbBr3,kashikar13,3.081,0.333,5.337,6.8,0.785
+CsPbI3,kashikar13,2.373,0.333,4.11,6.8,0.604
+CsPbI3,nestoklon_sp3d5sstar,2.997,0.304,5.437,6.8,0.8
+CsPbI3,nestoklon_experiment_corrected,2.967,0.302,5.398,6.8,0.794

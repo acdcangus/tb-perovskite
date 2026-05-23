@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "data_id": "experimental_band_data",
+  "description": "Experimental (or literature-DFT) cubic-phase band gaps Eg and conduction-band spin-orbit splittings Delta for CsBX3, used as inputs to the k.p universal g-factor relation (Theme A, A4). Provided by Cowork's literature survey in next_directive.md v2 (2026-05-23, sec.2.2).",
+  "provenance_note": "These Eg values come from Cowork's literature survey (directive v2). The cited source papers (Stoumpos 2013 JACS; Lin 2018; Nat.Commun.2022 for Pb) are NOT yet in references/pdfs/ -> flagged for repo ingestion (Cowork task). Pb Delta is from Nestoklon arXiv:2305.10586 Table S2 (in repo). Sn/Ge Delta is computed as Delta = 3*lambda_B from the Kashikar 13-orbital SOC parameters (Kashikar arXiv:2101.08562 Eq.9: the R-point CB SO splitting equals 3*lambda), since direct literature Delta for Sn/Ge is unresolved (Cowork task #18).",
+  "units": "eV",
+  "uncertainty_note": "Eg literature values carry phase/temperature spread (~0.05-0.1 eV). Sn/Ge Delta (from Kashikar 3*lambda) carries ~+/-20% uncertainty; g-factors are reported with this propagated as a range.",
+  "delta_uncertainty_frac": 0.20,
+  "materials": {
+    "CsPbCl3": {"Eg": 3.04, "Delta": 1.526, "Eg_source": "DOI:10.1038/s41467-022-30701-0 (via Cowork directive v2)", "Delta_source": "Nestoklon arXiv:2305.10586 Table S2", "Delta_method": "literature"},
+    "CsPbBr3": {"Eg": 2.36, "Delta": 1.436, "Eg_source": "DOI:10.1038/s41467-022-30701-0 (via Cowork directive v2)", "Delta_source": "Nestoklon arXiv:2305.10586 Table S2", "Delta_method": "literature"},
+    "CsPbI3":  {"Eg": 1.73, "Delta": 1.258, "Eg_source": "DOI:10.1038/s41467-022-30701-0 alpha-phase (via Cowork directive v2)", "Delta_source": "Nestoklon arXiv:2305.10586 Table S2", "Delta_method": "literature"},
+    "CsSnCl3": {"Eg": 2.85, "Delta": 0.48, "Eg_source": "DOI:10.1021/ja4023298 (Stoumpos JACS 2013, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Sn (lambda=0.16)", "Delta_method": "kashikar_3lambda"},
+    "CsSnBr3": {"Eg": 1.77, "Delta": 0.48, "Eg_source": "DOI:10.1021/ja4023298 (Stoumpos JACS 2013, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Sn (lambda=0.16)", "Delta_method": "kashikar_3lambda"},
+    "CsSnI3":  {"Eg": 1.30, "Delta": 0.42, "Eg_source": "DOI:10.1021/ja4023298 (Stoumpos JACS 2013, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Sn (lambda=0.14)", "Delta_method": "kashikar_3lambda"},
+    "CsGeCl3": {"Eg": 3.40, "Delta": 0.21, "Eg_source": "DOI:10.1063/1.5045820 (Lin 2018, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Ge (lambda=0.07)", "Delta_method": "kashikar_3lambda"},
+    "CsGeBr3": {"Eg": 2.32, "Delta": 0.21, "Eg_source": "DOI:10.1063/1.5045820 (Lin 2018, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Ge (lambda=0.07)", "Delta_method": "kashikar_3lambda"},
+    "CsGeI3":  {"Eg": 1.60, "Delta": 0.21, "Eg_source": "DOI:10.1063/1.5045820 (Lin 2018, via Cowork directive v2)", "Delta_source": "Kashikar arXiv:2101.08562 Eq.9: Delta=3*lambda_Ge (lambda=0.07)", "Delta_method": "kashikar_3lambda"}
+  }
+}

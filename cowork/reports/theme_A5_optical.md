@@ -64,6 +64,8 @@ PYTHONPATH=src python -m pytest tests/test_optical.py -q
 ```
 
 ## 9. 関連ファイル
+- **Production バンドル（数値の典拠）:** `results/production/phase_1.5_optical/2026-05-23_31374dc/MANIFEST.json`
+  （ε_∞ 順序・f-sum・吸収端等は `key_numbers`、収束は `convergence` フィールド/`raw/convergence.md`）
 - 定式化: `docs/optical-formulation.md`、実装: `src/perovskite_tb/optical.py`
 - データ/図: `results/optical/`（`9material_optical_summary.csv`, `convergence.md`, `*_dielectric.png`, `9material_eps_imag.png`）
 - テスト: `tests/test_optical.py`

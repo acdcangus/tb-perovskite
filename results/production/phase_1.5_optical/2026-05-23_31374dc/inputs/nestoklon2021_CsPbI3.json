@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "model_id": "nestoklon2021_CsPbI3",
+  "model_kind": "empirical_tight_binding_jancu_spds",
+  "description": "Empirical tight-binding (ETB) parameters for cubic CsPbI3 in the Jancu-Scholz-Beltram-Bassani sp3d5s* nearest-neighbour Slater-Koster scheme (PRB 57, 6493 (1998)). Cs is dropped from the basis (following Boyer-Richard et al.); only the cation c=Pb and anion a=I sublattices are kept. The unit cell contains 1 Pb + 3 I (one halide on each cubic axis), octahedral coordination, nearest-neighbour Pb-I bonds of length a/2 along the cubic axes. Each atom carries an sp3d5s* basis (10 orbitals) plus spin (x2). Spin-orbit coupling is included via the on-site p (and the convention's) Delta/3 parameters.",
+  "source": {
+    "authors": "M. O. Nestoklon",
+    "title": "Tight-binding description of inorganic lead halide perovskites in cubic phase",
+    "arxiv": "2012.14705",
+    "version": "v2 (6 Jan 2021)",
+    "affiliation": "Ioffe Institute, St. Petersburg",
+    "parameters_from": "Table I",
+    "units": "eV",
+    "dft_reference": "WIEN2k, modified Becke-Johnson XC potential (Tran-Blaha) in Jishi parametrization",
+    "method_references": [
+      "J. C. Slater and G. F. Koster, Phys. Rev. 94, 1498 (1954)",
+      "J.-M. Jancu, R. Scholz, F. Beltram, F. Bassani, Phys. Rev. B 57, 6493 (1998)",
+      "S. Boyer-Richard et al., J. Phys. Chem. Lett. 7, 3833 (2016) [starting parameters, ref. 12]"
+    ]
+  },
+  "structure": {
+    "phase": "cubic (alpha), Pm-3m",
+    "lattice_constant_angstrom": 6.289,
+    "cation_c": "Pb",
+    "anion_a": "I",
+    "coordination": "PbI6 octahedron; nearest-neighbour Pb-I along +/- x, y, z at distance a/2",
+    "unit_cell_atoms": ["Pb (cation)", "I_x (anion on x-axis)", "I_y (anion on y-axis)", "I_z (anion on z-axis)"]
+  },
+  "verification_targets": {
+    "comment": "Values stated explicitly in the paper text; used as V&V acceptance criteria.",
+    "dft_band_gap_R_eV": 1.017,
+    "dft_band_gap_R_eV_source": "Sec. II: 'for the band gap we obtain the value Eg = 1.017 eV'",
+    "experiment_corrected_gap_R_eV": 1.65,
+    "experiment_corrected_gap_M_eV": 2.75,
+    "experiment_gap_X_eV": 3.40,
+    "experiment_source": "Sec. V, after Yuan et al. (ref. 35): peaks at 1.65 (R), 2.75 (M), 3.40 (X) eV",
+    "conduction_band_SO_splitting_R_eV": 1.48,
+    "SO_splitting_source": "Sec. V: 'the spin-orbit splitting of the conduction band in R point is 1.48 eV'",
+    "experimental_cubic_gap_eV": 1.65,
+    "experimental_cubic_gap_source": "Yuan et al., J. Phys. Chem. C 124, 8008 (2020), ref. 35"
+  },
+  "parameter_key_convention": {
+    "naming": "Subscripts a = anion (I), c = cation (Pb). Orbital labels: s, s* (second s, 's*'), p, d. Two-centre Slater-Koster integrals are named <orb1><orb2><bond> e.g. 'sapcsigma' = (s on anion)-(p on cation) sigma integral; 'scpasigma' = (s on cation)-(p on anion) sigma. On-site energies: E<orb><atom>, e.g. 'E_s_a' = on-site s energy on anion.",
+    "spin_orbit": "Delta_a/3 and Delta_c/3 are the listed spin-orbit parameters for anion and cation p-orbitals (lambda = Delta/3 enters the L.S matrix on p-orbitals)."
+  },
+  "zeroed_integrals": {
+    "comment": "Stated in Table I caption: these integrals are set to zero in all parameter sets.",
+    "integrals": ["sstar_sstar_sigma", "sc_sstar_a_sigma", "sstar_a_dc_sigma", "pc_da_sigma", "pa_dc_pi", "pc_da_pi"]
+  },
+  "parameter_sets": {
+    "sp3": {
+      "description": "Minimal sp3 model (no d, no s*). Fits DFT band structure (Fig. 1). SOC taken from the sp3d5s* fit.",
+      "basis": ["s", "px", "py", "pz"],
+      "onsite": {"E_s_a": -13.387, "E_s_c": -5.885, "E_p_a": -2.310, "E_p_c": 1.774},
+      "two_center": {"ss_sigma": 0.003, "sa_pc_sigma": 0.627, "sc_pa_sigma": 1.048, "pp_sigma": -1.376, "pp_pi": 0.635},
+      "spin_orbit": {"Delta_a_over_3": 0.300, "Delta_c_over_3": 0.433}
+    },
+    "sp3d5sstar": {
+      "description": "Full sp3d5s* nearest-neighbour model fit to DFT band structure (Fig. 2). Reproduces DFT R-point gap (1.017 eV) and the high-symmetry-point energies to meV precision.",
+      "basis": ["s", "px", "py", "pz", "dxy", "dyz", "dzx", "dx2-y2", "dz2", "s*"],
+      "onsite": {"E_s_a": -13.3903, "E_s_c": -5.8406, "E_sstar_a": 19.8877, "E_sstar_c": 22.0026, "E_p_a": -2.2838, "E_p_c": 3.9373, "E_d_a": 10.9883, "E_d_c": 13.9810},
+      "two_center": {"ss_sigma": -0.2570, "sa_sstar_c_sigma": 0.5198, "sa_pc_sigma": 0.0047, "sc_pa_sigma": 1.0565, "sstar_a_pc_sigma": 2.9449, "sstar_c_pa_sigma": -0.3643, "sa_dc_sigma": 0.0290, "sc_da_sigma": 0.5825, "sstar_c_da_sigma": 0.0859, "pp_sigma": -1.7915, "pp_pi": 0.5421, "pa_dc_sigma": 1.0063, "dd_sigma": -1.0285, "dd_pi": 2.0000, "dd_delta": -1.4000},
+      "spin_orbit": {"Delta_a_over_3": 0.2836, "Delta_c_over_3": 0.5413}
+    },
+    "experiment_corrected": {
+      "description": "sp3d5s* parameters revised to reproduce experimental band gaps (R: 1.65 eV, M: 2.75 eV). Recommended for nanostructure calculations to be compared with experiment. Differs from the 'sp3d5sstar' set only in a few integrals (E_p_c, sa_pc_sigma, sstar_a_pc_sigma, sstar_c_pa_sigma, pp_sigma, pp_pi).",
+      "basis": ["s", "px", "py", "pz", "dxy", "dyz", "dzx", "dx2-y2", "dz2", "s*"],
+      "onsite": {"E_s_a": -13.3903, "E_s_c": -5.8406, "E_sstar_a": 19.7828, "E_sstar_c": 22.0026, "E_p_a": -2.2838, "E_p_c": 4.6044, "E_d_a": 10.9883, "E_d_c": 13.9810},
+      "two_center": {"ss_sigma": -0.2570, "sa_sstar_c_sigma": 0.5198, "sa_pc_sigma": 0.0155, "sc_pa_sigma": 1.0565, "sstar_a_pc_sigma": 2.9131, "sstar_c_pa_sigma": -0.3642, "sa_dc_sigma": 0.0290, "sc_da_sigma": 0.5825, "sstar_c_da_sigma": 0.0859, "pp_sigma": -1.8988, "pp_pi": -0.0331, "pa_dc_sigma": 1.0063, "dd_sigma": -1.0285, "dd_pi": 2.0000, "dd_delta": -1.4000},
+      "spin_orbit": {"Delta_a_over_3": 0.2836, "Delta_c_over_3": 0.5413}
+    }
+  }
+}

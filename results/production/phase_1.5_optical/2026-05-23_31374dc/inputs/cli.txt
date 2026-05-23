@@ -1,0 +1,3 @@
+PYTHONPATH=src python scripts/optical_convergence.py
+PYTHONPATH=src python scripts/scan_optical_9materials.py
+PYTHONPATH=src python scripts/scan_optical.py

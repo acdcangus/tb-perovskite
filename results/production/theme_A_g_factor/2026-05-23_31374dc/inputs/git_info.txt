@@ -1,0 +1,19 @@
+commit: 31374dc91473bf9a3f80c728ee4d92d709885558
+branch: main
+dirty: False
+
+commit 31374dc91473bf9a3f80c728ee4d92d709885558
+Author:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+AuthorDate: Sat May 23 11:08:33 2026 +0000
+Commit:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+CommitDate: Sat May 23 11:08:33 2026 +0000
+
+    Add reusable Production-bundle helper (per cowork/PRODUCTION_RULES.md)
+    
+    scripts/make_production_bundle.py: builds results/production/<theme>/<date>_<commit>/
+    with MANIFEST.json, inputs/ (cli, git_info, requirements, parameter copies),
+    outputs/{raw,figures}, convergence/, logs/, README. sha256 checksums, software
+    versions, key_numbers. Reusable for all themes; git_dirty ignores the bundle dir
+    so retroactive bundling of committed results reports a clean tree.
+    
+    Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>

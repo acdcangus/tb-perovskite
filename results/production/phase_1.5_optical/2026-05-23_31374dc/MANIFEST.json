@@ -1,0 +1,62 @@
+{
+  "manifest_version": "1.0",
+  "theme": "phase_1.5_optical",
+  "subtask": "B4 convergence + B5 9-material dielectric scan",
+  "date_utc": "2026-05-23T11:08:40.776061+00:00",
+  "git_commit": "31374dc91473bf9a3f80c728ee4d92d709885558",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": true,
+  "physics_method": "Independent-particle (Kubo-Greenwood) eps(omega) from velocity operator (Apergi 2023 Eq.3,4); KK for eps_1; Lorentzian eta.",
+  "convergence": {
+    "k_grid": "6^3, 8^3, 12^3 (results/optical/convergence.md)",
+    "eta_eV": "0.03, 0.05, 0.08",
+    "result": "absorption edge -> Eg with finer k; f-sum ~0.21 stable (Blount-1962 TB incompleteness, not numerical)"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/9material_optical_summary.csv",
+      "outputs/raw/convergence.md"
+    ],
+    "figures": [
+      "outputs/figures/9material_eps_imag.png",
+      "outputs/figures/CsPbI3_dielectric.png"
+    ]
+  },
+  "key_numbers": {
+    "CsPbI3_eps_inf": 3.46,
+    "CsPbBr3_eps_inf": 2.35,
+    "CsPbCl3_eps_inf": 1.46,
+    "f_sum_ratio": 0.21,
+    "CsPbI3_abs_edge_12cubed_eV": 1.79
+  },
+  "checksums_sha256": {
+    "outputs/figures/9material_eps_imag.png": "5e8ce57819e21eb22e4da41a1b3e22f14dcbe28be45eadf031f6f64ba70cbbe2",
+    "outputs/figures/CsPbI3_dielectric.png": "896e6bc70b07dccd03adae3854bada885712c2063f5aa3395821cc6be693d610",
+    "outputs/raw/9material_optical_summary.csv": "2f0519fbbc77caddf6f3047cad513140d5012cb49785a95155511b180eb7f855",
+    "outputs/raw/convergence.md": "bb9400ace8c6069dd80e3b61a614f5fe2b210346759701aa935a18af634e6e92"
+  },
+  "data_size_total_bytes": 420093,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "Retroactive. Absorption edge tracks gap; eps_inf ordering CsPbI3>CsPbBr3>CsPbCl3 matches experiment; absolute values low (Blount-1962).",
+  "references": [
+    "Apergi 2023 arXiv:2309.14002 Eq.3,4",
+    "Cho 2019 arXiv:1908.09436",
+    "Blount 1962 Phys.Rev.126,1636"
+  ]
+}

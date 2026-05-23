@@ -1,0 +1,69 @@
+{
+  "manifest_version": "1.0",
+  "theme": "theme_A_g_factor",
+  "subtask": "A4 9-material k.p g-factor scan + A6 TB-derived Kane P + A7",
+  "date_utc": "2026-05-23T11:08:37.650026+00:00",
+  "git_commit": "31374dc91473bf9a3f80c728ee4d92d709885558",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": true,
+  "physics_method": "k.p universal relation (Kirstein 2021 Eq.5,6) with literature Eg, Delta from Nestoklon Table S2 (Pb) / Kashikar Eq.9 3*lambda (Sn,Ge); P_universal=6.8 eV.A; TB-derived P from velocity operator (A6).",
+  "convergence": {
+    "k_grid": "Not applicable (R-point band-edge evaluation)",
+    "eta_eV": "Not applicable"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/g_factor_9material.csv",
+      "outputs/raw/kane_parameters.csv"
+    ],
+    "figures": [
+      "outputs/figures/kirstein_universal_plot.png",
+      "outputs/figures/material_grid.png",
+      "outputs/figures/ge_universality.png",
+      "outputs/figures/gh_delta_dependence.png"
+    ]
+  },
+  "key_numbers": {
+    "CsPbI3_g_e": 3.01,
+    "CsPbBr3_g_e": 1.76,
+    "CsPbCl3_g_e": 0.99,
+    "CsSnI3_g_e": 4.56,
+    "CsGeI3_g_e": 3.39,
+    "CsGeI3_gh_deviation": 1.86,
+    "CsSnI3_gh_deviation": 1.81,
+    "CsPbI3_TB_P_nestoklon": 5.44,
+    "P_universal": 6.8
+  },
+  "checksums_sha256": {
+    "outputs/figures/ge_universality.png": "e9d8f2b2012f35c0c5b1458a3cca7b69b1a238234733b7323391d2d7b1c3e8e3",
+    "outputs/figures/gh_delta_dependence.png": "f2830dbc78246572805127c67724a0d8da127218c6c9497c2d2793b0b0dd127a",
+    "outputs/figures/kirstein_universal_plot.png": "3332acb8ee51350b4a534dca43121fc389c6f47733a313449bc6606ccb09bf31",
+    "outputs/figures/material_grid.png": "c248a3937163b7ee9ef2df2fbeb1ddcd37cb1c126d6cfb7cc9686eb6d1861b9f",
+    "outputs/raw/g_factor_9material.csv": "7718bf842e7741be89e797c14b02ed4f23e690226f0ec16d43e051cf01626114",
+    "outputs/raw/kane_parameters.csv": "747f898595a42982059b820575d8ae77d778bd4dca0a25bd759371e47fdf9670"
+  },
+  "data_size_total_bytes": 359481,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "Retroactive Production-ization. g_e on single universal curve; g_h of lead-free Sn/Ge deviates +0.5..+1.9 (smaller CB SOC Delta). TB-derived P underestimates 6.8 (Blount-1962 incompleteness).",
+  "references": [
+    "Kirstein 2021 arXiv:2112.15384 Eq.5,6",
+    "Nestoklon 2023 arXiv:2305.10586 Table S2",
+    "Kashikar 2021 arXiv:2101.08562 Eq.9"
+  ]
+}

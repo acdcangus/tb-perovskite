@@ -1,0 +1,4 @@
+PYTHONPATH=src python scripts/scan_g_factors.py
+PYTHONPATH=src python scripts/scan_kane_parameters.py
+PYTHONPATH=src python scripts/plot_ge_universality.py
+PYTHONPATH=src python scripts/plot_gh_delta_dependence.py

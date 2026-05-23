@@ -141,6 +141,8 @@ PYTHONPATH=src python -m pytest tests/test_g_factor.py tests/test_velocity.py -q
 ```
 
 ## 9. 関連ファイル
+- **Production バンドル（数値の典拠）:** `results/production/theme_A_g_factor/2026-05-23_31374dc/MANIFEST.json`
+  （本報告書の g_e/g_h・TB-derived P 等は `key_numbers` から取得。再現コマンドは同 README/inputs/cli.txt）
 - 定式化: `docs/g-factor-formulation.md`、解析: `docs/g-factor-analysis.md`
 - 実装: `src/perovskite_tb/g_factor.py`, `velocity.py`
 - データ: `data/parameters/experimental_band_data.json`, `results/g_factors/g_factor_9material.csv`

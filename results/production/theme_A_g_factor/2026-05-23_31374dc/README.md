@@ -1,0 +1,1 @@
+Theme A g-factor production bundle (retroactive). k.p universal relation with TB-derived Delta and P for 9 CsBX3. Main result: lead-free g_h breakdown of the universal relation. See cowork/reports/theme_A_g_factor.md.

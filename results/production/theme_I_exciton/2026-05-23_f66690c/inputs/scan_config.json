@@ -1,0 +1,18 @@
+{
+  "materials": [
+    "CsGeCl3",
+    "CsGeBr3",
+    "CsGeI3",
+    "CsSnCl3",
+    "CsSnBr3",
+    "CsSnI3",
+    "CsPbCl3",
+    "CsPbBr3",
+    "CsPbI3"
+  ],
+  "n_occ": 20,
+  "dk": 0.001,
+  "k_point": "R = pi/a (1,1,1)",
+  "directions": "[100],[010],[001] averaged",
+  "model": "Kashikar-13"
+}

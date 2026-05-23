@@ -1,0 +1,11 @@
+commit: f66690c79172e8cc757d7df5c15fdb56e3ac7da7
+branch: main
+dirty: False
+
+commit f66690c79172e8cc757d7df5c15fdb56e3ac7da7
+Author:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+AuthorDate: Sat May 23 22:14:37 2026 +0000
+Commit:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+CommitDate: Sat May 23 22:14:37 2026 +0000
+
+    cowork/progress: track 0710 supervisor patrol (polling-loop install reviewed OK)

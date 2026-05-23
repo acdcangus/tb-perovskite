@@ -1,0 +1,100 @@
+{
+  "manifest_version": "1.0",
+  "theme": "theme_I_exciton",
+  "subtask": "effective-mass map + Wannier-Mott E_b (9 materials)",
+  "date_utc": "2026-05-23T22:14:45.088243+00:00",
+  "git_commit": "f66690c79172e8cc757d7df5c15fdb56e3ac7da7",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": false,
+  "physics_method": "band-edge effective mass m*/m0 = (hbar^2/m0)/(d2E/dk2) at R (Kashikar-13); Wannier-Mott E_b = (mu/m0)/eps_r^2 * Ry",
+  "convergence": {
+    "dk": [
+      0.02,
+      0.01,
+      0.005,
+      0.001
+    ],
+    "directions": [
+      "100",
+      "110",
+      "111"
+    ],
+    "note": "single-point curvature at R; dk & direction-anisotropy converged"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/exciton_9materials.csv"
+    ],
+    "figures": []
+  },
+  "key_numbers": {
+    "runtime_seconds": 3.2,
+    "primary": "effective masses m_e, m_h, mu (TB-derived, reliable)",
+    "secondary_caveat": "E_b uses TB-optical eps_inf (Blount-limited f-sum~0.21 -> eps_inf underestimated -> E_b overestimated, esp. Cl); RELATIVE TREND ONLY. Absolute E_b needs external DFT/exp eps_inf (option c).",
+    "dk_converged": 0.10635,
+    "CsGeCl3_m_e": 0.2283,
+    "CsGeCl3_m_h": -0.168,
+    "CsGeCl3_mu": 0.0968,
+    "CsGeCl3_E_b_rel_meV": 209.7,
+    "CsGeBr3_m_e": 0.1479,
+    "CsGeBr3_m_h": -0.1007,
+    "CsGeBr3_mu": 0.0599,
+    "CsGeBr3_E_b_rel_meV": 59.6,
+    "CsGeI3_m_e": 0.1115,
+    "CsGeI3_m_h": -0.1001,
+    "CsGeI3_mu": 0.0527,
+    "CsGeI3_E_b_rel_meV": 33.0,
+    "CsSnCl3_m_e": 0.1766,
+    "CsSnCl3_m_h": -0.1097,
+    "CsSnCl3_mu": 0.0677,
+    "CsSnCl3_E_b_rel_meV": 172.9,
+    "CsSnBr3_m_e": 0.0749,
+    "CsSnBr3_m_h": -0.0496,
+    "CsSnBr3_mu": 0.0298,
+    "CsSnBr3_E_b_rel_meV": 34.8,
+    "CsSnI3_m_e": 0.0346,
+    "CsSnI3_m_h": -0.0254,
+    "CsSnI3_mu": 0.0146,
+    "CsSnI3_E_b_rel_meV": 9.0,
+    "CsPbCl3_m_e": 0.2371,
+    "CsPbCl3_m_h": -0.2253,
+    "CsPbCl3_mu": 0.1155,
+    "CsPbCl3_E_b_rel_meV": 742.8,
+    "CsPbBr3_m_e": 0.151,
+    "CsPbBr3_m_h": -0.1439,
+    "CsPbBr3_mu": 0.0737,
+    "CsPbBr3_E_b_rel_meV": 181.8,
+    "CsPbI3_m_e": 0.1062,
+    "CsPbI3_m_h": -0.1338,
+    "CsPbI3_mu": 0.0592,
+    "CsPbI3_E_b_rel_meV": 67.2
+  },
+  "checksums_sha256": {
+    "outputs/raw/exciton_9materials.csv": "da2bca3938e55ed88f31a7c3c77843344b8890ba864fea92819789d91e33e161"
+  },
+  "data_size_total_bytes": 6866,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "PRIMARY = TB effective masses (reliable, publishable). SECONDARY = E_b with TB-optical eps_inf is RELATIVE-TREND only (Blount-limited; Cl unphysical). Absolute E_b deferred to option (c): external DFT/exp eps_inf input.",
+  "references": [
+    "Yang et al. 2017 PRB 96 035301",
+    "Tanaka et al. 2003 SSC 127 619",
+    "Cho et al. 2019 (arXiv:1908.09436, GW-BSE)",
+    "Kashikar, Gupta, Nanda 2021 (arXiv:2101.08562)"
+  ]
+}

@@ -1,0 +1,1 @@
+OMP_NUM_THREADS=1 PYTHONPATH=src python scripts/scan_exciton_9materials.py production

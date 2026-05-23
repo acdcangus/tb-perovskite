@@ -1,0 +1,69 @@
+# リポジトリ構造定義書 (repository-structure)
+
+```
+.
+├── CLAUDE.md                  プロジェクトメモリ（標準ルール）
+├── README.md                  概要・クイックスタート
+├── RESULTS.md                 ★ 進捗と論文値の再現結果サマリ（携帯確認用）
+├── pyproject.toml             パッケージ定義（src レイアウト, pytest 設定）
+├── requirements.txt           依存関係
+├── .gitignore                 PDF・生成大容量データ・キャッシュを除外
+│
+├── src/perovskite_tb/         ソースコード（実装本体）
+│   ├── slater_koster.py / _soc.py
+│   ├── models_kashikar.py / models_nestoklon.py / models.py
+│   ├── kpath.py / io_params.py / bandstructure.py / plotting.py
+│   ├── cli.py / __main__.py / _meta.py / __init__.py
+│
+├── tests/                     単体テスト・V&V テスト
+│   ├── test_soc.py            SOC L·S 固有値・規約
+│   ├── test_slater_koster.py  SK 二中心積分（軸方向手計算・パリティ）
+│   ├── test_kashikar.py       Eq.9 / SO分裂=3λ / 4軌道ギャップ
+│   └── test_nestoklon.py      R点 1.017 / 実験 1.65・2.75 / SO分裂 1.48 eV
+│
+├── data/                      入力データ
+│   └── parameters/            論文から抽出したパラメータ（JSON）
+│       ├── kashikar2021_cubic_13orb.json
+│       ├── kashikar2021_cubic_4orb.json
+│       ├── nestoklon2021_CsPbI3.json
+│       └── SOURCES.md         出典・検証アンカー・誤植注記
+│
+├── configs/                   実行設定（k 経路）
+│   ├── cubic_MRGXM.json
+│   └── cubic_GXMGR.json
+│
+├── results/                   計算結果（バンド図 + 再現性メタデータ JSON）
+│   ├── kashikar13/  kashikar4/  nestoklon/
+│
+├── notebooks/                 試行錯誤・可視化用（任意）
+├── scripts/                   実行・バッチスクリプト（任意）
+│
+├── docs/                      永続的ドキュメント（本フォルダ）
+│   ├── research-objectives.md / theoretical-model.md / numerical-methods.md
+│   ├── architecture.md / repository-structure.md / development-guidelines.md
+│   ├── verification-validation.md / data-management.md / glossary.md
+│
+├── .steering/                 作業単位ドキュメント
+│   └── 20260523-initial-implementation/  (requirements/design/tasklist)
+│
+└── references/                収集論文
+    ├── references.md          文献リスト（arXiv ID 付き = 再取得可能）
+    └── pdfs/                   PDF 群（Git 管理外, .gitignore）
+```
+
+## ディレクトリの役割とファイル配置ルール
+
+- `src/`: 実装。物理量・軌道順序・ゲージ規約は各モジュール docstring に明記。
+- `data/parameters/`: **論文記載値の転記のみ**。改変禁止、誤植は注記。出典必須。
+- `configs/`: 計算条件（材料・モデルではなく k 経路など）。
+- `results/`: 図と**再現性メタデータ JSON**を対で配置。大容量 `.npz/.npy` は Git 管理外。
+- `tests/`: V&V を含む。論文の数値・解析式を再現することを assert する。
+- `docs/`: 恒久ドキュメント。理論・数値・V&V の変更時に更新。
+- `.steering/`: 作業ごとに `YYYYMMDD-タイトル` で新規作成（履歴=実験ノート）。
+
+## 大容量データの取り扱い
+
+- 参照 PDF（計 245 MB, 49 本）は Git 本体にコミットしない（`.gitignore`）。
+  来歴は `references/references.md` の arXiv ID で保持（再取得可能）。
+- 生成バンドデータ（`.npz/.npy`）は Git 管理外。図 (PNG) とメタデータ (JSON) は
+  軽量なため必要に応じてコミット可。詳細は [data-management.md](data-management.md)。

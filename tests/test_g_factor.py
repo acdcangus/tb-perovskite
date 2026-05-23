@@ -64,6 +64,31 @@ def test_spin_only_limit_gives_g0():
     assert g["g_zz"] == pytest.approx(G0, abs=1e-6)
 
 
+def test_roth_lax_vs_kp_within_remote_band_tolerance():
+    """Roth-Lax (atomistic, incl. intra-atomic L) agrees with the k.p universal
+    g_e within the remote-band tolerance (~1.5), per Cowork review 2026-05-23.
+
+    The residual difference is the contribution of conduction bands above the
+    model space (Kirstein's Delta_g_e ~ -1); it is a physical result, not a bug.
+    """
+    m = get_material(load_parameter_file(NES), parameter_set="experiment_corrected")
+    p, a, basis = m["params"], m["a"], m["basis"]
+    builder = mn.make_builder(p, a, basis)
+    dHdk = vel.make_dH_dk_nestoklon(p, a, basis)
+    kR = np.array([np.pi / a] * 3)
+    H = builder(kR)
+    dH = (dHdk(kR, 0), dHdk(kR, 1), dHdk(kR, 2))
+    ev = np.sort(np.linalg.eigvalsh(H).real)
+    nf = 26
+    Eg, Delta = ev[nf] - ev[nf - 1], ev[nf + 2] - ev[nf]
+
+    from perovskite_tb.g_factor import onsite_L_operators
+    L = onsite_L_operators(len(basis), 4, (1, 2, 3))
+    ge_rl = compute_g_factor(H, dH, band_index=26, orbital_L=L)["g_iso"]
+    ge_kp = g_factor_kp(Eg, Delta)["g_e"]
+    assert abs(ge_rl - ge_kp) < 1.5, f"|{ge_rl:.2f}-{ge_kp:.2f}| = {abs(ge_rl-ge_kp):.2f}"
+
+
 def test_atomistic_returns_finite_isotropic_values():
     """Smoke test: atomistic g_e, g_h are finite and isotropic (magnitude is an
     open item, not asserted here)."""

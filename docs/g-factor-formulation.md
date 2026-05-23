@@ -15,7 +15,10 @@
 | **(I) k·p / Roth-Lax 摂動公式**（バンド端のバンド間速度行列要素から） | バルク（無限結晶、k点1点） | Kirstein 2021 Eq.(5),(6); Nestoklon 2023 SI Eq.(S3),(S7) | **9材料バルクスキャン（A4）の主手法** |
 | **(II) Peierls 置換 + Zeeman 項の有限磁場対角化** | ナノ結晶・有限系（実空間）/ 磁場超格子 | Nestoklon 2023 本文 II 節 | NC 計算用（本 Phase では副次的） |
 
-> **判断ポイント（Cowork へ）:** directive A2 は「Roth-Lax 公式」を指定しているが、Nestoklon 2023 の**バルク**g因子（Table S2）は k·p 公式、**ナノ結晶**は Peierls+Zeeman で計算されている。Roth-Lax 摂動公式は、バンド端で k·p 普遍式に帰着する（=同一物理の別表現）。本プロジェクトの主目的（バルク9材料スキャン）には **(I) Roth-Lax/k·p が適切**と判断した。(II) は将来の NC 計算用に別途実装する想定。この方針で良いか確認希望。
+> **方法選択（Cowork レビュー 2026-05-23 で確認済み ✅）:** バルク9材料スキャンには
+> **(I) k·p / Roth-Lax** を採用（承認）。**k·p 普遍式をゴールドスタンダード**、Roth-Lax を
+> atomistic 比較に用い、**両者の差分を remote band 寄与の指標**として記録する（欠陥ではなく
+> 科学的解釈）。(II) Peierls+Zeeman は Theme A 完了後の NC 拡張で別 Phase に実装。
 
 ---
 
@@ -144,9 +147,12 @@ Table S2 は **修正パラメータセット（Table S1）**で計算されて�
   ベースと一致しない: 例 CsPbI₃ Epc=4.6044 vs ジャーナル系の修正後 4.81）。
 - **問題2:** したがって **Table S2 を厳密再現できるのは CsPbI₃ のみ**（experiment_corrected + Table S1
   差分で近似的に）。CsPbBr₃/CsPbCl₃ はベースパラメータ取得が必要。
-- → **Cowork へ依頼候補:** Nestoklon, *Comput. Mater. Sci.* **196**, 110535 (2021) の本文/SI
-  （CsPbX₃ 全ハライドの sp³d⁵s\* パラメータ表）を入手できるか。無ければ CsPbI₃ を主アンカーとし、
-  Br/Cl は k·p 普遍式・Kirstein 実験値との比較に留める。
+- → **Cowork 調査結果（2026-05-23）: 入手不可**（Elsevier paywall, DOI 10.1016/j.commatsci.2021.110535）。
+  **Fallback 採用（承認済み）:** **Kashikar 13軌道モデルを9材料スキャンの主手法に格上げ**
+  （`kashikar2021_cubic_13orb.json` が CsBX₃ 全9種を網羅、Eq.9 で検証済み）。
+  **Nestoklon sp³d⁵s\* は CsPbI₃ のアンカー**として軌道基底拡張の補正量定量化に限定。
+  **k·p 普遍式（Δ=1.5, P=6.8, Δg_e=−1）は全9材料の独立参照**。
+  論文ストーリー: 「Table S2 厳密再現は CsPbI₃ のみ、他は Kashikar 13軌道 + k·p 比較」。
 
 ### 5.3 Kirstein 2021 実験値（符号・オーダーのベンチマーク, ±0.5 許容）
 | 材料 | E_g (eV) | g_e (実験) | g_h (実験) |
@@ -168,11 +174,14 @@ Table S2 は **修正パラメータセット（Table S1）**で計算されて�
 - VBM/CBM のバンド index は既存 `n_filled`（Kashikar13:20, Nestoklon:26）から決定。
 - 速度演算子は g因子と光学（Phase 1.5）で共有する（重複実装禁止）。
 
-## 7. 未解決・要判断（progress に転記）
-1. 方法 (I) Roth-Lax/k·p をバルク主手法とする方針の可否（§0）。
-2. Roth-Lax の remote band 取りこぼし／二重項・スピン寄与の符号規約（§3）。
-3. ジャーナル版パラメータ（Comp. Mat. Sci. 196, 110535）の入手可否（§5.2）。
-4. SOC→0 極限テストの設計（孤立バンド vs 結合バンドで g₀=2.0023 をどう確認するか）。
+## 7. 判断ポイントの解決（Cowork レビュー 2026-05-23, `progress/2026-05-23_0735_code_review.md`）
+1. ✅ 方法 (I) Roth-Lax/k·p をバルク主手法 → **承認**。k·p をゴールドスタンダード、Roth-Lax を比較。
+2. ✅ remote band 取りこぼし → **Roth-Lax と k·p の差分を remote 寄与として記録**（科学的に正しい解釈、
+   許容 |差| ≲ 1.5）。符号規約は Roth-Lax 1959 原典に従う（§3）。
+3. ✅ ジャーナル版パラメータ → **入手不可確定**。Fallback（Kashikar 13軌道主手法 + Nestoklon CsPbI₃
+   アンカー + k·p 参照）を採用（§5.2）。Cowork が継続調査（task #18）。
+4. ✅ SOC→0 テスト → 2種に分離: `test_g_free_electron_limit`（混成OFFで g→g₀）と
+   `test_g_cubic_perovskite_bare`（CBM単独 SOC=0 で −2/3, Kirstein の指摘）。
 
 ---
 
@@ -219,10 +228,12 @@ Zeeman 行列に加法で追加（係数 g_L=1）。結果：
   総合的な定式化が必要。これ以上の単独推測は**ハルシネーション risk** のため停止し、Cowork に
   式の検証を依頼する（intra-L 項は物理的に正しいのでオプション実装として残置, default off）。
 
-→ **Cowork へレビュー希望（progress の review_request 参照）**: (a) inter-atomic Roth-Lax と
-   intra-atomic L の正しい結合（符号・係数・二重カウント有無）、(b) g_h が intra-L 追加で
-   逆方向に動く理由、(c) Nestoklon の bulk ETB g因子の具体式（Ref.9 SI の手続き）。
-   または (d) bulk も Peierls+Zeeman を磁場超格子で回すのが本筋か。
+**Cowork レビューによる再解釈（2026-05-23）:** Roth-Lax（モデル内有限バンド）と k·p 普遍式
+（remote 寄与 Δg_e=−1 込み）の **差分は remote band 寄与の指標であり、欠陥ではない**（許容 |差|≲1.5）。
+intra-atomic L 込みの Roth-Lax g_e=+2.27 と k·p +3.24 の差は **0.97 < 1.5** で整合的。
+→ 本プロジェクトの主出力は **k·p 普遍式（ゴールドスタンダード）**、Roth-Lax は atomistic 比較
+（差分 = remote 指標）として併記する。g_h の符号差は 2 バンド k·p の限界（remote/多重項）として
+A5 で考察。これ以上の単独推測はせず、この方針で A4 に進む。
 
 **当面の実用方針（A4 スキャン）:** atomistic g の絶対値が未検証のため、9材料スキャンは
 **k·p 公式（材料ごとに計算した Eg, Δ ＋ 普遍 P, Δg_e）**を主出力とし、atomistic 値は

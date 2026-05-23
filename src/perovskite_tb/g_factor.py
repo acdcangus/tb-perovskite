@@ -57,9 +57,39 @@ def _spin_pauli(n_orb_total: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return sx, sy, sz
 
 
+def onsite_L_operators(n_orb_per_atom: int, n_atoms: int,
+                       p_indices: tuple[int, int, int]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Build on-site (intra-atomic) orbital angular momentum L_gamma/hbar matrices.
+
+    These are the atomic L operators acting on each atom's p-orbitals (the same
+    operators used in the SOC term), embedded in the full spin-major (2N) basis
+    (spin-independent: I2 (x) L_orbital).  d-orbital contributions are omitted
+    (band edge is s/p dominated).  Returns (Lx, Ly, Lz)/hbar as (2N,2N) arrays.
+
+    This term is *additive* to the Roth-Lax inter-atomic orbital moment: the TB
+    velocity dH/dk only carries the inter-site current (the atomic position
+    operator is taken diagonal), so the intra-atomic orbital moment must be added
+    explicitly. See docs/g-factor-formulation.md sec.8.
+    """
+    from ._soc import _LX, _LY, _LZ
+    N = n_orb_per_atom * n_atoms
+    Lorb = [np.zeros((N, N), dtype=complex) for _ in range(3)]
+    px, py, pz = p_indices
+    for atom in range(n_atoms):
+        base = atom * n_orb_per_atom
+        idx = [base + px, base + py, base + pz]
+        for g, Lg in enumerate((_LX, _LY, _LZ)):
+            for i in range(3):
+                for j in range(3):
+                    Lorb[g][idx[i], idx[j]] = Lg[i, j]
+    # Spin-independent: replicate across both spin blocks (spin-major).
+    return tuple(np.kron(np.eye(2, dtype=complex), Lorb[g]) for g in range(3))
+
+
 def compute_g_factor(hamiltonian: np.ndarray,
                      velocity_ops: tuple[np.ndarray, np.ndarray, np.ndarray],
                      band_index: int,
+                     orbital_L: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
                      degeneracy_tol: float = 1e-4) -> dict:
     """Roth-Lax g-tensor for the Kramers doublet starting at ``band_index``.
 
@@ -123,6 +153,13 @@ def compute_g_factor(hamiltonian: np.ndarray,
                        for a in range(2)], dtype=complex)
 
         M = 0.5 * (G0 * Sg + dG)
+
+        # Intra-atomic orbital moment (additive; coefficient g_L = 1, i.e. L/hbar).
+        if orbital_L is not None:
+            Lg = orbital_L[gamma]
+            Lproj = np.array([[psi[a].conj() @ (Lg @ psi[b]) for b in range(2)]
+                              for a in range(2)], dtype=complex)
+            M = M + Lproj
         M = 0.5 * (M + M.conj().T)  # enforce Hermiticity
         w = np.linalg.eigvalsh(M)
         g[glabels[gamma]] = float(w[-1] - w[0])  # splitting = g-factor

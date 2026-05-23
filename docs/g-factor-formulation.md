@@ -204,10 +204,25 @@ atomistic Roth-Lax（TB `∂H/∂k` 経由）の **|g_e| が Table S2 を大き�
 2. **準縮退多重項の摂動論**: CB(Γ₆⁻) と he/le(Γ₈⁻) は Δ≈1.5 eV 離れるが、Roth-Lax の単純2次
    摂動では多重項構造（Clebsch 係数）を取りこぼす可能性。k·p は (4/3) などの角度係数を陽に含む。
 
-→ **Cowork へレビュー希望（progress の review_request 参照）**: Roth-Lax 軌道項に intra-atomic
-   L を加える定式化（例: 速度演算子へのオンサイト軌道角運動量項 `(i/ℏ)[H_atomic, r]` の追加、
-   または position operator の Berry 接続項）が、TB で g因子を正しく出す標準手順か。
-   Nestoklon の bulk ETB g因子の具体的計算式（Ref.9 SI の手続き）の確認も依頼したい。
+**intra-atomic L 項を加えた追試（2026-05-23）:**
+オンサイト軌道角運動量（SOC と同じ `_LX/_LY/_LZ` を p 軌道に作用、`onsite_L_operators`）を
+Zeeman 行列に加法で追加（係数 g_L=1）。結果：
+
+| 量 | inter のみ | inter + intra-L | k·p / Table S2 |
+|---|---|---|---|
+| g_e | +1.06 | **+2.27** | +3.24 / +3.23 |
+| g_h | +0.45 | **+0.67** | −0.30 / −0.33 |
+
+- g_e は target 方向へ大きく改善（1.06→2.27）。**intra-atomic 軌道モーメントは確かに効く**。
+- しかし g_h は逆方向（0.45→0.67、target −0.33）。立方等方性は維持（~1e-15）。
+- → 単一の欠落項ではなく、**inter/intra 軌道寄与の符号・準縮退多重項の摂動論**を含む
+  総合的な定式化が必要。これ以上の単独推測は**ハルシネーション risk** のため停止し、Cowork に
+  式の検証を依頼する（intra-L 項は物理的に正しいのでオプション実装として残置, default off）。
+
+→ **Cowork へレビュー希望（progress の review_request 参照）**: (a) inter-atomic Roth-Lax と
+   intra-atomic L の正しい結合（符号・係数・二重カウント有無）、(b) g_h が intra-L 追加で
+   逆方向に動く理由、(c) Nestoklon の bulk ETB g因子の具体式（Ref.9 SI の手続き）。
+   または (d) bulk も Peierls+Zeeman を磁場超格子で回すのが本筋か。
 
 **当面の実用方針（A4 スキャン）:** atomistic g の絶対値が未検証のため、9材料スキャンは
 **k·p 公式（材料ごとに計算した Eg, Δ ＋ 普遍 P, Δg_e）**を主出力とし、atomistic 値は

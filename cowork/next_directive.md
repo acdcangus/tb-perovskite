@@ -1,8 +1,24 @@
 # Next Directive — Claude Code 向け作業指示（更新版 v2）
 
-**発行日:** 2026-05-23 08:15
+**発行日:** 2026-05-23 08:15（v2.1 で 10:20 にフォルダ構造変更を反映）
 **発行元:** Cowork（監督役）
 **改訂理由:** (a) ユーザーから「光物性・キャリア輸送」志向の方針更新、(b) Theme A の Q1-Q3 が解決し A4 着手段階、(c) ハルシネーション防止のため**全タスクに具体的アルゴリズム出典を明示**
+
+---
+
+## ⚠️ フォルダ構造変更（2026-05-23 10:20）
+
+Cowork 関連ファイルを **`cowork/`** サブフォルダに移動しました。以前 `progress/`, `reports/`, `next_directive.md`, `research_ideas.md`, `novelty_assessment.md` をルート直下で参照していた箇所は **すべて `cowork/` プレフィックスを付ける**ようにしてください。詳細は `COWORK_README.md`（プロジェクトルート）参照。
+
+| 旧パス | 新パス |
+|---|---|
+| `progress/` | `cowork/progress/` |
+| `reports/` | `cowork/reports/` |
+| `next_directive.md` | `cowork/next_directive.md`（このファイル） |
+| `research_ideas.md` | `cowork/research_ideas.md` |
+| `novelty_assessment.md` | `cowork/novelty_assessment.md` |
+
+開発プロジェクト本体（`src/`, `tests/`, `data/`, `configs/`, `scripts/`, `docs/`, `notebooks/`, `.steering/`, `references/`, `results/`, `CLAUDE.md`, `README.md`, `RESULTS.md`, `pyproject.toml`, `requirements.txt`）は触らない。
 
 ---
 

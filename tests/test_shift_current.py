@@ -42,18 +42,24 @@ def test_harrison_scaling():
 def test_polar_builder_reduces_to_base_at_zero(cspbi3):
     """delta=0 polar builder == centrosymmetric base Nestoklon builder (exactly)."""
     p, a, basis = cspbi3
-    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
+    Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
     Hb = mn.make_builder(p, a, basis)
     dHb = vel.make_dH_dk_nestoklon(p, a, basis)
     k = np.array([0.13, 0.21, 0.31]) * (2 * np.pi / a)
     assert np.allclose(Hp(k), Hb(k), atol=1e-12)
     assert np.allclose(dHp(k, 2), dHb(k, 2), atol=1e-12)
+    # d2H/dk_z^2 is Hermitian and matches a central finite difference of dH/dk_z
+    eps = 1e-4
+    ez = np.array([0.0, 0.0, 1.0])
+    fd = (dHp(k + eps * ez, 2) - dHp(k - eps * ez, 2)) / (2 * eps)
+    assert np.allclose(d2Hp(k, 2), fd, atol=1e-3)
+    assert np.allclose(d2Hp(k, 2), d2Hp(k, 2).conj().T, atol=1e-12)
 
 
 def test_polar_builder_breaks_inversion(cspbi3):
     """delta>0 modifies the Hamiltonian (inversion broken) but keeps TRS E(k)=E(-k)."""
     p, a, basis = cspbi3
-    Hp, _ = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.2)
+    Hp, _, _ = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.2)
     Hb = mn.make_builder(p, a, basis)
     k = np.array([0.1, 0.2, 0.3]) * (2 * np.pi / a)
     assert not np.allclose(Hp(k), Hb(k), atol=1e-6)          # inversion broken
@@ -65,9 +71,10 @@ def test_polar_builder_breaks_inversion(cspbi3):
 def test_centrosymmetric_vanishes(cspbi3):
     """delta=0 => sigma_zzz == 0 by centrosymmetry (sum-over-states, to ~1e-10)."""
     p, a, basis = cspbi3
-    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
+    Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
     omega = np.linspace(1.0, 4.0, 25)
-    sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08)
+    sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08,
+                               d2Hdk_fn=d2Hp)
     assert np.max(np.abs(sig)) < 1e-10, f"max|sigma|={np.max(np.abs(sig)):.2e}"
 
 
@@ -78,8 +85,9 @@ def test_polar_displacement_turns_on_and_scales(cspbi3):
     omega = np.linspace(1.0, 4.5, 25)
     peaks = {}
     for delta in (0.0, 0.05, 0.10):
-        Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=delta)
-        sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08)
+        Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=delta)
+        sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08,
+                                   d2Hdk_fn=d2Hp)
         assert np.all(np.isreal(sig))
         peaks[delta] = np.max(np.abs(sig))
     assert peaks[0.0] < 1e-10
@@ -93,11 +101,11 @@ def test_cubic_all_diagonal_components_vanish(cspbi3):
     """F4-4: in the centrosymmetric cubic phase (delta=0), sigma_xxx = sigma_yyy =
     sigma_zzz = 0 (rank-3 polar tensor forbidden by inversion)."""
     p, a, basis = cspbi3
-    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
+    Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
     omega = np.linspace(1.0, 4.0, 20)
     for direction in (0, 1, 2):
         sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
-                                   smearing_eta=0.08, direction=direction)
+                                   smearing_eta=0.08, direction=direction, d2Hdk_fn=d2Hp)
         assert np.max(np.abs(sig)) < 1e-10, f"dir={direction}: {np.max(np.abs(sig)):.2e}"
 
 
@@ -105,13 +113,13 @@ def test_p4mm_only_polar_axis_nonzero(cspbi3):
     """F4-4: under [001] polar displacement (P4mm), sigma_zzz != 0 but sigma_xxx,
     sigma_yyy ~ 0 (4mm symmetry forbids x-/y-polarised diagonal shift current)."""
     p, a, basis = cspbi3
-    Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.15)
+    Hp, dHp, d2Hp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.15)
     omega = np.linspace(1.0, 4.5, 25)
     s_zzz = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
-                                               smearing_eta=0.08, direction=2)))
+                                               smearing_eta=0.08, direction=2, d2Hdk_fn=d2Hp)))
     s_xxx = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
-                                               smearing_eta=0.08, direction=0)))
+                                               smearing_eta=0.08, direction=0, d2Hdk_fn=d2Hp)))
     s_yyy = np.max(np.abs(sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6,
-                                               smearing_eta=0.08, direction=1)))
+                                               smearing_eta=0.08, direction=1, d2Hdk_fn=d2Hp)))
     assert s_zzz > 1e-3
     assert s_xxx < 1e-9 and s_yyy < 1e-9, f"xxx={s_xxx:.2e}, yyy={s_yyy:.2e}"

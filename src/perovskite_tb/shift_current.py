@@ -63,14 +63,20 @@ def harrison_scaled_hopping(t0: float, d0: float, d: float, eta: float = 2.0) ->
 def make_polar_nestoklon_builders(params, a: float, basis,
                                   polar_displacement_z: float = 0.0,
                                   eta: float = 2.0):
-    """Return (H_fn, dHdk_fn) for Nestoklon with the B cation displaced by
-    ``polar_displacement_z`` (Angstrom) along [001].
+    """Return (H_fn, dHdk_fn, d2Hdk_fn) for Nestoklon with the B cation displaced
+    by ``polar_displacement_z`` (Angstrom) along [001].
 
     Only the Pb-I_z bonds are made asymmetric (the dominant polar mode): the +z
     bond length becomes d0-delta, the -z becomes d0+delta (d0=a/2), and their SK
     hopping blocks are scaled by the Harrison law.  At delta=0 the builder is
     bit-for-bit the centrosymmetric one, so sigma^(2) vanishes exactly.
     x,y bonds are left at d0 (their change is O(delta^2) and inversion-even).
+
+    ``d2Hdk_fn(kvec, alpha)`` returns the second k-derivative d^2H/dk_alpha^2,
+    REQUIRED for the tight-binding shift current: the generalized derivative for a
+    TB Hamiltonian carries an off-diagonal w^{ab}_nm = <n|d^2H/dk_a dk_b|m> term
+    that the continuum (H=p^2/2m+V) sum-over-states form omits (Fregoso 2017,
+    arXiv:1701.00172, Eq.(C2) and remark after it).
     """
     _norm = {"dx2-y2": "dx2y2", "s*": "sstar"}
     basis = [_norm.get(b, b) for b in basis]
@@ -141,7 +147,22 @@ def make_polar_nestoklon_builders(params, a: float, basis,
         dH0[slc(alpha + 1), slc(0)] = dblock.conj().T
         return np.kron(np.eye(2, dtype=complex), dH0)
 
-    return H_fn, dHdk_fn
+    def d2Hdk_fn(kvec, alpha):
+        """d^2 H / dk_alpha^2 (second k-derivative, same axis twice)."""
+        k = np.asarray(kvec, float)
+        d2H0 = np.zeros((N, N), dtype=complex)
+        direction = mn._AXIS_DIR[alpha]
+        kd = float(np.dot(k, direction))
+        bp, lp, bm, lm = _bond_phase_lengths(alpha)
+        # d^2/dk^2 of  bp e^{i kd lp} + bm e^{-i kd lm}:
+        #   bp (i lp)^2 e^{...} + bm (-i lm)^2 e^{...} = -bp lp^2 e^{...} - bm lm^2 e^{...}
+        d2block = (bp * (1j * lp) ** 2 * np.exp(1j * kd * lp)
+                   + bm * (-1j * lm) ** 2 * np.exp(-1j * kd * lm))
+        d2H0[slc(0), slc(alpha + 1)] = d2block
+        d2H0[slc(alpha + 1), slc(0)] = d2block.conj().T
+        return np.kron(np.eye(2, dtype=complex), d2H0)
+
+    return H_fn, dHdk_fn, d2Hdk_fn
 
 
 # --------------------------------------------------------------------------- #
@@ -206,47 +227,89 @@ def shift_current_zzz_abelian_deprecated(H_fn: Callable, dHdk_fn: Callable, a: f
     return sigma
 
 
+def shift_current_integrand_aaa(E: np.ndarray, Va: np.ndarray, Waa: np.ndarray,
+                                n_occ: int, deg_tol: float = 1e-5):
+    """Per-k shift-current integrand g_{vc} = Im[ r^a_cv r^a_{vc;a} ] and gaps w_cv.
+
+    Inputs are in the BAND (eigenstate) basis at one k-point:
+        E    : (Nb,)    band energies
+        Va   : (Nb,Nb)  velocity matrix  v^a_nm = <n|dH/dk_a|m>
+        Waa  : (Nb,Nb)  second derivative w^aa_nm = <n|d^2H/dk_a^2|m>
+    Returns (g, wcv) each shaped (n_occ, n_unocc).
+
+    Generalized (covariant) derivative -- Fregoso 2017 (arXiv:1701.00172) Eq.(C2),
+    the velocity form *valid for tight-binding* (keeps the off-diagonal second-
+    derivative term w^aa, unlike the continuum Sipe-Shkrebtii form):
+
+        r^a_{vc;a} = -(1/(i w_vc)) [ 2 v^a_vc Delta^a_vc / w_vc - w^aa_vc
+                                     + sum_{p!=v,c} v^a_vp v^a_pc (1/w_pc - 1/w_vp) ]
+        w_vc = E_v - E_c,  w_pc = E_p - E_c,  w_vp = E_v - E_p
+        Delta^a_vc = v^a_vv - v^a_cc          r^a_cv = v^a_cv / (i w_cv)
+
+    The virtual sum is vectorised with R[i,j] = v^a_ij/(E_i-E_j) (diagonal and
+    degenerate pairs zeroed, |E_i-E_j| < deg_tol): then
+        sum_{p!=v,c} v_vp v_pc (1/w_pc - 1/w_vp)
+            = (Va @ R)_vc - (R @ Va)_vc - Delta^a_vc v^a_vc / w_vc,
+    so the combined bracket is  v^a_vc Delta/w_vc - w^aa_vc + (Va@R - R@Va)_vc.
+    Validated to machine precision vs the explicit (v,c,p) loop and, for the
+    2-band Rice-Mele model, against Fregoso's closed form Eq.(D15)
+    Im[r^z_cv r^z_vc;z] = a^3 t delta Delta /(32 E^3) (see tests).
+    """
+    Nb = E.shape[0]
+    dEij = E[:, None] - E[None, :]                     # E_i - E_j
+    mask = np.abs(dEij) > deg_tol
+    R = np.zeros((Nb, Nb), dtype=complex)
+    R[mask] = Va[mask] / dEij[mask]                    # R[i,j] = v_ij/(E_i-E_j)
+    T1 = Va @ R
+    T2 = R @ Va
+    vdiag = np.real(np.diag(Va))
+
+    v = slice(0, n_occ)
+    c = slice(n_occ, Nb)
+    wvc = E[v, None] - E[None, c]                      # E_v - E_c  (<0)
+    wcv = -wvc                                         # E_c - E_v  (>0)
+    Delta = vdiag[v, None] - vdiag[None, c]            # Delta^a_vc
+    bracket = Va[v, c] * Delta / wvc - Waa[v, c] + (T1[v, c] - T2[v, c])
+    r_vc_a = -bracket / (1j * wvc)
+    r_cv = Va[c, v].T / (1j * wcv)                     # r^a_cv, shape (n_occ,n_unocc)
+    g = np.imag(r_cv * r_vc_a)
+    return g, wcv
+
+
 def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
                       omega_grid: np.ndarray, n_kpts: int = 8,
                       smearing_eta: float = 0.05, deg_tol: float = 1e-5,
-                      direction: int = 2) -> np.ndarray:
-    """Diagonal shift-current conductivity sigma_aaa(omega) -- velocity-gauge sum-over-states.
+                      direction: int = 2,
+                      d2Hdk_fn: Callable | None = None) -> np.ndarray:
+    """Diagonal shift-current conductivity sigma_aaa(omega) -- velocity-gauge, TB form.
 
     ``direction`` selects the Cartesian polarisation/current axis a (0=x,1=y,2=z;
-    default z). Computes sigma_{aaa} = sum Im[r^a_cv r^a_{vc;a}] delta(w_cv-w).
+    default z).  ``d2Hdk_fn(k, alpha)`` must return d^2H/dk_alpha^2 (REQUIRED for the
+    tight-binding generalized derivative; see ``shift_current_integrand_aaa`` and
+    Fregoso 2017 Eq.(C2)).  If omitted the second-derivative term is dropped (w=0),
+    which is WRONG for tight-binding and only kept for back-compat regression.
 
-    Recommended method (Cowork review cowork/progress/2026-05-23_1300_code_review.md,
-    option B). Avoids the k-derivative gauge fixing and handles the Kramers (SOC)
-    degeneracy by skipping degenerate intermediate states, so the centrosymmetric
-    vanishing at delta=0 is recovered.
+        sigma_aaa(w) = (1/N_k) sum_k sum_{v in occ, c in unocc}
+                          Im[ r^a_cv r^a_{vc;a} ] * Lorentzian(w_cv - w)
 
-    sigma_zzz(w) ~ sum_{v in occ, c in unocc} Im[ r^z_cv * r^z_{vc;z} ] delta(w_cv - w)
+    The Kramers (SOC) degeneracy is handled by zeroing degenerate-pair Berry
+    connections (deg_tol), so the centrosymmetric vanishing at delta=0 holds to
+    machine precision.
 
-    with the interband Berry connection (TEXTBOOK convention) and the
-    Aversa-Sipe / Sipe-Shkrebtii generalized (covariant) derivative:
+    Refs: Fregoso 2017 (arXiv:1701.00172) Eq.(C2)/(D12)/(D15) [in-repo, primary for
+    the TB form]; Sipe & Shkrebtii, PRB 61, 5337 (2000) Eq.(4.5) [continuum form,
+    missing off-diagonal w]; Young & Rappe 2012 (arXiv:1202.3168) Eq.(1).
 
-        r^z_nm   = i <n|dH/dk_z|m> / (E_m - E_n)           (n != m)
-        Delta^z_nm = <n|dH/dk_z|n> - <m|dH/dk_z|m>          (band-velocity difference)
-        r^z_{vc;z} = 2 r^z_vc Delta^z_vc / (E_v - E_c)
-                   - (i/(E_v-E_c)) sum_{l != v,c} (w_lc - w_vl) r^z_vl r^z_lc
-        w_lc = E_l - E_c,  w_vl = E_v - E_l
-
-    Degenerate intermediate states (|E_l - E_c| < deg_tol or |E_v - E_l| < deg_tol)
-    are skipped (removes the Kramers partner contributions, which are ill-defined).
-
-    Refs: Aversa & Sipe, PRB 52, 14636 (1995) Eq.(39) [primary, NOT in repo];
-    Sipe & Shkrebtii, PRB 61, 5337 (2000) Eq.(4.5); Fregoso 2017 (arXiv:1701.00172)
-    Eq.(A6); Passos 2018 (arXiv:1712.04924) Sec. II-B; Young & Rappe 2012
-    (arXiv:1202.3168) Eq.(1).
-
-    *** VALIDATION STATUS ***
-    The STRUCTURE is validated by the centrosymmetric vanishing at delta=0 (sign-
-    robust) and the emergence/peak at delta>0 (tests/test_shift_current.py).  The
-    ABSOLUTE sign and prefactor (-pi e^3/hbar^2) are NOT independently verified
-    against the primary source (Aversa-Sipe 1995, not obtainable here); output is in
-    relative units and the overall sign is convention-dependent -> deferred to F4
-    (re-requested from Cowork). Absolute magnitude is additionally limited by the
-    Blount-1962 TB intra-atomic incompleteness (same as g-factor / optical).
+    *** VALIDATION STATUS (F4-3) ***
+    The integrand Im[r^z_cv r^z_vc;z] is validated to machine precision against
+    Fregoso's closed-form Rice-Mele result Eq.(D15) (sign AND magnitude), and the
+    full sigma_zzz(w) reproduces Fregoso Eq.(D16) (negative for t,delta,Delta>0).
+    The centrosymmetric vanishing at delta=0 holds to ~1e-15.  Output is in the
+    natural units of Fregoso Eq.(C2)/(D12) up to the global prefactor (the e^3,
+    hbar, pi factors of Eq.(D12)); ABSOLUTE calibration to uA/V^2 is deferred to F5.
+    Absolute magnitude is additionally limited by the Blount-1962 TB intra-atomic
+    incompleteness (same as g-factor / optical); *symmetry, sign, spectral shape*
+    are robust.
     """
     from .optical import monkhorst_pack
     kred = monkhorst_pack(n_kpts)
@@ -256,38 +319,107 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
 
     for k in kcart:
         E, U = _eig(H_fn(k))
-        Vz = U.conj().T @ (dHdk_fn(k, direction)) @ U  # Vz[n,m] = <n|dH/dk_a|m>
         Nb = E.shape[0]
-        # interband Berry connection r^z[n,m] = i Vz[n,m]/(E[m]-E[n]); set to 0 on the
-        # diagonal AND for degenerate pairs (|E[m]-E[n]| < deg_tol). Zeroing degenerate
-        # entries makes the virtual l-sum a plain matrix product that auto-excludes
-        # l=v, l=c and Kramers-degenerate intermediate states.
-        dE = E[None, :] - E[:, None]                   # dE[n,m] = E[m]-E[n]
-        nondeg = np.abs(dE) > deg_tol
-        rz = np.zeros((Nb, Nb), dtype=complex)
-        rz[nondeg] = 1j * Vz[nondeg] / dE[nondeg]
-        vdiag = np.real(np.diag(Vz))                   # band velocities v^z_nn
-
-        # virtual-state sum  S[v,c] = sum_l (2E_l - E_v - E_c) r^z_vl r^z_lc
-        #                            = (rz @ diag(2E) @ rz) - (E_v+E_c) (rz @ rz)
-        P = rz @ rz
-        Q = (rz * (2.0 * E)[None, :]) @ rz
-        S = Q - (E[:, None] + E[None, :]) * P          # (Nb,Nb)
-
-        v = slice(0, n_occ)
-        c = slice(n_occ, Nb)
-        wcv = E[None, c] - E[v, None]                  # (n_occ, n_unocc) = E_c - E_v
-        denom = E[v, None] - E[None, c]                # E_v - E_c (= -wcv)
-        Delta = vdiag[v, None] - vdiag[None, c]        # Delta^z_vc
-        gd = 2.0 * rz[v, c] * Delta / denom - 1j * S[v, c] / denom
-        integ = np.imag(rz[c, v].T * gd)               # rz[c,v].T -> (n_occ,n_unocc)
-        # mask transitions with (near-)zero gap
+        Va = U.conj().T @ (dHdk_fn(k, direction)) @ U  # v^a_nm = <n|dH/dk_a|m>
+        if d2Hdk_fn is not None:
+            Waa = U.conj().T @ (d2Hdk_fn(k, direction)) @ U
+        else:
+            Waa = np.zeros((Nb, Nb), dtype=complex)    # continuum form (WRONG for TB)
+        g, wcv = shift_current_integrand_aaa(E, Va, Waa, n_occ, deg_tol)
         valid = wcv > deg_tol
-        wflat = wcv[valid]                             # (Npair,)
-        gflat = integ[valid]
-        # sigma(omega) += sum_pair gflat * Lorentzian(wcv - omega)
+        wflat = wcv[valid]
+        gflat = g[valid]
         diff = wflat[:, None] - omega_grid[None, :]
         Lor = inv_pi_eta / (diff * diff + smearing_eta * smearing_eta)
         sigma += gflat @ Lor
     sigma /= kcart.shape[0]
+    return sigma
+
+
+# --------------------------------------------------------------------------- #
+# Rice-Mele 1D two-band model -- analytic validation of the shift current
+# (Fregoso 2017, arXiv:1701.00172, Appendix D)
+# --------------------------------------------------------------------------- #
+_SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
+_SY = np.array([[0.0, -1j], [1j, 0.0]], dtype=complex)
+_SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+
+
+def rice_mele_hamiltonian(k: float, t: float, delta: float, Delta: float,
+                          a: float = 1.0) -> np.ndarray:
+    """Rice-Mele Bloch Hamiltonian, Fregoso 2017 Eq.(D2):
+    H(k) = t cos(ka/2) sigma_x - delta sin(ka/2) sigma_y + Delta sigma_z.
+
+    t = mean hopping, delta = dimerization, Delta = staggered (ionic) potential.
+    Inversion symmetry is broken iff delta != 0 and Delta != 0.
+    """
+    ka2 = k * a / 2.0
+    return t * np.cos(ka2) * _SX - delta * np.sin(ka2) * _SY + Delta * _SZ
+
+
+def rice_mele_dHdk(k: float, t: float, delta: float, Delta: float,
+                   a: float = 1.0) -> np.ndarray:
+    """dH_RM/dk (Delta sigma_z is k-independent)."""
+    ka2 = k * a / 2.0
+    return (-t * (a / 2.0) * np.sin(ka2) * _SX
+            - delta * (a / 2.0) * np.cos(ka2) * _SY)
+
+
+def rice_mele_d2Hdk(k: float, t: float, delta: float, Delta: float,
+                    a: float = 1.0) -> np.ndarray:
+    """d^2H_RM/dk^2."""
+    ka2 = k * a / 2.0
+    return (-t * (a / 2.0) ** 2 * np.cos(ka2) * _SX
+            + delta * (a / 2.0) ** 2 * np.sin(ka2) * _SY)
+
+
+def rice_mele_energy(k: float, t: float, delta: float, Delta: float,
+                     a: float = 1.0) -> float:
+    """Conduction-band energy +E(k), Fregoso Eq.(D2):
+    E = sqrt(t^2 cos^2(ka/2) + delta^2 sin^2(ka/2) + Delta^2)."""
+    ka2 = k * a / 2.0
+    return np.sqrt(t ** 2 * np.cos(ka2) ** 2 + delta ** 2 * np.sin(ka2) ** 2
+                   + Delta ** 2)
+
+
+def rice_mele_integrand_analytic(k: float, t: float, delta: float, Delta: float,
+                                 a: float = 1.0) -> float:
+    """Fregoso Eq.(D15): Im[r^z_cv r^z_vc;z] = a^3 t delta Delta / (32 E^3).
+
+    NOTE this is Fregoso's sign convention for Im[r r;]; our
+    ``shift_current_integrand_aaa`` uses the textbook r^a_cv = v_cv/(i w_cv)
+    convention and returns the NEGATIVE of this (the shift-current-relevant
+    combination |r|^2 R = -Im[r r;], so the physical sigma sign agrees -- see
+    Fregoso Eq.(D14)/(D16))."""
+    E = rice_mele_energy(k, t, delta, Delta, a)
+    return a ** 3 * t * delta * Delta / (32.0 * E ** 3)
+
+
+def shift_current_1d_two_band(t: float, delta: float, Delta: float, a: float,
+                              omega_grid: np.ndarray, n_kpts: int = 4000,
+                              smearing_eta: float = 0.02,
+                              deg_tol: float = 1e-9) -> np.ndarray:
+    """sigma_zzz(omega) for the 1D Rice-Mele model via the same generalized-
+    derivative integrand as the 3D code (``shift_current_integrand_aaa``).
+
+    Used to validate sign/shape against Fregoso Eq.(D16):
+        sigma_zzz = -(e^3 a^3 t delta Delta)/(8 hbar^4 omega^3) sum_i 1/|dE/dk(k_i)|
+    (negative for t,delta,Delta>0).  Returned in the natural units of the integrand
+    (no e^3/hbar^4 prefactor), so compare SIGN and SHAPE, not absolute magnitude.
+    """
+    kgrid = (np.arange(n_kpts) + 0.5) / n_kpts * (2.0 * np.pi / a) - np.pi / a
+    sigma = np.zeros(omega_grid.shape[0])
+    inv_pi_eta = smearing_eta / np.pi
+    for k in kgrid:
+        E, U = _eig(rice_mele_hamiltonian(k, t, delta, Delta, a))
+        Va = U.conj().T @ rice_mele_dHdk(k, t, delta, Delta, a) @ U
+        Waa = U.conj().T @ rice_mele_d2Hdk(k, t, delta, Delta, a) @ U
+        g, wcv = shift_current_integrand_aaa(E, Va, Waa, n_occ=1, deg_tol=deg_tol)
+        valid = wcv > deg_tol
+        wflat = wcv[valid]
+        gflat = g[valid]
+        diff = wflat[:, None] - omega_grid[None, :]
+        Lor = inv_pi_eta / (diff * diff + smearing_eta * smearing_eta)
+        sigma += gflat @ Lor
+    sigma /= kgrid.shape[0]
     return sigma

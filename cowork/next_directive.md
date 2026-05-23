@@ -22,6 +22,24 @@ Cowork 関連ファイルを **`cowork/`** サブフォルダに移動しまし�
 
 ---
 
+## ⭐ 本番計算ルール（2026-05-23 10:35 追加）
+
+**論文・公開・最終報告書に使う計算は必ず `cowork/PRODUCTION_RULES.md` に従う**。要点：
+
+- 計算は **Exploratory（試行錯誤）/ Production（本番）** を明示的に分ける
+- Production は **収束確認**（k グリッド、η、ω 分解能を 3 段階以上）必須
+- Production は `results/production/<theme>/<date>_<commitHash>/` に**全データ保存**（生数値・収束プロット・ログ・乱数シード含む）
+- 入力ファイル一式（config, parameters, env.yml, git_info）を `inputs/` に保存
+- 中心索引 `MANIFEST.json` を必ず置く（テンプレ PRODUCTION_RULES.md §4）
+- Production 実行時は uncommitted modification なし
+- `cowork/reports/` で引用する数値は **MANIFEST.json への参照付き**
+
+既存の Theme A / Phase 1.5 結果は次の自然な作業区切りで遡及的に Production 化。
+
+詳細・テンプレートは `cowork/PRODUCTION_RULES.md` を参照。
+
+---
+
 ## 0. ハルシネーション防止の絶対ルール（必読）
 
 **コード実装に着手する前に、以下を必ず満たすこと:**

@@ -248,38 +248,42 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
     kred = monkhorst_pack(n_kpts)
     kcart = kred * (2.0 * np.pi / a)
     sigma = np.zeros(omega_grid.shape[0])
+    inv_pi_eta = smearing_eta / np.pi
 
     for k in kcart:
         E, U = _eig(H_fn(k))
         Vz = U.conj().T @ (dHdk_fn(k, 2)) @ U          # Vz[n,m] = <n|dH/dk_z|m>
         Nb = E.shape[0]
-        # interband Berry connection r^z[n,m] = i Vz[n,m]/(E[m]-E[n]) (0 on diagonal)
+        # interband Berry connection r^z[n,m] = i Vz[n,m]/(E[m]-E[n]); set to 0 on the
+        # diagonal AND for degenerate pairs (|E[m]-E[n]| < deg_tol). Zeroing degenerate
+        # entries makes the virtual l-sum a plain matrix product that auto-excludes
+        # l=v, l=c and Kramers-degenerate intermediate states.
         dE = E[None, :] - E[:, None]                   # dE[n,m] = E[m]-E[n]
-        with np.errstate(divide="ignore", invalid="ignore"):
-            rz = 1j * Vz / dE
-        np.fill_diagonal(rz, 0.0)
-        rz[~np.isfinite(rz)] = 0.0
+        nondeg = np.abs(dE) > deg_tol
+        rz = np.zeros((Nb, Nb), dtype=complex)
+        rz[nondeg] = 1j * Vz[nondeg] / dE[nondeg]
         vdiag = np.real(np.diag(Vz))                   # band velocities v^z_nn
 
-        for v in range(n_occ):
-            for c in range(n_occ, Nb):
-                wcv = E[c] - E[v]
-                if wcv < deg_tol:
-                    continue
-                # generalized derivative r^z_{vc;z}
-                Delta = vdiag[v] - vdiag[c]            # Delta^z_vc
-                gd = 2.0 * rz[v, c] * Delta / (E[v] - E[c])
-                # virtual sum over l != v,c, skipping degenerate partners
-                l = np.arange(Nb)
-                mask = (l != v) & (l != c)
-                mask &= np.abs(E - E[c]) > deg_tol      # |w_lc| > tol
-                mask &= np.abs(E[v] - E) > deg_tol      # |w_vl| > tol
-                w_lc = E - E[c]
-                w_vl = E[v] - E
-                ssum = np.sum(((w_lc - w_vl) * rz[v, :] * rz[:, c])[mask])
-                gd += -1j * ssum / (E[v] - E[c])
-                integrand = np.imag(rz[c, v] * gd)
-                Lor = (smearing_eta / np.pi) / ((wcv - omega_grid) ** 2 + smearing_eta ** 2)
-                sigma += integrand * Lor
+        # virtual-state sum  S[v,c] = sum_l (2E_l - E_v - E_c) r^z_vl r^z_lc
+        #                            = (rz @ diag(2E) @ rz) - (E_v+E_c) (rz @ rz)
+        P = rz @ rz
+        Q = (rz * (2.0 * E)[None, :]) @ rz
+        S = Q - (E[:, None] + E[None, :]) * P          # (Nb,Nb)
+
+        v = slice(0, n_occ)
+        c = slice(n_occ, Nb)
+        wcv = E[None, c] - E[v, None]                  # (n_occ, n_unocc) = E_c - E_v
+        denom = E[v, None] - E[None, c]                # E_v - E_c (= -wcv)
+        Delta = vdiag[v, None] - vdiag[None, c]        # Delta^z_vc
+        gd = 2.0 * rz[v, c] * Delta / denom - 1j * S[v, c] / denom
+        integ = np.imag(rz[c, v].T * gd)               # rz[c,v].T -> (n_occ,n_unocc)
+        # mask transitions with (near-)zero gap
+        valid = wcv > deg_tol
+        wflat = wcv[valid]                             # (Npair,)
+        gflat = integ[valid]
+        # sigma(omega) += sum_pair gflat * Lorentzian(wcv - omega)
+        diff = wflat[:, None] - omega_grid[None, :]
+        Lor = inv_pi_eta / (diff * diff + smearing_eta * smearing_eta)
+        sigma += gflat @ Lor
     sigma /= kcart.shape[0]
     return sigma

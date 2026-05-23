@@ -1,0 +1,3 @@
+runtime_seconds=5278.3
+n_kpts=48 eta=0.1 deltas=[0.1, 0.15, 0.2]
+delta0_null_max_abs=6.923e-15

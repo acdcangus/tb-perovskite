@@ -1,0 +1,23 @@
+{
+  "materials": [
+    "CsGeCl3",
+    "CsGeBr3",
+    "CsGeI3",
+    "CsSnCl3",
+    "CsSnBr3",
+    "CsSnI3",
+    "CsPbCl3",
+    "CsPbBr3",
+    "CsPbI3"
+  ],
+  "B_cations": [
+    "Ge",
+    "Sn",
+    "Pb"
+  ],
+  "halides": [
+    "Cl",
+    "Br",
+    "I"
+  ]
+}

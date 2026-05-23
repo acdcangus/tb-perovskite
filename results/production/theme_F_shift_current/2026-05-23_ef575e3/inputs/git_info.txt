@@ -1,0 +1,11 @@
+commit: ef575e3cadbaee9487cab83fcd8b8a5a53410e27
+branch: main
+dirty: False
+
+commit ef575e3cadbaee9487cab83fcd8b8a5a53410e27
+Author:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+AuthorDate: Sat May 23 17:32:48 2026 +0000
+Commit:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+CommitDate: Sat May 23 17:32:48 2026 +0000
+
+    cowork: finalize Theme F report with F5 production results (lead-free Sn/Ge halides largest sigma); track supervisor patrol files

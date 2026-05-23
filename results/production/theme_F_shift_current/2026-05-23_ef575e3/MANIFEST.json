@@ -1,0 +1,112 @@
+{
+  "manifest_version": "1.0",
+  "theme": "theme_F_shift_current",
+  "subtask": "F5 9-material x delta shift-current scan",
+  "date_utc": "2026-05-23T17:33:10.200665+00:00",
+  "git_commit": "ef575e3cadbaee9487cab83fcd8b8a5a53410e27",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": false,
+  "physics_method": "Fregoso 2017 Eq.(C2) TB shift current (w-term) | Kashikar-13 [001] polar (P4mm) Harrison eta=2.0 | velocity gauge, sum-over-states",
+  "convergence": {
+    "k_grid": [
+      24,
+      32,
+      48
+    ],
+    "eta_eV": [
+      0.05,
+      0.08,
+      0.15
+    ],
+    "omega_resolution": [
+      150,
+      300,
+      600
+    ],
+    "production_n_kpts": 48,
+    "production_eta_eV": 0.1,
+    "L2rel_k32_to_k48_at_eta0.10": 0.019,
+    "note": "eta=0.05 too sharp for these grids; eta>=0.08 converges (see convergence/)"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/sigma_zzz_9materials.csv",
+      "outputs/raw/peak_summary.csv"
+    ],
+    "figures": [
+      "outputs/figures/sigma_zzz_9materials.png"
+    ]
+  },
+  "key_numbers": {
+    "runtime_seconds": 5278.3,
+    "settings": "n_kpts=48, eta=0.1, deltas=[0.1, 0.15, 0.2], n_occ=20",
+    "delta0_null_max_abs_sigma_zzz_rel": 6.9233775153449465e-15,
+    "units_note": "relative (consistent prefactor across all 9 materials -> valid cross-material comparison); absolute uA/V^2 deferred (Young&Rappe 2012 Eq.1 prefactor pi e^3/(hbar^4 V_cell); Blount-1962 limited)",
+    "CsGeCl3_peak_sigma_zzz_rel_d0.15": 0.6595216986870932,
+    "CsGeCl3_peak_omega_eV_d0.15": 5.0,
+    "CsGeCl3_omega_integral_Eg_2Eg_rel_d0.15": -0.3592012518686204,
+    "CsGeCl3_gap_at_R_eV": 1.7667542880097304,
+    "CsGeBr3_peak_sigma_zzz_rel_d0.15": 1.3014240330057771,
+    "CsGeBr3_peak_omega_eV_d0.15": 4.009698996655518,
+    "CsGeBr3_omega_integral_Eg_2Eg_rel_d0.15": -0.34032172838601094,
+    "CsGeBr3_gap_at_R_eV": 1.0307325789868975,
+    "CsGeI3_peak_sigma_zzz_rel_d0.15": -2.6720272013067508,
+    "CsGeI3_peak_omega_eV_d0.15": 1.7304347826086959,
+    "CsGeI3_omega_integral_Eg_2Eg_rel_d0.15": -0.6306807434098244,
+    "CsGeI3_gap_at_R_eV": 0.6400701760145808,
+    "CsSnCl3_peak_sigma_zzz_rel_d0.15": -0.44065302641216736,
+    "CsSnCl3_peak_omega_eV_d0.15": 2.9408026755852843,
+    "CsSnCl3_omega_integral_Eg_2Eg_rel_d0.15": -0.1424679396231116,
+    "CsSnCl3_gap_at_R_eV": 1.0555005873140528,
+    "CsSnBr3_peak_sigma_zzz_rel_d0.15": -1.3125993275473722,
+    "CsSnBr3_peak_omega_eV_d0.15": 2.18628762541806,
+    "CsSnBr3_omega_integral_Eg_2Eg_rel_d0.15": -0.07364681642325724,
+    "CsSnBr3_gap_at_R_eV": 0.38258211754556637,
+    "CsSnI3_peak_sigma_zzz_rel_d0.15": -3.426397216008314,
+    "CsSnI3_peak_omega_eV_d0.15": 1.6361204013377928,
+    "CsSnI3_omega_integral_Eg_2Eg_rel_d0.15": -0.016869790384750855,
+    "CsSnI3_gap_at_R_eV": 0.17458484735384872,
+    "CsPbCl3_peak_sigma_zzz_rel_d0.15": -0.11476672953273043,
+    "CsPbCl3_peak_omega_eV_d0.15": 4.874247491638796,
+    "CsPbCl3_omega_integral_Eg_2Eg_rel_d0.15": -0.13304535177168936,
+    "CsPbCl3_gap_at_R_eV": 2.126943566161609,
+    "CsPbBr3_peak_sigma_zzz_rel_d0.15": -0.3119126772154767,
+    "CsPbBr3_peak_omega_eV_d0.15": 2.736454849498328,
+    "CsPbBr3_omega_integral_Eg_2Eg_rel_d0.15": -0.13967205230498292,
+    "CsPbBr3_gap_at_R_eV": 1.1003154321842765,
+    "CsPbI3_peak_sigma_zzz_rel_d0.15": 0.9652383217070627,
+    "CsPbI3_peak_omega_eV_d0.15": 3.962541806020067,
+    "CsPbI3_omega_integral_Eg_2Eg_rel_d0.15": -0.23830179009344588,
+    "CsPbI3_gap_at_R_eV": 0.6298311252736619
+  },
+  "checksums_sha256": {
+    "outputs/figures/sigma_zzz_9materials.png": "000a38548d640ec95ffdb5c396e87e9fe91ab9a1de61b4dc907d342d032d3490",
+    "outputs/raw/peak_summary.csv": "8c73fbd2ffca104a0e0bc8ddaed75e7276762ae9b2ce712b2de86140f37e7ec5",
+    "outputs/raw/sigma_zzz_9materials.csv": "18ed3f7cb29dc9439fa7b5fc150d8d11dcc6900f840c0adac01e28b59358bc78"
+  },
+  "data_size_total_bytes": 256490,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "Relative units are the primary deliverable; absolute uA/V^2 is Blount-1962 limited (TB intra-atomic position contributions missing -- same systematic underestimate as the g-factor and optical f-sum). Single-thread BLAS forced before numpy import (n_kpts=24 sigma 281s->5.9s). delta=0 null sigma_zzz max |.|=6.92e-15 (centrosymmetric vanishing). gap is the R-point N_OCC gap (not guaranteed CBM-VBM for all materials).",
+  "references": [
+    "Fregoso, Morimoto, Moore 2017 PRB 96 075421 (arXiv:1701.00172) Eq.(C2)/(D12)/(D15)",
+    "Tan, Zheng, Young, Wang, Liu, Rappe 2016 npj Comput Mater 2:16026",
+    "Young & Rappe 2012 PRL 109 116601 (arXiv:1202.3168) Eq.(1)",
+    "Kashikar, Gupta, Nanda 2021 (arXiv:2101.08562)"
+  ]
+}

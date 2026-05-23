@@ -1,0 +1,3 @@
+{
+  "random_seeds": "not used (deterministic eigh + uniform Monkhorst-Pack k-grid)"
+}

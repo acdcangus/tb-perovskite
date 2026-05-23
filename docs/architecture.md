@@ -4,9 +4,10 @@
 
 - **言語**: Python (>= 3.10)。Python 3.14 でも動作確認。
 - **主要ライブラリ**:
-  - `numpy`（配列・線形代数 `linalg.eigvalsh`）
-  - `scipy`（補助; 依存として固定）
+  - `numpy`（配列・線形代数 `linalg.eigvalsh`。**唯一の機能的依存**）
   - `matplotlib`（バンド図, 非対話 Agg バックエンド）
+  - `scipy`（宣言済み依存だが現状は機能的に未使用。`_meta.py` がバージョン記録のために
+    任意 import するのみ。将来の数値拡張用に保持）
   - `pytest`（検証・V&V テスト）
   - `pymupdf`（参照論文 PDF からのテキスト抽出; 開発時のみ）
 - **数値精度**: 倍精度（float64 / complex128）。

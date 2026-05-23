@@ -86,14 +86,23 @@ def cmd_gap(args):
     data, _loaded, _spec = _prepare(args) if args.material not in ("all", None) else (
         load_parameter_file(args.params), None, None)
 
-    materials = (list_materials(data) if (args.material in ("all", None) and "materials" in data)
-                 else [args.material])
+    multi = "materials" in data
+    if multi:
+        materials = list_materials(data) if args.material in ("all", None) else [args.material]
+        label_hdr = "material"
+    else:
+        # Single-material file (e.g. Nestoklon): iterate parameter sets instead.
+        if args.parameter_set:
+            materials = [args.parameter_set]
+        else:
+            materials = sorted(data.get("parameter_sets", {}).keys()) or ["<single>"]
+        label_hdr = "param_set"
 
     print(f"# {data['model_id']}")
-    print(f"{'material':10s} {'a(A)':>6s} {'gap_R(eV)':>10s} {'fundamental_gap(eV)':>20s}")
+    print(f"{label_hdr:18s} {'a(A)':>6s} {'gap_R(eV)':>10s} {'fundamental_gap(eV)':>20s}")
     for mat in materials:
-        loaded = get_material(data, material=mat if "materials" in data else None,
-                              parameter_set=getattr(args, "parameter_set", None))
+        loaded = get_material(data, material=mat if multi else None,
+                              parameter_set=(None if multi else mat))
         spec = build_model(loaded)
         a = loaded["a"]
         kR = np.array([np.pi / a] * 3)
@@ -102,7 +111,7 @@ def cmd_gap(args):
         path = kp.make_kpath(["M", "R", "G", "X", "M", "G"], a, 80)
         bs = compute_band_structure(spec.builder, path, spec.n_filled)
         gi = fundamental_gap(bs)
-        print(f"{mat:10s} {a:6.2f} {g_R:10.4f} {gi['gap']:20.4f}")
+        print(f"{mat:18s} {a:6.2f} {g_R:10.4f} {gi['gap']:20.4f}")
 
 
 def build_parser() -> argparse.ArgumentParser:

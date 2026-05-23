@@ -32,9 +32,14 @@ def _git_commit() -> str:
 def run_metadata(extra: dict[str, Any] | None = None) -> dict[str, Any]:
     """Return a dict of reproducibility metadata."""
     import numpy
-    import scipy
 
     from . import __version__
+
+    try:  # scipy is a declared dependency but not functionally required.
+        import scipy
+        scipy_ver = scipy.__version__
+    except ImportError:
+        scipy_ver = "not installed"
 
     meta = {
         "timestamp_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(),
@@ -42,7 +47,7 @@ def run_metadata(extra: dict[str, Any] | None = None) -> dict[str, Any]:
         "package_version": __version__,
         "python": platform.python_version(),
         "numpy": numpy.__version__,
-        "scipy": scipy.__version__,
+        "scipy": scipy_ver,
         "platform": platform.platform(),
     }
     if extra:

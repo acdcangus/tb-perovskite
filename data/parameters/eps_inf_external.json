@@ -1,0 +1,23 @@
+{
+  "_README": "External high-frequency dielectric constants (eps_inf) for the Wannier-Mott exciton binding (Theme I, option c). Extracted ONLY from in-repo references/pdfs (no fabricated values). See cowork/progress 2026-05-24 Y1c1 note. Most CsBX3 eps_inf are NOT present in the in-repo literature -> status 'not_found_in_references'; PI decision requested (provide values / authorize external DFT-RPA+experimental lookup / exclude).",
+  "_extraction_date": "2026-05-24",
+  "_searched_texts": "references/texts/*.txt (61 files), grep for high-frequency/optical dielectric, epsilon_inf, refractive index, per material",
+  "materials": {
+    "CsPbI3": {
+      "eps_inf": 6.1,
+      "status": "proxy_lead_iodide_effective",
+      "source": "Cho et al. 2019, arXiv:1908.09436 (text line ~224, 'epsilon = 6.1'); also Bhattacharya-type NC paper arXiv:2210.01324 (lines 119/190, 'dielectric constant eps_p = 6.1', stated as bulk MAPbI3 high-frequency dielectric)",
+      "method": "effective exciton screening (eps_p) used in BSE/Wannier-Mott for lead-iodide perovskite",
+      "phase": "(reference is MAPbI3, not cubic CsPbI3)",
+      "notes": "NOT a measured CsPbI3 eps_inf. It is the EFFECTIVE dielectric (between eps_inf and eps_static) used for the MAPbI3-type lead-iodide exciton. Used here only as a rough proxy for CsPbI3; flag in any E_b output. Do not treat as material-specific eps_inf."
+    },
+    "CsPbBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"]},
+    "CsPbCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"]},
+    "CsSnI3":  {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
+    "CsSnBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
+    "CsSnCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
+    "CsGeI3":  {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"},
+    "CsGeBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"},
+    "CsGeCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"}
+  }
+}

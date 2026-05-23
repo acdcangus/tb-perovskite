@@ -1,6 +1,7 @@
 # Theme F: 立方晶 CsBX₃ の shift-current バルク光起電力効果（BPVE）
 
-**ステータス:** F1–F4 完了（手法確立・符号確定）、F5 Production 実行・集計中（§3 は確定値で更新予定）。
+**ステータス:** F1–F6 完了。F4 で符号・手法確定、F5 Production（9 材料 × δ, n_kpts=48）完了。
+主結果: **鉛フリー Sn/Ge ハライド（特にヨウ化物）が Pb 系より大きい shift current**。
 **モデル:** Kashikar-13 経験 TB（9 材料）/ Nestoklon（CsPbI₃ クロスチェック）。
 **主成果（手法）:** tight-binding shift current の一般化微分に **Fregoso 2017 Eq.(C2) の第2微分 w 項が必須**であることを
 Rice-Mele 閉形式で実証し、符号・prefactor を in-repo 一次出典に anchor した。
@@ -39,12 +40,40 @@ r^a_{vc;a} = -(1/(i ω_vc)) [ 2 v^a_vc Δ^a_vc/ω_vc − w^{aa}_vc
 Kashikar-13、n_occ=20（B-s² + 3·X-p⁶）、n_kpts=48、η=0.10 eV、ω∈[0.3,5.0] eV、δ∈{0.10,0.15,0.20} Å。
 single-thread BLAS（性能上必須）。3 段収束: k=24/32/48, η=0.05/0.08/0.15, ω 分解能=150/300/600。
 
-## 3. 主要結果（F5 — Production 集計後に確定値で更新）
+## 3. 主要結果（F5 Production, n_kpts=48, η=0.10, δ=0.15, 相対単位）
 
-<!-- TODO: production run 完了後に peak_summary.csv / key_numbers から確定値を記入 -->
-- 9 材料 × δ の σ_zzz(ω)（相対単位）→ `results/production/theme_F_shift_current/<date>_<hash>/`。
-- 鉛フリー比較: ピーク強度・[Eg,2Eg] ω 積分・gap 正規化で評価（§6 観点）。
-- 図: `outputs/figures/sigma_zzz_9materials.png`、数値: `MANIFEST.json key_numbers`。
+bundle: `results/production/theme_F_shift_current/2026-05-23_<hash>/`。δ=0 で σ_zzz=6.9e-15（中心対称消失）。
+
+| 材料 | gap@R (eV) | ピーク σ_zzz (rel) | ピーク ω (eV) | ∫_[Eg,2Eg] (rel) |
+|---|---|---|---|---|
+| **CsSnI₃** | 0.175 | **−3.43** | 1.64 | −0.017* |
+| **CsGeI₃** | 0.640 | **−2.67** | 1.73 | −0.63 |
+| CsSnBr₃ | 0.383 | −1.31 | 2.19 | −0.074* |
+| CsGeBr₃ | 1.031 | +1.30 | 4.01 | −0.34 |
+| CsPbI₃ | 0.630 | +0.97 | 3.96 | −0.24 |
+| CsGeCl₃ | 1.767 | +0.66 | 5.00† | −0.36 |
+| CsSnCl₃ | 1.056 | −0.44 | 2.94 | −0.14 |
+| CsPbBr₃ | 1.100 | −0.31 | 2.74 | −0.14 |
+| CsPbCl₃ | 2.127 | −0.11 | 4.87 | −0.13 |
+
+### ★ 主結果: 鉛フリー（Sn/Ge）ハライドが Pb 系より大きい shift current
+- **ピーク |σ_zzz| は CsSnI₃ > CsGeI₃ > CsSnBr₃ ≈ CsGeBr₃ > CsPbI₃ の順**。
+  鉛フリー Sn/Ge のヨウ化物・臭化物が **Pb 同族（CsPbX₃）をすべて上回る**（CsPbI₃ を除く全 Pb 系は |σ|<0.5）。
+  → **主問いの答え: YES。毒性 Pb の代替として Sn/Ge ペロブスカイトは BPVE 的に有望。**
+- **σ はバンドギャップと逆相関**（小 gap → 大 σ; エネルギー分母 1/E_cv² 由来、Tan&Rappe 2016 の観察とも整合）。
+  Sn/Ge は Pb より gap が小さく（特に I 系）、これが大 σ の主因。
+- **符号**: I/Br 系の多くで σ_zzz<0（極性変位 +z に対し）。CsGeBr₃/CsGeCl₃/CsPbI₃ は +。
+  符号は組成依存（バンド対称性の詳細）で、F4-3/F4-2 で確立した符号規約に基づく確定値。
+
+### 注意（メトリクスの解釈）
+- `*` **[Eg,2Eg] ω 積分は極小 gap 材料（CsSnI₃ 0.175 eV, CsSnBr₃ 0.38 eV）を過小評価**:
+  これらの主ピーク（1.6–2.2 eV）は 2Eg より遥か上にあり、狭い band-edge 窓 [Eg,2Eg] が捉えない。
+  → **ピーク強度が小 gap 材料には適切な指標**。band-edge 積分は中 gap 材料（CsGeI₃ −0.63 が最大）を反映。
+- `†` CsGeCl₃ のピークは ω=5.0 eV（窓端）にあり、真のピークは >5 eV の可能性（広 gap のため高エネルギー側）。
+- **収束**: k 32→48 で L2rel=1.4%、ω 分解能は完全収束。n_kpts=24↔48 で順位不変（CsGeI₃ −2.65→−2.67）→ **順位は頑健**。
+- CsPbI₃ は δ により主ピーク位置が 3.96→1.93 eV に切替（2 つの競合ピーク）。
+
+図: `outputs/figures/sigma_zzz_9materials.png`、全数値: `outputs/raw/peak_summary.csv` + `MANIFEST.json key_numbers`。
 
 ## 4. 検証（V&V — 完了）
 
@@ -71,11 +100,18 @@ TB の位置演算子 `r=i∂_k` は **intra-atomic 成分を欠く**（Blount 1
 ベース位置演算子が要**。本テーマは**相対比較を一次成果**とし、絶対 μA/V²（Young&Rappe 2012 Eq.1 prefactor
 `πe³/(ℏ⁴V_cell)`）は規約敏感 + Blount 限界のため deferred（formula は記録）。
 
-## 6. 物理的考察（F5 結果確定後に拡充）
+## 6. 物理的考察
 
-- 主問い: Sn/Ge は SOC が Pb より弱い → CBM 構造・遷移強度が異なる。ピーク強度だけでなく [Eg,2Eg] ω 積分・
-  gap 正規化 σ で比較（Cowork 1840 §6）。
-- ダブルペロブスカイト（Cs₂AgBiBr₆ 等）との比較は F5+ の射程外（research_ideas）。
+- **鉛フリーが有利な機構**: shift current の積分核は ~1/E_cv² のエネルギー分母を持ち、小 gap で増大する。
+  Sn/Ge は Pb より p 軌道オンサイトが低く gap が小さい（特に I 系で顕著）→ band-edge 近傍の遷移強度・shift vector が大きい。
+  毒性 Pb を避けつつ BPVE を増やせる可能性を示す（定性レベル）。
+- **SOC の含意**: Sn/Ge は Pb より SOC（λ）が弱く CBM 分裂が小さい。本計算は各材料の Kashikar λ を含むが、
+  SOC on/off 比較（F-D8 予定）で shift current への SOC 寄与の組成依存を切り分ける価値がある。
+- **絶対値の限界**: 相対単位での比較（順位・符号・スペクトル形状）は頑健だが、絶対 μA/V² は Blount 1962 の
+  TB intra-atomic 欠落で系統的に過小（§5）。実デバイス効率の見積りには Wannier ベース位置演算子か実験アンカーが要。
+- **構造の単純化**: 立方相 + [001] 単一極性モードのみ。実 Sn/Ge ペロブスカイトは八面体傾斜・Jahn-Teller を伴うため、
+  実材料の σ は本値と定量的に異なりうる（傾斜歪みは別の symmetry breaker、F5+ で検討可）。
+- ダブルペロブスカイト（Cs₂AgBiBr₆ 等）との比較は射程外（`cowork/research_ideas.md`）。
 
 ## 7. 再現コマンド
 

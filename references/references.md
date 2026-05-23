@@ -189,3 +189,18 @@
 取得日: 2026-05-23
 
 PDFは `arxiv.org/pdf/<arxiv_id>.pdf` から直接取得。
+
+---
+
+## Theme F (Phase 2, shift current/BPVE) 追加収集 — 2026-05-23
+
+Cowork directive (1055/1110) に基づき取得・**タイトル検証済み**:
+
+| arXiv ID | 著者 | タイトル | 用途 |
+|---|---|---|---|
+| 1712.04924 | D. J. Passos et al. (PRB 97, 235446, 2018) | Nonlinear optical responses of crystalline systems: Results from a velocity gauge analysis | Theme F primary 方法論（velocity gauge, Berry connection, Blount 分解） |
+| 2207.00331 | A. M. Sheikhabadi, Z. Bagheri, A. Sadeghi (2022) | Theory of nonlinear optical response | Theme F sub（disorder 入り 2nd-order） |
+
+**取得時 ID 誤りの記録（ハルシネーション防止）:** Cowork が「可能性/推定」とした
+arXiv:1207.5462（実際は統計の論文）, arXiv:1612.09194（実際は billiards の数学論文）は
+Young & Rappe 2012 / Fregoso 2017 では**なかった**ため削除。正しい ID は Cowork 確認待ち。

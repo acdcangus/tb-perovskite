@@ -144,5 +144,10 @@ PYTHONPATH=src python -m pytest tests/test_g_factor.py tests/test_velocity.py -q
 - 定式化: `docs/g-factor-formulation.md`、解析: `docs/g-factor-analysis.md`
 - 実装: `src/perovskite_tb/g_factor.py`, `velocity.py`
 - データ: `data/parameters/experimental_band_data.json`, `results/g_factors/g_factor_9material.csv`
-- 図: `results/g_factors/kirstein_universal_plot.png`, `material_grid.png`
-- テスト: `tests/test_g_factor.py`, `tests/test_velocity.py`
+- 図（論文候補）:
+  - Fig.1 `results/g_factors/kirstein_universal_plot.png`（g_e, g_h vs Eg + 普遍曲線）
+  - `results/g_factors/material_grid.png`（3×3 ヒートマップ）
+  - `results/g_factors/ge_universality.png`（2段: g_e vs 1/Eg + Kane P 比較; A7）
+  - **Fig.2 `results/g_factors/gh_delta_dependence.png`（Δg_h vs Δ; 鉛フリーで Δ 縮小 → g_h 乖離増大）**
+- テスト: `tests/test_g_factor.py`, `tests/test_velocity.py`, `tests/test_kane_parameter.py`
+- 図生成: `scripts/scan_g_factors.py`, `plot_ge_universality.py`, `plot_gh_delta_dependence.py`

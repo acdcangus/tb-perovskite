@@ -1,0 +1,6 @@
+{
+  "name": "cubic_GXMGR",
+  "description": "Simple-cubic Brillouin-zone path Gamma-X-M-Gamma-R-X (a common cubic path).",
+  "segments": ["G", "X", "M", "G", "R", "X"],
+  "n_per_segment": 120
+}

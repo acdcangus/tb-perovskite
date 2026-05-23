@@ -1,0 +1,45 @@
+{
+  "timestamp_utc": "2026-05-23T00:42:18.543191+00:00",
+  "git_commit": "de9fa167f671d95977052c4a98aa189869a97b92-dirty",
+  "package_version": "0.1.0",
+  "python": "3.14.5",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+  "model_id": "kashikar2021_cubic_13orb",
+  "model_kind": "slater_koster_13orbital",
+  "material": "CsSnCl3",
+  "parameter_set": null,
+  "lattice_constant_a": 5.62,
+  "params": {
+    "E_B_s": -0.71,
+    "E_B_p": 6.42,
+    "E_X_p": -0.06,
+    "t_BX_sp": -1.29,
+    "t_BX_ppsigma": 1.94,
+    "t_BX_pppi": -0.52,
+    "t_BB_ss": -0.08,
+    "t_BB_spsigma": -0.2,
+    "t_BB_ppsigma": 0.24,
+    "t_BB_pppi": 0.06,
+    "lambda_SOC": 0.16
+  },
+  "kpath_segments": [
+    "M",
+    "R",
+    "G",
+    "X",
+    "M",
+    "G"
+  ],
+  "n_per_segment": 120,
+  "n_filled": 20,
+  "fundamental_gap": {
+    "vbm": 4.324499412685944,
+    "cbm": 5.379999999999997,
+    "gap": 1.0555005873140528,
+    "vbm_distance": 0.559002251528433,
+    "cbm_distance": 0.559002251528433,
+    "direct": true
+  }
+}

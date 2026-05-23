@@ -38,7 +38,7 @@ from typing import Mapping
 
 import numpy as np
 
-from ._soc import soc_p_matrix
+from ._soc import soc_p_from_lambda3
 
 # Indices of the three halides and the cubic axis each sits on.
 # axis index: 0 -> x, 1 -> y, 2 -> z
@@ -122,7 +122,7 @@ def kashikar13_hamiltonian(kvec: np.ndarray, params: Mapping[str, float], a: flo
     H = np.kron(np.eye(2, dtype=complex), H0)  # spin-major: block-diag(H0, H0)
 
     lam = params["lambda_SOC"]
-    soc = soc_p_matrix(lam)  # 6x6 on (px,py,pz) x (up,down), spin-major
+    soc = soc_p_from_lambda3(lam)  # Eq. 10 convention: p-splitting = 3*lambda
     # B-p orbital indices in the spinless basis are 1,2,3.
     p_idx = [1, 2, 3]
     full_idx = [s * N_ORB_13 + o for s in (0, 1) for o in p_idx]  # spin-major
@@ -204,7 +204,7 @@ def kashikar4_hamiltonian(kvec: np.ndarray, params: Mapping[str, float], a: floa
     H0 = kashikar4_spinless(kvec, params, a)
     H = np.kron(np.eye(2, dtype=complex), H0)
     lam = params["lambda_SOC"]
-    soc = soc_p_matrix(lam)
+    soc = soc_p_from_lambda3(lam)
     p_idx = [1, 2, 3]
     full_idx = [s * N_ORB_4 + o for s in (0, 1) for o in p_idx]
     for a_i, A in enumerate(full_idx):

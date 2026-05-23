@@ -1,0 +1,6 @@
+{
+  "name": "cubic_MRGXM",
+  "description": "Simple-cubic Brillouin-zone path M-R-Gamma-X-M-Gamma, as used in Nestoklon arXiv:2012.14705 (Figs. 1,2,4).",
+  "segments": ["M", "R", "G", "X", "M", "G"],
+  "n_per_segment": 120
+}

@@ -82,6 +82,31 @@ def test_R_point_degeneracies(data13, material):
 
 
 @pytest.mark.parametrize("material", MATERIALS)
+def test_cb_soc_splitting_at_R(data13, material):
+    """Conduction-band SO splitting at R equals 3*lambda (Eq. 10 convention).
+
+    At R the B-p triplet (CB) is isolated at E3 (the B-X p-p coupling vanishes
+    there), so ``lambda L.S`` (implemented as 2*lambda*L.S) splits the 6 CB
+    spin-states into a 4-fold j=3/2 level at E3+lambda and a 2-fold j=1/2 level
+    at E3-2*lambda: splitting = 3*lambda.  For CsPbI3 (lambda=0.50) this gives
+    1.50 eV, close to the 1.48 eV reported by Nestoklon (arXiv:2012.14705).
+    """
+    m = get_material(data13, material)
+    p, a = m["params"], m["a"]
+    lam = p["lambda_SOC"]
+    kR = np.array([np.pi / a] * 3)
+    ev = np.sort(np.linalg.eigvalsh(mk.kashikar13_hamiltonian(kR, p, a)))
+    # The 6 CB states are spin-states 20..25 (n_filled = 20).
+    cb = ev[20:26]
+    lower = cb[:2]   # j=1/2 doublet
+    upper = cb[2:]   # j=3/2 quartet
+    assert np.allclose(lower, lower[0], atol=1e-9)
+    assert np.allclose(upper, upper[0], atol=1e-9)
+    splitting = upper[0] - lower[0]
+    assert abs(splitting - 3.0 * lam) < 1e-9, f"{material}: {splitting} vs {3*lam}"
+
+
+@pytest.mark.parametrize("material", MATERIALS)
 def test_4orbital_gap_formula(data4, material):
     """4-orbital model: closed-form no-SOC gap == numeric (E[CBM]-E[VBM]) at R.
 

@@ -11,9 +11,16 @@ Young & Rappe Eq.(1)-(3) factorised form:
 
 We compute the diagonal component sigma_{zzz}(omega). The momentum matrix element
 P_r = m0 v_r = (m0/hbar) dH/dk_r is reused from velocity.py (same operator as the
-g-factor and optical modules). The shift vector R_q is evaluated with a
-**gauge-invariant discrete link expression** (all eigenvector phase choices cancel
-in the closed loop), avoiding explicit gauge fixing.
+g-factor and optical modules).
+
+The production routine ``shift_current_zzz`` uses the **velocity-gauge
+sum-over-states** form of the generalized (covariant) derivative (Aversa-Sipe 1995;
+Sipe-Shkrebtii 2000; Passos 2018) -- it needs no k-derivative gauge fixing and
+handles the Kramers (SOC) degeneracy by skipping degenerate intermediate states, so
+the centrosymmetric vanishing at delta=0 holds to machine precision (~1e-15). The
+earlier Abelian discrete-link routine (``shift_current_zzz_abelian_deprecated``)
+fails this because the band-diagonal link is ill-defined for degenerate bands; it
+is kept only for regression comparison.
 
 Symmetry (docs/shift-current-formulation.md sec.4): cubic Pm-3m is centrosymmetric
 => sigma^(2) == 0.  We break inversion with a [001] **polar displacement** of the B
@@ -145,26 +152,17 @@ def _eig(H):
     return np.linalg.eigh(H)
 
 
-def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
-                      omega_grid: np.ndarray, n_kpts: int = 8,
-                      smearing_eta: float = 0.05, dk: float = 1e-3) -> np.ndarray:
-    """Shift-current conductivity sigma_{zzz}(omega) (relative units).
+def shift_current_zzz_abelian_deprecated(H_fn: Callable, dHdk_fn: Callable, a: float,
+                                         n_occ: int, omega_grid: np.ndarray,
+                                         n_kpts: int = 8, smearing_eta: float = 0.05,
+                                         dk: float = 1e-3) -> np.ndarray:
+    """DEPRECATED Abelian band-diagonal shift vector -- DO NOT USE for results.
 
-    Young & Rappe 2012 Eq.(1) with r=s=q=z. Intensity from |<v|dH/dk_z|c>|^2,
-    shift vector R_z from the gauge-invariant discrete link form. Sum over
-    valence v < n_occ, conduction c >= n_occ, on a Gamma-centred MP grid.
-
-    *** WORK IN PROGRESS -- NOT YET VALIDATED (do not use for results) ***
-    The transition intensity and the polar Hamiltonian builder are validated, but
-    this Abelian (band-diagonal) shift vector is INVALID here: with SOC every band
-    is Kramers-doubly-degenerate, so the eigenvectors within a degenerate pair are
-    arbitrarily mixed by the diagonaliser at each k, and the band-diagonal link
-    Ov[c,c] is meaningless. As a result the required centrosymmetric vanishing at
-    delta=0 is NOT satisfied (observed |sigma_zzz| ~ O(10) instead of 0).
-    A correct treatment needs the NON-ABELIAN shift vector (trace over the
-    degenerate subspaces) or the velocity-gauge sum-over-states form (Passos 2018).
-    Escalated to Cowork (progress/2026-05-23_*_shift_current_kramers.md). The
-    delta=0 test in tests/test_shift_current.py is xfail-marked accordingly.
+    Kept only for regression comparison. Fails the centrosymmetric vanishing at
+    delta=0 because SOC makes every band Kramers-doubly-degenerate and the
+    band-diagonal link Ov[c,c] is ill-defined within the degenerate subspace
+    (|sigma_zzz| ~ O(10) instead of 0). Superseded by ``shift_current_zzz``
+    (velocity-gauge sum-over-states). See cowork/progress/2026-05-23_1300_code_review.md.
     """
     from .optical import monkhorst_pack
     kred = monkhorst_pack(n_kpts)
@@ -204,5 +202,84 @@ def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
                 # Lorentzian-broadened delta(Ecv - hw)
                 L = (smearing_eta / np.pi) / ((Ecv - omega_grid) ** 2 + smearing_eta ** 2)
                 sigma += intensity * R_z * L
+    sigma /= kcart.shape[0]
+    return sigma
+
+
+def shift_current_zzz(H_fn: Callable, dHdk_fn: Callable, a: float, n_occ: int,
+                      omega_grid: np.ndarray, n_kpts: int = 8,
+                      smearing_eta: float = 0.05, deg_tol: float = 1e-5) -> np.ndarray:
+    """Shift-current conductivity sigma_zzz(omega) -- velocity-gauge sum-over-states.
+
+    Recommended method (Cowork review cowork/progress/2026-05-23_1300_code_review.md,
+    option B). Avoids the k-derivative gauge fixing and handles the Kramers (SOC)
+    degeneracy by skipping degenerate intermediate states, so the centrosymmetric
+    vanishing at delta=0 is recovered.
+
+    sigma_zzz(w) ~ sum_{v in occ, c in unocc} Im[ r^z_cv * r^z_{vc;z} ] delta(w_cv - w)
+
+    with the interband Berry connection (TEXTBOOK convention) and the
+    Aversa-Sipe / Sipe-Shkrebtii generalized (covariant) derivative:
+
+        r^z_nm   = i <n|dH/dk_z|m> / (E_m - E_n)           (n != m)
+        Delta^z_nm = <n|dH/dk_z|n> - <m|dH/dk_z|m>          (band-velocity difference)
+        r^z_{vc;z} = 2 r^z_vc Delta^z_vc / (E_v - E_c)
+                   - (i/(E_v-E_c)) sum_{l != v,c} (w_lc - w_vl) r^z_vl r^z_lc
+        w_lc = E_l - E_c,  w_vl = E_v - E_l
+
+    Degenerate intermediate states (|E_l - E_c| < deg_tol or |E_v - E_l| < deg_tol)
+    are skipped (removes the Kramers partner contributions, which are ill-defined).
+
+    Refs: Aversa & Sipe, PRB 52, 14636 (1995) Eq.(39) [primary, NOT in repo];
+    Sipe & Shkrebtii, PRB 61, 5337 (2000) Eq.(4.5); Fregoso 2017 (arXiv:1701.00172)
+    Eq.(A6); Passos 2018 (arXiv:1712.04924) Sec. II-B; Young & Rappe 2012
+    (arXiv:1202.3168) Eq.(1).
+
+    *** VALIDATION STATUS ***
+    The STRUCTURE is validated by the centrosymmetric vanishing at delta=0 (sign-
+    robust) and the emergence/peak at delta>0 (tests/test_shift_current.py).  The
+    ABSOLUTE sign and prefactor (-pi e^3/hbar^2) are NOT independently verified
+    against the primary source (Aversa-Sipe 1995, not obtainable here); output is in
+    relative units and the overall sign is convention-dependent -> deferred to F4
+    (re-requested from Cowork). Absolute magnitude is additionally limited by the
+    Blount-1962 TB intra-atomic incompleteness (same as g-factor / optical).
+    """
+    from .optical import monkhorst_pack
+    kred = monkhorst_pack(n_kpts)
+    kcart = kred * (2.0 * np.pi / a)
+    sigma = np.zeros(omega_grid.shape[0])
+
+    for k in kcart:
+        E, U = _eig(H_fn(k))
+        Vz = U.conj().T @ (dHdk_fn(k, 2)) @ U          # Vz[n,m] = <n|dH/dk_z|m>
+        Nb = E.shape[0]
+        # interband Berry connection r^z[n,m] = i Vz[n,m]/(E[m]-E[n]) (0 on diagonal)
+        dE = E[None, :] - E[:, None]                   # dE[n,m] = E[m]-E[n]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            rz = 1j * Vz / dE
+        np.fill_diagonal(rz, 0.0)
+        rz[~np.isfinite(rz)] = 0.0
+        vdiag = np.real(np.diag(Vz))                   # band velocities v^z_nn
+
+        for v in range(n_occ):
+            for c in range(n_occ, Nb):
+                wcv = E[c] - E[v]
+                if wcv < deg_tol:
+                    continue
+                # generalized derivative r^z_{vc;z}
+                Delta = vdiag[v] - vdiag[c]            # Delta^z_vc
+                gd = 2.0 * rz[v, c] * Delta / (E[v] - E[c])
+                # virtual sum over l != v,c, skipping degenerate partners
+                l = np.arange(Nb)
+                mask = (l != v) & (l != c)
+                mask &= np.abs(E - E[c]) > deg_tol      # |w_lc| > tol
+                mask &= np.abs(E[v] - E) > deg_tol      # |w_vl| > tol
+                w_lc = E - E[c]
+                w_vl = E[v] - E
+                ssum = np.sum(((w_lc - w_vl) * rz[v, :] * rz[:, c])[mask])
+                gd += -1j * ssum / (E[v] - E[c])
+                integrand = np.imag(rz[c, v] * gd)
+                Lor = (smearing_eta / np.pi) / ((wcv - omega_grid) ** 2 + smearing_eta ** 2)
+                sigma += integrand * Lor
     sigma /= kcart.shape[0]
     return sigma

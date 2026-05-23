@@ -7,10 +7,11 @@ VALIDATED here:
     bug, not a Hamiltonian bug);
   * time-reversal E(k)=E(-k) holds for the polar (delta>0) builder.
 
-KNOWN ISSUE (xfail): the Abelian discrete shift vector does not give the required
-centrosymmetric vanishing at delta=0 because the bands are Kramers-doubly-degenerate
-(SOC); a non-Abelian (degenerate-subspace) shift vector is needed. See
-src/perovskite_tb/shift_current.py docstring. Not falsified to pass.
+The production sigma_zzz uses the velocity-gauge sum-over-states generalized
+derivative (Cowork review 2026-05-23 1300, option B), which recovers the
+centrosymmetric vanishing at delta=0 (machine precision) by skipping degenerate
+intermediate states. The deprecated Abelian routine (which fails this) is retained
+only for regression. Absolute sign/prefactor are F4 (relative units here).
 """
 
 import numpy as np
@@ -61,13 +62,28 @@ def test_polar_builder_breaks_inversion(cspbi3):
     assert np.allclose(Ek, Emk, atol=1e-10)                  # time-reversal
 
 
-@pytest.mark.xfail(reason="Abelian shift vector invalid for Kramers-degenerate (SOC) "
-                          "bands; needs non-Abelian treatment. Escalated to Cowork.",
-                   strict=True)
 def test_centrosymmetric_vanishes(cspbi3):
-    """delta=0 must give sigma_zzz ~ 0 by centrosymmetry (currently FAILS -- Kramers)."""
+    """delta=0 => sigma_zzz == 0 by centrosymmetry (sum-over-states, to ~1e-10)."""
     p, a, basis = cspbi3
     Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=0.0)
-    omega = np.linspace(1.0, 4.0, 30)
+    omega = np.linspace(1.0, 4.0, 25)
     sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08)
-    assert np.max(np.abs(sig)) < 1e-6
+    assert np.max(np.abs(sig)) < 1e-10, f"max|sigma|={np.max(np.abs(sig)):.2e}"
+
+
+def test_polar_displacement_turns_on_and_scales(cspbi3):
+    """sigma_zzz vanishes at delta=0, is nonzero at delta>0, and grows with delta
+    (approximately linear for small delta). Output is real."""
+    p, a, basis = cspbi3
+    omega = np.linspace(1.0, 4.5, 25)
+    peaks = {}
+    for delta in (0.0, 0.05, 0.10):
+        Hp, dHp = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=delta)
+        sig = sc.shift_current_zzz(Hp, dHp, a, 26, omega, n_kpts=6, smearing_eta=0.08)
+        assert np.all(np.isreal(sig))
+        peaks[delta] = np.max(np.abs(sig))
+    assert peaks[0.0] < 1e-10
+    assert peaks[0.05] > 1e-3
+    assert peaks[0.10] > peaks[0.05]                       # grows with delta
+    # approximately linear: sigma(0.1)/sigma(0.05) ~ 2 (allow 1.5-3)
+    assert 1.5 < peaks[0.10] / peaks[0.05] < 3.0

@@ -1,23 +1,24 @@
 {
-  "_README": "External high-frequency dielectric constants (eps_inf) for the Wannier-Mott exciton binding (Theme I, option c). Extracted ONLY from in-repo references/pdfs (no fabricated values). See cowork/progress 2026-05-24 Y1c1 note. Most CsBX3 eps_inf are NOT present in the in-repo literature -> status 'not_found_in_references'; PI decision requested (provide values / authorize external DFT-RPA+experimental lookup / exclude).",
+  "_README": "External high-frequency dielectric constants (eps_inf) for the Wannier-Mott exciton binding (Theme I, option c). Extracted ONLY from cited sources (no fabricated values). In-repo references (references/texts/) yielded only a lead-iodide proxy; the rest are pending Cowork Claude-in-Chrome search (directive supplement 2026-05-24_0735). PI decision (v): Cowork fills missing materials via Chrome (Materials Project / NoMaD / Scholar / arXiv).",
   "_extraction_date": "2026-05-24",
-  "_searched_texts": "references/texts/*.txt (61 files), grep for high-frequency/optical dielectric, epsilon_inf, refractive index, per material",
+  "_searched_texts": "references/texts/*.txt (61 files); keywords: high-frequency/optical dielectric, epsilon_inf, eps_inf, refractive index, varepsilon_infty, per material",
+  "_workflow": "Claude Code marks not-found as pending_cowork_chrome_search and writes *_eps_inf_missing_request.md; Cowork appends cited values here via Chrome; Claude Code re-runs Y1-c-3 next polling cycle.",
   "materials": {
     "CsPbI3": {
       "eps_inf": 6.1,
       "status": "proxy_lead_iodide_effective",
-      "source": "Cho et al. 2019, arXiv:1908.09436 (text line ~224, 'epsilon = 6.1'); also Bhattacharya-type NC paper arXiv:2210.01324 (lines 119/190, 'dielectric constant eps_p = 6.1', stated as bulk MAPbI3 high-frequency dielectric)",
-      "method": "effective exciton screening (eps_p) used in BSE/Wannier-Mott for lead-iodide perovskite",
-      "phase": "(reference is MAPbI3, not cubic CsPbI3)",
-      "notes": "NOT a measured CsPbI3 eps_inf. It is the EFFECTIVE dielectric (between eps_inf and eps_static) used for the MAPbI3-type lead-iodide exciton. Used here only as a rough proxy for CsPbI3; flag in any E_b output. Do not treat as material-specific eps_inf."
+      "source": "Cho et al. 2019, arXiv:1908.09436 (text ~line 224, 'epsilon = 6.1'); arXiv:2210.01324 (lines 119/190, 'dielectric constant eps_p = 6.1', stated as bulk MAPbI3 high-frequency dielectric)",
+      "method": "effective exciton screening (eps_p) for lead-iodide perovskite (MAPbI3)",
+      "phase": "reference is MAPbI3, not cubic CsPbI3",
+      "notes": "NOT a measured CsPbI3 eps_inf; effective dielectric (between eps_inf and eps_static). Rough proxy only; Cowork may replace with a CsPbI3-specific cited value."
     },
-    "CsPbBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"]},
-    "CsPbCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"]},
-    "CsSnI3":  {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
-    "CsSnBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
-    "CsSnCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Sn-halide eps_inf in any references/texts"},
-    "CsGeI3":  {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"},
-    "CsGeBr3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"},
-    "CsGeCl3": {"eps_inf": null, "status": "not_found_in_references", "searched": "no Ge-halide eps_inf in any references/texts"}
+    "CsPbBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric constant", "refractive index"]},
+    "CsPbCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric constant", "refractive index"]},
+    "CsSnI3":  {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
+    "CsSnBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
+    "CsSnCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
+    "CsGeI3":  {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]},
+    "CsGeBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]},
+    "CsGeCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]}
   }
 }

@@ -17,18 +17,66 @@ only for regression. Absolute sign/prefactor are F4 (relative units here).
 import numpy as np
 import pytest
 
+from perovskite_tb import models_kashikar as mk
 from perovskite_tb import models_nestoklon as mn
 from perovskite_tb import shift_current as sc
 from perovskite_tb import velocity as vel
 from perovskite_tb.io_params import get_material, load_parameter_file
 
 NES = "data/parameters/nestoklon2021_CsPbI3.json"
+KAS13 = "data/parameters/kashikar2021_cubic_13orb.json"
 
 
 @pytest.fixture(scope="module")
 def cspbi3():
     m = get_material(load_parameter_file(NES), parameter_set="experiment_corrected")
     return m["params"], m["a"], m["basis"]
+
+
+@pytest.fixture(scope="module")
+def cspbi3_kashikar():
+    m = get_material(load_parameter_file(KAS13), "CsPbI3")
+    return m["params"], m["a"]
+
+
+def test_polar_kashikar_reduces_to_base_at_zero(cspbi3_kashikar):
+    """delta=0 polar Kashikar-13 builder == base kashikar13_hamiltonian (bit-exact);
+    dH/d2H Hermitian and match central finite differences for all axes."""
+    p, a = cspbi3_kashikar
+    H, dH, d2H = sc.make_polar_kashikar13_builders(p, a, polar_displacement_z=0.0)
+    k = np.array([0.11, 0.23, 0.31]) * (2 * np.pi / a)
+    assert np.allclose(H(k), mk.kashikar13_hamiltonian(k, p, a), atol=1e-12)
+    for alpha in (0, 1, 2):
+        eps = 1e-5
+        ek = np.zeros(3)
+        ek[alpha] = eps
+        assert np.allclose(dH(k, alpha), dH(k, alpha).conj().T, atol=1e-12)
+        assert np.allclose(d2H(k, alpha), d2H(k, alpha).conj().T, atol=1e-12)
+        assert np.allclose(dH(k, alpha), (H(k + ek) - H(k - ek)) / (2 * eps), atol=1e-3)
+        assert np.allclose(d2H(k, alpha),
+                           (dH(k + ek, alpha) - dH(k - ek, alpha)) / (2 * eps), atol=1e-3)
+
+
+def test_polar_kashikar_shift_current_symmetry(cspbi3_kashikar):
+    """Polar Kashikar-13 (9-material model) shift current: delta=0 vanishes;
+    sigma_zzz(-delta) = -sigma_zzz(+delta) (Tan&Rappe sign reversal); P4mm forbids
+    sigma_xxx.  n_occ=20 (Pb-s^2 + 3 I-p^6)."""
+    p, a = cspbi3_kashikar
+    omega = np.linspace(0.5, 3.5, 14)
+
+    def sigma(delta, direction):
+        H, dH, d2H = sc.make_polar_kashikar13_builders(p, a, polar_displacement_z=delta)
+        return sc.shift_current_zzz(H, dH, a, 20, omega, n_kpts=4, smearing_eta=0.08,
+                                    direction=direction, d2Hdk_fn=d2H)
+
+    s0 = sigma(0.0, 2)
+    sp = sigma(0.12, 2)
+    sm = sigma(-0.12, 2)
+    sx = sigma(0.12, 0)
+    assert np.max(np.abs(s0)) < 1e-10
+    assert np.max(np.abs(sp)) > 1e-3
+    assert np.max(np.abs(sp + sm)) < 1e-9 * max(np.max(np.abs(sp)), 1.0)  # sign reversal
+    assert np.max(np.abs(sx)) < 1e-8                                       # P4mm forbids xxx
 
 
 def test_harrison_scaling():

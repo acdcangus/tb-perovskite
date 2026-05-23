@@ -42,6 +42,7 @@ from typing import Callable
 
 import numpy as np
 
+from . import models_kashikar as mk
 from . import models_nestoklon as mn
 from ._soc import soc_p_from_lambda3
 
@@ -161,6 +162,135 @@ def make_polar_nestoklon_builders(params, a: float, basis,
         d2H0[slc(0), slc(alpha + 1)] = d2block
         d2H0[slc(alpha + 1), slc(0)] = d2block.conj().T
         return np.kron(np.eye(2, dtype=complex), d2H0)
+
+    return H_fn, dHdk_fn, d2Hdk_fn
+
+
+# --------------------------------------------------------------------------- #
+# Polar-displaced Kashikar 13-orbital Hamiltonian ([001] B off-centering, P4mm)
+# --------------------------------------------------------------------------- #
+def _kashikar13_polar_matrix(k, alpha, order, params, a, delta, eta):
+    """Spinful 26x26 Kashikar-13 matrix (order 0) or its alpha-th k-derivative
+    (order 1 -> dH/dk_alpha, order 2 -> d^2H/dk_alpha^2) with the B cation displaced
+    by ``delta`` along [001].  Only the B-X3 (z-halide) bonds become asymmetric:
+    the +z bond length is a/2-delta, -z is a/2+delta, hoppings scaled by Harrison.
+    At delta=0 it reduces bit-for-bit to ``models_kashikar.kashikar13_hamiltonian``.
+    """
+    No = mk.N_ORB_13
+    ka = [float(k[d]) * a for d in range(3)]
+    eps_s, eps_p, eps_X = params["E_B_s"], params["E_B_p"], params["E_X_p"]
+    t_sp, t_pps, t_ppp = params["t_BX_sp"], params["t_BX_ppsigma"], params["t_BX_pppi"]
+    tbb_ss, tbb_sp = params["t_BB_ss"], params["t_BB_spsigma"]
+    tbb_pps, tbb_ppp = params["t_BB_ppsigma"], params["t_BB_pppi"]
+    o0 = (order == 0)
+
+    # --- B-X factors for the non-polar axes (depend on k_d only) ---
+    def S(d):  # odd s-p sigma, = 2i sin(k_d a/2) at order 0
+        s, c = np.sin(ka[d] / 2.0), np.cos(ka[d] / 2.0)
+        if order == 0:
+            return 2j * s
+        if alpha != d:
+            return 0.0
+        return 2j * (a / 2.0) * c if order == 1 else -2j * (a / 2.0) ** 2 * s
+
+    def C(d):  # even p-p, = 2 cos(k_d a/2) at order 0
+        s, c = np.sin(ka[d] / 2.0), np.cos(ka[d] / 2.0)
+        if order == 0:
+            return 2.0 * c
+        if alpha != d:
+            return 0.0
+        return -2.0 * (a / 2.0) * s if order == 1 else -2.0 * (a / 2.0) ** 2 * c
+
+    # --- B-X3 polar z-bond factors (sign=-1 for s-p sigma, +1 for p-p) ---
+    d_plus, d_minus = a / 2.0 - delta, a / 2.0 + delta
+    s_plus = (a / 2.0 / d_plus) ** eta
+    s_minus = (a / 2.0 / d_minus) ** eta
+    kz = float(k[2])
+
+    def Zpol(sign):
+        ep = s_plus * np.exp(1j * kz * d_plus)
+        em = s_minus * np.exp(-1j * kz * d_minus)
+        if order == 0:
+            return ep + sign * em
+        if alpha != 2:
+            return 0.0
+        if order == 1:
+            return 1j * d_plus * ep + sign * (-1j * d_minus) * em
+        return -(d_plus ** 2) * ep + sign * (-(d_minus ** 2)) * em
+
+    # --- B-B factors (full-a phases, depend on k_d only) ---
+    def cbb(d):
+        if order == 0:
+            return np.cos(ka[d])
+        if alpha != d:
+            return 0.0
+        return -a * np.sin(ka[d]) if order == 1 else -a ** 2 * np.cos(ka[d])
+
+    def sbb(d):
+        if order == 0:
+            return np.sin(ka[d])
+        if alpha != d:
+            return 0.0
+        return a * np.cos(ka[d]) if order == 1 else -a ** 2 * np.sin(ka[d])
+
+    H = np.zeros((No, No), dtype=complex)
+    # B-X nearest neighbour: x,y halides (non-polar) then z halide (polar)
+    for axis in (0, 1):
+        base = mk._HALIDE_BLOCK[axis]
+        H[0, base + axis] = t_sp * S(axis)
+        for i in range(3):
+            H[1 + i, base + i] = (t_pps if i == axis else t_ppp) * C(axis)
+    basez = mk._HALIDE_BLOCK[2]
+    H[0, basez + 2] = t_sp * Zpol(-1.0)
+    for i in range(3):
+        H[1 + i, basez + i] = (t_pps if i == 2 else t_ppp) * Zpol(+1.0)
+
+    # B-B block
+    h1 = 2.0 * tbb_ss * (cbb(0) + cbb(1) + cbb(2))
+    h2 = 2.0 * tbb_pps * cbb(0) + 2.0 * tbb_ppp * (cbb(1) + cbb(2))
+    h3 = 2.0 * tbb_pps * cbb(1) + 2.0 * tbb_ppp * (cbb(0) + cbb(2))
+    h4 = 2.0 * tbb_pps * cbb(2) + 2.0 * tbb_ppp * (cbb(0) + cbb(1))
+    H[0, 0] = (eps_s if o0 else 0.0) + h1
+    H[1, 1] = (eps_p if o0 else 0.0) + h2
+    H[2, 2] = (eps_p if o0 else 0.0) + h3
+    H[3, 3] = (eps_p if o0 else 0.0) + h4
+    for d in range(3):
+        H[0, 1 + d] = tbb_sp * 2j * sbb(d)
+    if o0:
+        for base in mk._HALIDE_BLOCK.values():
+            for i in range(3):
+                H[base + i, base + i] = eps_X
+
+    H = H + H.conj().T - np.diag(np.diag(H).real).astype(complex)
+    Hf = np.kron(np.eye(2, dtype=complex), H)
+    if o0:  # SOC is k-independent -> contributes only to order 0
+        soc = soc_p_from_lambda3(params["lambda_SOC"])
+        full_idx = [s * No + o for s in (0, 1) for o in (1, 2, 3)]
+        for ai, A in enumerate(full_idx):
+            for bi, B in enumerate(full_idx):
+                Hf[A, B] += soc[ai, bi]
+    return Hf
+
+
+def make_polar_kashikar13_builders(params, a: float, polar_displacement_z: float = 0.0,
+                                   eta: float = 2.0):
+    """Return (H_fn, dHdk_fn, d2Hdk_fn) for the spinful Kashikar-13 model with the B
+    cation displaced by ``polar_displacement_z`` (Angstrom) along [001] (-> P4mm).
+
+    Mirrors ``make_polar_nestoklon_builders`` but for the 9-material Kashikar
+    parameter set (used for the F5 lead-free shift-current scan). At delta=0 it is
+    bit-for-bit ``models_kashikar.kashikar13_hamiltonian``.
+    """
+    delta = float(polar_displacement_z)
+
+    def H_fn(kvec):
+        return _kashikar13_polar_matrix(kvec, 0, 0, params, a, delta, eta)
+
+    def dHdk_fn(kvec, alpha):
+        return _kashikar13_polar_matrix(kvec, alpha, 1, params, a, delta, eta)
+
+    def d2Hdk_fn(kvec, alpha):
+        return _kashikar13_polar_matrix(kvec, alpha, 2, params, a, delta, eta)
 
     return H_fn, dHdk_fn, d2Hdk_fn
 

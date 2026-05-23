@@ -1,0 +1,18 @@
+{
+  "materials": [
+    "CsGeCl3",
+    "CsGeBr3",
+    "CsGeI3",
+    "CsSnCl3",
+    "CsSnBr3",
+    "CsSnI3",
+    "CsPbCl3",
+    "CsPbBr3",
+    "CsPbI3"
+  ],
+  "n_occ": 20,
+  "dk": 0.001,
+  "k_point": "R = pi/a (1,1,1)",
+  "model": "Kashikar-13",
+  "method": "m*/m0 = (hbar^2/m0)/(d2E/dk2), central difference, per-axis"
+}

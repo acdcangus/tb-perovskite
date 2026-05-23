@@ -1,0 +1,102 @@
+{
+  "manifest_version": "1.0",
+  "theme": "theme_I_effective_mass",
+  "subtask": "Y1-a: 9-material band-edge effective-mass map",
+  "date_utc": "2026-05-23T22:29:32.062031+00:00",
+  "git_commit": "1e9c65c20b6f8e6c40fc1bd90d6b0a46ecbde6b8",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": false,
+  "physics_method": "band-edge effective mass m*/m0 = (hbar^2/m0)/(d2E/dk2) at R-point (Kashikar-13), per Cartesian axis + average + anisotropy; mu = 1/(1/|m_e|+1/|m_h|)",
+  "convergence": {
+    "dk": [
+      0.02,
+      0.01,
+      0.005,
+      0.001,
+      0.0005
+    ],
+    "directions": [
+      "x",
+      "y",
+      "z"
+    ],
+    "n_kpts": "N/A (single-point R-curvature, not a BZ integral)"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/effective_masses_9materials.csv"
+    ],
+    "figures": [
+      "outputs/figures/effective_mass_summary.png"
+    ]
+  },
+  "key_numbers": {
+    "runtime_seconds": 0.6,
+    "dk_converged_m_e_CsPbI3": 0.10615,
+    "CsGeCl3_m_e_avg": 0.2283,
+    "CsGeCl3_m_h_avg": -0.168,
+    "CsGeCl3_mu": 0.0968,
+    "CsGeCl3_m_e_aniso": 1.0,
+    "CsGeBr3_m_e_avg": 0.1479,
+    "CsGeBr3_m_h_avg": -0.1007,
+    "CsGeBr3_mu": 0.0599,
+    "CsGeBr3_m_e_aniso": 1.0,
+    "CsGeI3_m_e_avg": 0.1115,
+    "CsGeI3_m_h_avg": -0.1001,
+    "CsGeI3_mu": 0.0527,
+    "CsGeI3_m_e_aniso": 1.0,
+    "CsSnCl3_m_e_avg": 0.1766,
+    "CsSnCl3_m_h_avg": -0.1097,
+    "CsSnCl3_mu": 0.0677,
+    "CsSnCl3_m_e_aniso": 1.0,
+    "CsSnBr3_m_e_avg": 0.0749,
+    "CsSnBr3_m_h_avg": -0.0496,
+    "CsSnBr3_mu": 0.0298,
+    "CsSnBr3_m_e_aniso": 1.0,
+    "CsSnI3_m_e_avg": 0.0346,
+    "CsSnI3_m_h_avg": -0.0254,
+    "CsSnI3_mu": 0.0146,
+    "CsSnI3_m_e_aniso": 1.0,
+    "CsPbCl3_m_e_avg": 0.2371,
+    "CsPbCl3_m_h_avg": -0.2253,
+    "CsPbCl3_mu": 0.1155,
+    "CsPbCl3_m_e_aniso": 1.0,
+    "CsPbBr3_m_e_avg": 0.151,
+    "CsPbBr3_m_h_avg": -0.1439,
+    "CsPbBr3_mu": 0.0737,
+    "CsPbBr3_m_e_aniso": 1.0,
+    "CsPbI3_m_e_avg": 0.1062,
+    "CsPbI3_m_h_avg": -0.1338,
+    "CsPbI3_mu": 0.0592,
+    "CsPbI3_m_e_aniso": 1.0
+  },
+  "checksums_sha256": {
+    "outputs/figures/effective_mass_summary.png": "4829fb03952af212e0c573529a9db61c92a131116e7de423d4fd07dc0f2c1e13",
+    "outputs/raw/effective_masses_9materials.csv": "09d674fc5c25822aec39ed159d7c82d1f330d10e3784c7b6c26d4a56f6ac7a51"
+  },
+  "data_size_total_bytes": 48038,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "TB-derived effective masses from R-point d2E/dk2. Direct band-gap material set (CsBX3 cubic phase). m_e/m_h consistent with literature (~0.1-0.15 m0 for CsPbI3). Cubic point group -> isotropic (anisotropy ratio ~1; see CSV). n_kpts is not a convergence axis (single-point curvature, exact derivative); dk and direction-anisotropy are the convergence axes (see convergence/).",
+  "references": [
+    "Kashikar, Gupta, Nanda 2021 (arXiv:2101.08562)",
+    "Yang et al. 2017 PRB 96 035301",
+    "Cho et al. 2019 (arXiv:1908.09436)",
+    "Theme A k.p framework (src/perovskite_tb/kane_parameter.py)"
+  ]
+}

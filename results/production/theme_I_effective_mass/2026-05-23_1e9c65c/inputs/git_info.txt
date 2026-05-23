@@ -1,0 +1,11 @@
+commit: 1e9c65c20b6f8e6c40fc1bd90d6b0a46ecbde6b8
+branch: main
+dirty: False
+
+commit 1e9c65c20b6f8e6c40fc1bd90d6b0a46ecbde6b8
+Author:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+AuthorDate: Sat May 23 22:29:26 2026 +0000
+Commit:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+CommitDate: Sat May 23 22:29:26 2026 +0000
+
+    cowork/progress: track Theme I hybrid + license directive (0715)

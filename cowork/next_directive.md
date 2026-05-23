@@ -1,8 +1,147 @@
-# Next Directive — Claude Code 向け作業指示（更新版 v2）
+# Next Directive — Claude Code 向け作業指示（更新版 v3 - 夜間自走モード）
 
-**発行日:** 2026-05-23 08:15（v2.1 で 10:20 にフォルダ構造変更を反映）
+**発行日:** 2026-05-23 08:15（v3 で 14:40 に PI 不在中の長時間タスクキュー追加）
 **発行元:** Cowork（監督役）
-**改訂理由:** (a) ユーザーから「光物性・キャリア輸送」志向の方針更新、(b) Theme A の Q1-Q3 が解決し A4 着手段階、(c) ハルシネーション防止のため**全タスクに具体的アルゴリズム出典を明示**
+**PI 状態:** 2026-05-23 14:40 から約 10 時間 不在（睡眠中）。Cowork supervisor は 1 時間に 1 回巡回。
+**Claude Code への期待:** 起床後の PI が kick したら、以下の **10+ 時間分のタスクキュー** を順次自走で消化してほしい
+
+---
+
+## 🌙 PI 不在中の作業優先順位（最重要）
+
+PI が起きるまでに、以下を可能な限り進めてください。**順序通り**ですが、ブロックされたら次に進んで OK：
+
+### 優先 1: Theme F F4 — CsPbI3 で Tan & Rappe 2015 ベンチマーク
+
+**目的:** Theme F shift current の絶対符号・絶対値を確定する
+
+**手順:**
+1. `references/pdfs/arxiv_1508.03564.pdf` (Tan & Rappe 2015) を pdftotext で読み、CsPbI3 の以下を抽出：
+   - 計算条件（圧力範囲、相、k グリッド、smearing）
+   - σ_BPVE(ω) の数値・ピーク位置・符号・グラフのスケール
+2. `references/pdfs/doi_10.1103_PhysRevB.53.10751.pdf` (Hughes-Sipe 1996) で χ^(2) 公式の前因子を再確認
+3. `references/pdfs/doi_10.1038_npjcompumats.2016.26.pdf` (Tan & Rappe 2016 review) で BPVE の現代的レビュー視点を確認
+4. **Production モード**で CsPbI3 の shift current を本研究の TB sum-over-states で計算
+   - 内部歪み δ を Tan & Rappe 2015 の圧力範囲に合わせる
+   - 収束確認 3 段階（k グリッド 8³→16³→24³、η 0.10→0.05→0.025 eV）
+   - `results/production/theme_F_shift_current/2026-05-23_<hash>/` に全データ + MANIFEST.json
+5. **比較:**
+   - スペクトル形状（ピーク位置、形）
+   - 符号（同じ or 反転）
+   - 絶対値オーダー
+6. **符号・前因子の確定**を `docs/shift-current-formulation.md` に記載
+7. `cowork/progress/.../F4_complete.md` で Cowork に通知
+
+### 優先 2: Theme F F5 — 9 材料 × δ スキャン（Production モード）
+
+**目的:** 鉛フリー (Sn/Ge) で強い BPVE 材料があるかを示す
+
+**手順:**
+1. `shift_current.py` のベクトル化最適化（einsum 化、F3 で 100s かかっていたものを 10s 以下に）
+2. 9 材料 × δ ∈ {0.05, 0.10, 0.15, 0.20} で σ_zzz(ω) を計算
+3. Production モード（収束 + MANIFEST）
+4. `results/production/theme_F_shift_current_9material/2026-05-23_<hash>/`
+5. 比較プロット（9 材料の σ_max vs Eg, vs B サイト など）
+6. 鉛フリー優位な材料候補ランキング
+
+### 優先 3: Theme A・Phase 1.5 の遡及 Production 化
+
+PI からの指示通り（`PRODUCTION_RULES.md`）:
+1. `results/g_factors/` の既存結果を `results/production/theme_A_g_factor/2026-05-23_<hash>/` にコピー
+2. MANIFEST.json 作成（key_numbers に CsPbI3/CsSnI3/CsGeI3 の g_e, g_h）
+3. 入力 JSON + cli.txt + git_info.txt + env.yml を `inputs/` に
+4. 同様に `results/optical/` を `results/production/phase_1.5_optical/2026-05-23_<hash>/`
+5. 既存 reports の数値表に MANIFEST 参照を追記
+
+### 優先 4: Theme A 報告書の論文化磨き
+
+`cowork/reports/theme_A_g_factor.md` を **公開クオリティ** に仕上げる：
+
+1. **歴史的引用の系譜を Introduction に明記:**
+   - Roth 1960 (PR 118, 1534, in `references/pdfs/classic_Roth1960_PR118_1534.pdf`) - g因子 k·p 原典 (Ge, Si)
+   - Kane 1957 (要 D ドライブからコピー、`cowork/progress/2026-05-23_1410_directive_update.md` 参照) - k·p 原典
+   - Yafet 1963 - g因子拡張（要追加調査）
+   - Boyer-Richard 2016 (in `references/pdfs/doi_10.1021_acs.jpclett.6b01749_BoyerRichard2016.pdf`) - MAPbI3 symmetry-based TB 原典
+   - Kirstein 2022 (in collection) - Pb halide perovskite で普遍関係発見
+   - Nestoklon 2023 (in collection) - TB から確認
+   - **本研究 (Sn/Ge halide perovskite で普遍関係破れ)**
+
+2. **Figure 1-3 の本格化:**
+   - Fig.1: 9 材料の g_e と g_h を Eg の関数として、Pb 普遍曲線重畳
+   - Fig.2: g_h deviation vs Δ (材料別)
+   - Fig.3: g テンソル等方性（Roth-Lax 数値、立方等方性確認）
+   - PDF として results/production/theme_A_g_factor/figures/ に保存
+
+3. **Discussion 強化:**
+   - Blount 1962 / Roth-Lax 1959 の TB 不完全性議論
+   - g_e 「見かけ普遍性」（P が ~40% 変動）
+   - g_h 「真の普遍性破れ」（Δ→0 で g_h→+2）
+   - 磁気光学（Faraday rotation）実験への含意
+
+4. **References 整理:**
+   - 全ての引用を BibTeX 形式で `cowork/reports/theme_A_g_factor.bib` に作成
+
+### 優先 5: D ドライブの古典原典 16 本のコピー
+
+`cowork/progress/2026-05-23_1410_directive_update.md` の通り、Windows `copy` コマンドで以下を `references/pdfs/` に。タイトル検証必須。
+
+- Kane 1957 (parts 1, 2), Kane 1963
+- Vogl 1983
+- Luttinger 1955, 1956
+- Wannier 1937
+- Dresselhaus 1955
+- Ando 1982 RMP
+- Hjarmarson 1980
+- Bouckaert 1936
+- Cardona 1966, Cohen 1966, Chelikowsky 1974
+- Brust 1964
+- Kohn 1955 (×2)
+
+### 優先 6: Theme F 報告書 (reports/theme_F_shift_current.md) draft
+
+F4・F5 完了後に draft を書く。Hughes-Sipe 1996 と Tan & Rappe 2015 を方法論の根拠として引用。
+
+### 優先 7: 全体のテスト・品質チェック
+
+- `pytest` 全テスト通過確認（既存 200+ 個、破壊なし）
+- `git log --oneline` で commit メッセージが分かりやすいか確認
+- `RESULTS.md` の更新（最新の達成状況を反映）
+
+---
+
+### 優先 8: 全部終わったら → `cowork/future_themes.md` の追加テーマへ
+
+PI から「全部終わってたらテーマ追加してね」との指示。優先 1-7 が全て完了したら、`cowork/future_themes.md` の以下を **軽い順**に着手：
+
+1. **Theme I — Exciton binding energy (Wannier-Mott)** ★軽量、すぐ実装可
+2. **Theme H — Berry curvature / Hall conductivity** ★velocity op 再利用
+3. **Theme J — Circular Photogalvanic Effect (CPGE)** ★Theme F の自然な拡張
+4. **Theme L — Carrier mobility (Fröhlich)** 中規模
+5. **Theme K — 2D Ruddlesden-Popper g-factor (Kopteva 2026 直接照合)** 重め
+
+各テーマも **Production モード必須**（`PRODUCTION_RULES.md` 準拠）。報告書 `reports/theme_<X>_<name>.md` も忘れずに。
+
+---
+
+## 🤖 PI 不在中の自律判断の原則
+
+- **30 分以上行き詰まったら**: `cowork/progress/.../BLOCKED_<topic>.md` に詳細を書いて次の優先タスクへ進む（PI 起床まで待つ必要なし）
+- **物理的判断に迷ったら**: 既存ルール（出典明記、改竄禁止）に従い、判断根拠を `progress/` に書く。後で PI レビュー
+- **新しい論文や式が必要になったら**: `progress/.../need_paper_<topic>.md` に書く。Cowork supervisor が次回巡回時に拾って取得試行
+- **テスト失敗したら**: 既存テストを修正せず、原因を `progress/.../test_failure_<file>.md` に書いて次へ
+
+## 📊 PI が朝起きた時に見たいもの（最終目標）
+
+1. ✅ `reports/theme_F_shift_current.md` draft v1
+2. ✅ `reports/theme_A_g_factor.md` 公開クオリティ
+3. ✅ `results/production/` 配下が Production 整備済み
+4. ✅ git log に 10+ 新規 commit、すべてテスト通過
+5. ✅ `RESULTS.md` が最新状態
+6. ✅ `cowork/progress/.../PI_summary_2026-05-24.md` で「PI 不在中に何をやったか」の総括
+
+朝に PI が `RESULTS.md` と `PI_summary_2026-05-24.md` だけ読めば全体把握できるように。
+
+---
 
 ---
 

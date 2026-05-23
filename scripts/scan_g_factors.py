@@ -1,131 +1,134 @@
 #!/usr/bin/env python3
-"""Theme A / A4 -- g-factor scan over the 9 cubic CsBX3 perovskites.
+"""Theme A / A4 -- k.p g-factor scan over the 9 cubic CsBX3 perovskites.
+
+Method (Cowork directive v2 sec.2): apply the Kirstein 2021 universal k.p
+relation (arXiv:2112.15384 Eqs.5,6) to literature band gaps Eg and SO
+splittings Delta (data/parameters/experimental_band_data.json).
+
+Two evaluations per material:
+  (i)  universal Delta = 1.5 eV  -> "does the Pb-based universal curve hold?"
+  (ii) material-specific Delta   -> "how does weaker Sn/Ge SOC shift g?"
+
+Physics note: g_e depends only on Eg (Eq.6), so every material lies on a single
+universal g_e(Eg) curve (given universal P). g_h depends on Eg AND Delta (Eq.5),
+so the smaller Sn/Ge conduction-band SO splitting makes their hole g-factor
+deviate from the Pb-based universal curve -- the central lead-free result.
 
 Outputs (results/g_factors/):
-  * g_factor_table.csv  -- per material: TB-computed Eg, Delta (Kashikar 13orb),
-    k.p universal g_e/g_h at the TB gap, and (Pb only, where a repo-sourced
-    realistic gap exists) the k.p g at the realistic gap.
-  * kirstein_plot.png   -- universal g_e(Eg), g_h(Eg) curves with the realistic
-    Pb anchors (Nestoklon Table S2) overlaid.
-  * material_grid.png   -- 3x3 (B x X) heatmaps of TB Eg and Delta.
-
-IMPORTANT (no hallucination):
-  * The Kashikar parametrisation reproduces the mBJ+SOC DFT gaps, which are
-    known to *underestimate* the experimental gaps (e.g. CsPbI3 ~0.6 eV vs
-    experiment ~1.7 eV).  The k.p g-factor formula needs the *realistic* gap, so
-    g-values computed at the small mBJ gaps are unphysically large and are
-    reported only for completeness.
-  * Realistic gaps are repo-sourced ONLY for the 3 Pb halides (Nestoklon
-    arXiv:2012.14705 / Table S2).  Realistic CsGeX3 / CsSnX3 gaps are NOT in the
-    repository -> flagged for Cowork (see progress/). Those rows are left blank
-    in the realistic columns rather than guessed.
+  g_factor_9material.csv, kirstein_universal_plot.png, material_grid.png
 """
 
 from __future__ import annotations
 
 import csv
+import json
 import os
 
 import numpy as np
 
-from perovskite_tb import models_kashikar as mk
 from perovskite_tb.g_factor import g_factor_kp
-from perovskite_tb.io_params import get_material, load_parameter_file
 
 OUTDIR = "results/g_factors"
-K13 = "data/parameters/kashikar2021_cubic_13orb.json"
+DATA = "data/parameters/experimental_band_data.json"
 B_SITES = ["Ge", "Sn", "Pb"]
 X_SITES = ["Cl", "Br", "I"]
-
-# Repo-sourced realistic (experimental/DFT-combined) cubic gaps and CB SO
-# splittings, in eV. Pb: Nestoklon arXiv:2012.14705 Table S2. Others: not in
-# repository (None -> flagged for Cowork, NOT guessed).
-REALISTIC = {
-    "CsPbCl3": {"Eg": 3.090, "Delta": 1.526, "src": "Nestoklon Table S2"},
-    "CsPbBr3": {"Eg": 2.352, "Delta": 1.436, "src": "Nestoklon Table S2"},
-    "CsPbI3": {"Eg": 1.652, "Delta": 1.258, "src": "Nestoklon Table S2"},
-}
-
-
-def tb_gap_delta(params, a):
-    """R-point gap Eg and CB spin-orbit splitting Delta from Kashikar 13orb."""
-    nf = 20
-    kR = np.array([np.pi / a] * 3)
-    ev = np.sort(np.linalg.eigvalsh(mk.kashikar13_hamiltonian(kR, params, a)).real)
-    return ev[nf] - ev[nf - 1], ev[nf + 2] - ev[nf]
+P_UNIVERSAL = 6.8
+DGE_UNIVERSAL = -1.0
+DELTA_UNIVERSAL = 1.5
 
 
 def main():
     os.makedirs(OUTDIR, exist_ok=True)
-    data = load_parameter_file(K13)
+    with open(DATA) as fh:
+        data = json.load(fh)
+    mats = data["materials"]
+    du = data.get("delta_uncertainty_frac", 0.20)
+
     rows = []
     for B in B_SITES:
         for X in X_SITES:
             mat = f"Cs{B}{X}3"
-            m = get_material(data, mat)
-            Eg_tb, D_tb = tb_gap_delta(m["params"], m["a"])
-            kp_tb = g_factor_kp(Eg_tb, D_tb)
-            row = {
-                "material": mat, "B": B, "X": X,
-                "Eg_TB_mBJ": round(Eg_tb, 4), "Delta_TB": round(D_tb, 4),
-                "g_e_kp_TB": round(kp_tb["g_e"], 3), "g_h_kp_TB": round(kp_tb["g_h"], 3),
-                "Eg_realistic": "", "Delta_realistic": "",
-                "g_e_kp_realistic": "", "g_h_kp_realistic": "", "realistic_src": "",
-            }
-            if mat in REALISTIC:
-                r = REALISTIC[mat]
-                kp_r = g_factor_kp(r["Eg"], r["Delta"])
-                row.update({
-                    "Eg_realistic": r["Eg"], "Delta_realistic": r["Delta"],
-                    "g_e_kp_realistic": round(kp_r["g_e"], 3),
-                    "g_h_kp_realistic": round(kp_r["g_h"], 3),
-                    "realistic_src": r["src"],
-                })
-            rows.append(row)
+            Eg = mats[mat]["Eg"]
+            Delta = mats[mat]["Delta"]
+            # g_e depends on Eg only; g_h on (Eg, Delta).
+            uni = g_factor_kp(Eg, DELTA_UNIVERSAL, P_UNIVERSAL, DGE_UNIVERSAL)
+            msp = g_factor_kp(Eg, Delta, P_UNIVERSAL, DGE_UNIVERSAL)
+            # Delta uncertainty -> g_h range (Sn/Ge only carry the +/-20%; Pb literature).
+            frac = du if mats[mat]["Delta_method"] == "kashikar_3lambda" else 0.05
+            gh_lo = g_factor_kp(Eg, Delta * (1 - frac), P_UNIVERSAL, DGE_UNIVERSAL)["g_h"]
+            gh_hi = g_factor_kp(Eg, Delta * (1 + frac), P_UNIVERSAL, DGE_UNIVERSAL)["g_h"]
+            rows.append({
+                "material": mat, "B": B, "X": X, "Eg": Eg, "Delta": Delta,
+                "g_e": round(msp["g_e"], 3),
+                "g_h_universalDelta": round(uni["g_h"], 3),
+                "g_h_materialDelta": round(msp["g_h"], 3),
+                "g_h_deviation": round(msp["g_h"] - uni["g_h"], 3),
+                "g_h_lo": round(min(gh_lo, gh_hi), 3),
+                "g_h_hi": round(max(gh_lo, gh_hi), 3),
+                "Delta_method": mats[mat]["Delta_method"],
+            })
 
-    csv_path = os.path.join(OUTDIR, "g_factor_table.csv")
+    csv_path = os.path.join(OUTDIR, "g_factor_9material.csv")
     with open(csv_path, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
     print(f"wrote {csv_path}")
+    for r in rows:
+        print(f"  {r['material']:9s} Eg={r['Eg']:.2f} D={r['Delta']:.2f}  "
+              f"g_e={r['g_e']:+.2f}  g_h(uniD)={r['g_h_universalDelta']:+.2f}  "
+              f"g_h(matD)={r['g_h_materialDelta']:+.2f}  dev={r['g_h_deviation']:+.2f}")
 
-    _plot_kirstein(rows)
+    _plot(rows)
     _plot_grid(rows)
     return rows
 
 
-def _plot_kirstein(rows):
+def _plot(rows):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    Eg = np.linspace(0.8, 3.6, 300)
-    ge = [g_factor_kp(e, 1.5)["g_e"] for e in Eg]
-    gh = [g_factor_kp(e, 1.5)["g_h"] for e in Eg]
-    fig, ax = plt.subplots(figsize=(7, 5))
-    ax.plot(Eg, ge, "C0-", label="$g_e$ universal (Kirstein, $\\Delta$=1.5)")
-    ax.plot(Eg, gh, "C3-", label="$g_h$ universal")
-    ax.axhline(-5 / 3, color="C0", ls=":", lw=0.8)
-    ax.axhline(2.0, color="C3", ls=":", lw=0.8)
-    # realistic Pb anchors
+    Egc = np.linspace(1.2, 3.6, 300)
+    ge_curve = [g_factor_kp(e, DELTA_UNIVERSAL, P_UNIVERSAL, DGE_UNIVERSAL)["g_e"] for e in Egc]
+    gh_curve = [g_factor_kp(e, DELTA_UNIVERSAL, P_UNIVERSAL, DGE_UNIVERSAL)["g_h"] for e in Egc]
+    color = {"Ge": "C2", "Sn": "C1", "Pb": "C0"}
+    marker = {"Cl": "o", "Br": "s", "I": "^"}
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.2))
+    # electron g
+    ax1.plot(Egc, ge_curve, "k-", lw=1.2, label="universal $g_e(E_g)$ (Kirstein)")
+    ax1.axhline(-5 / 3, color="grey", ls=":", lw=0.8)
     for r in rows:
-        if r["g_e_kp_realistic"] != "":
-            ax.scatter(r["Eg_realistic"], r["g_e_kp_realistic"], c="C0", s=60, zorder=5,
-                       edgecolor="k")
-            ax.scatter(r["Eg_realistic"], r["g_h_kp_realistic"], c="C3", s=60, zorder=5,
-                       edgecolor="k", marker="^")
-            ax.annotate(r["material"], (r["Eg_realistic"], r["g_e_kp_realistic"]),
-                        fontsize=8, xytext=(3, 4), textcoords="offset points")
-    ax.set_xlabel("Band gap $E_g$ (eV)")
-    ax.set_ylabel("Landé g-factor")
-    ax.set_title("g-factor vs band gap: universal relation + Pb anchors (realistic $E_g$)")
-    ax.legend(fontsize=8)
-    ax.grid(alpha=0.3)
+        ax1.scatter(r["Eg"], r["g_e"], c=color[r["B"]], marker=marker[r["X"]],
+                    s=70, edgecolor="k", zorder=5)
+    ax1.set_xlabel("$E_g$ (eV)"); ax1.set_ylabel("$g_e$")
+    ax1.set_title("Electron g-factor (depends on $E_g$ only)\nall 9 materials on one curve")
+    ax1.grid(alpha=0.3)
+
+    # hole g
+    ax2.plot(Egc, gh_curve, "k-", lw=1.2, label="Pb-based universal $g_h$ ($\\Delta$=1.5)")
+    ax2.axhline(2.0, color="grey", ls=":", lw=0.8)
+    for r in rows:
+        yerr = [[r["g_h_materialDelta"] - r["g_h_lo"]], [r["g_h_hi"] - r["g_h_materialDelta"]]]
+        ax2.errorbar(r["Eg"], r["g_h_materialDelta"], yerr=yerr, fmt=marker[r["X"]],
+                     color=color[r["B"]], ms=8, mec="k", capsize=3, zorder=5)
+    ax2.set_xlabel("$E_g$ (eV)"); ax2.set_ylabel("$g_h$")
+    ax2.set_title("Hole g-factor (depends on $E_g$ and $\\Delta$)\nSn/Ge deviate from Pb curve (weaker SOC)")
+    ax2.grid(alpha=0.3)
+
+    # shared legend for B/X
+    from matplotlib.lines import Line2D
+    handles = [Line2D([0], [0], marker="o", color="w", markerfacecolor=color[b],
+                      markeredgecolor="k", markersize=9, label=b) for b in B_SITES]
+    handles += [Line2D([0], [0], marker=marker[x], color="w", markerfacecolor="grey",
+                       markeredgecolor="k", markersize=9, label=x) for x in X_SITES]
+    ax2.legend(handles=handles, fontsize=8, ncol=2, title="B / X")
+    ax1.legend(fontsize=8)
+    fig.suptitle("k·p universal g-factors of cubic CsBX$_3$ (Kirstein 2021 relation, literature $E_g$)")
     fig.tight_layout()
-    p = os.path.join(OUTDIR, "kirstein_plot.png")
-    fig.savefig(p, dpi=150)
-    plt.close(fig)
+    p = os.path.join(OUTDIR, "kirstein_universal_plot.png")
+    fig.savefig(p, dpi=150); plt.close(fig)
     print(f"wrote {p}")
 
 
@@ -134,27 +137,26 @@ def _plot_grid(rows):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    Eg = np.zeros((3, 3)); D = np.zeros((3, 3))
-    for r in rows:
-        i = B_SITES.index(r["B"]); j = X_SITES.index(r["X"])
-        Eg[i, j] = r["Eg_TB_mBJ"]; D[i, j] = r["Delta_TB"]
+    R = {r["material"]: r for r in rows}
+    GE = np.zeros((3, 3)); GH = np.zeros((3, 3))
+    for i, B in enumerate(B_SITES):
+        for j, X in enumerate(X_SITES):
+            r = R[f"Cs{B}{X}3"]; GE[i, j] = r["g_e"]; GH[i, j] = r["g_h_materialDelta"]
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-    for ax, M, title in [(axes[0], Eg, "TB $E_g$ (mBJ+SOC, eV)"),
-                         (axes[1], D, "TB CB SO splitting $\\Delta$ (eV)")]:
-        im = ax.imshow(M, cmap="viridis", origin="upper")
+    for ax, M, title, cmap in [(axes[0], GE, "$g_e$", "viridis"),
+                              (axes[1], GH, "$g_h$ (material $\\Delta$)", "coolwarm")]:
+        im = ax.imshow(M, cmap=cmap, origin="upper")
         ax.set_xticks(range(3)); ax.set_xticklabels(X_SITES)
         ax.set_yticks(range(3)); ax.set_yticklabels(B_SITES)
         for i in range(3):
             for j in range(3):
-                ax.text(j, i, f"{M[i, j]:.2f}", ha="center", va="center",
-                        color="w", fontsize=10)
-        ax.set_title(title)
-        fig.colorbar(im, ax=ax, fraction=0.046)
-    fig.suptitle("Kashikar 13-orbital CsBX$_3$ (B rows: Ge/Sn/Pb, X cols: Cl/Br/I)")
+                ax.text(j, i, f"{M[i, j]:+.2f}", ha="center", va="center",
+                        color="k", fontsize=11)
+        ax.set_title(title); fig.colorbar(im, ax=ax, fraction=0.046)
+    fig.suptitle("Predicted g-factors, CsBX$_3$ (rows Ge/Sn/Pb, cols Cl/Br/I)")
     fig.tight_layout()
     p = os.path.join(OUTDIR, "material_grid.png")
-    fig.savefig(p, dpi=150)
-    plt.close(fig)
+    fig.savefig(p, dpi=150); plt.close(fig)
     print(f"wrote {p}")
 
 

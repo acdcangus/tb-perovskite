@@ -30,6 +30,21 @@ def test_kp_reproduces_electron_anchor():
     assert r["g_e"] == pytest.approx(3.23, abs=0.05)
 
 
+@pytest.mark.parametrize("mat,Eg,Delta,ge_ref", [
+    ("CsPbCl3", 3.090, 1.526, 0.95),
+    ("CsPbBr3", 2.352, 1.436, 1.77),
+    ("CsPbI3", 1.652, 1.258, 3.23),
+])
+def test_kp_reproduces_pb_electron_table_s2(mat, Eg, Delta, ge_ref):
+    """k.p g_e reproduces Nestoklon Table S2 for all 3 Pb halides to ~meV (A4-4).
+
+    (g_h is reproduced only approximately by the 2-band k.p, especially for the
+    iodide -- the known limitation; not asserted tightly here.)
+    """
+    g = g_factor_kp(Eg, Delta, P=6.8, dg_e=-1.0)
+    assert g["g_e"] == pytest.approx(ge_ref, abs=0.02), f"{mat}: g_e={g['g_e']:.3f}"
+
+
 def test_kp_large_gap_limits():
     """Eg -> infinity: g_e -> -2/3 + dg_e = -5/3, g_h -> +2 (Kirstein Sec. text)."""
     r = g_factor_kp(Eg=1e6, Delta=1.5, P=6.8, dg_e=-1.0)

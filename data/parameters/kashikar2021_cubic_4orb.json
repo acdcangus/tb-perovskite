@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "model_id": "kashikar2021_cubic_4orb",
+  "model_kind": "slater_koster_4orbital_minimal",
+  "description": "Four-orbital minimal-basis Slater-Koster tight-binding model for cubic halide perovskites CsBX3. Basis = B-{s, px, py, pz} only; the X-p contribution is folded into effective B-B (second-neighbour) interactions. eps_s, eps_p are the anti-bonding band centres; t's are effective second-neighbour hoppings. SOC lambda*L.S acts on the B-p manifold. Hamiltonian: Eqs. (11)-(12); dispersion functions h_i in Eq. (8). Minimal-model band gap (no SOC): Eg = eps_p - eps_s - 2*tppsigma - 4*tppi + 6*tss.",
+  "source": {
+    "authors": "R. Kashikar, M. Gupta, B. R. K. Nanda",
+    "title": "A Generic Slater-Koster Description of the Electronic Structure of Centrosymmetric Halide Perovskites",
+    "arxiv": "2101.08562",
+    "version": "v1 (21 Jan 2021)",
+    "parameters_from": "Table IV (four-orbital minimal model, cubic phase)",
+    "units": "eV",
+    "dft_reference": "PBE-GGA + Tran-Blaha mBJ"
+  },
+  "parameter_keys": {
+    "eps_s":    "Anti-bonding band centre, s character (eps_s^A)",
+    "eps_p":    "Anti-bonding band centre, p character (eps_p^A)",
+    "t_ss":     "Effective second-neighbour s-s hopping (t_ss)",
+    "t_sp":     "Effective second-neighbour s-p sigma hopping (t_sp)",
+    "t_ppsigma":"Effective second-neighbour p-p sigma hopping (t_pp,sigma)",
+    "t_pppi":   "Effective second-neighbour p-p pi hopping (t_pp,pi)",
+    "lambda_SOC":"Spin-orbit coupling strength lambda on B-p"
+  },
+  "materials": {
+    "CsGeCl3": {"a": 5.34, "params": {"eps_s": 1.17, "eps_p": 6.47, "t_ss": -0.26, "t_sp": 0.47, "t_ppsigma": 0.75, "t_pppi": 0.09, "lambda_SOC": 0.07}},
+    "CsGeBr3": {"a": 5.60, "params": {"eps_s": 1.46, "eps_p": 6.10, "t_ss": -0.23, "t_sp": 0.48, "t_ppsigma": 0.84, "t_pppi": 0.09, "lambda_SOC": 0.06}},
+    "CsGeI3":  {"a": 6.00, "params": {"eps_s": 1.70, "eps_p": 5.55, "t_ss": -0.16, "t_sp": 0.48, "t_ppsigma": 0.86, "t_pppi": 0.09, "lambda_SOC": 0.06}},
+    "CsSnCl3": {"a": 5.62, "params": {"eps_s": 2.08, "eps_p": 8.68, "t_ss": -0.25, "t_sp": 0.45, "t_ppsigma": 0.74, "t_pppi": 0.10, "lambda_SOC": 0.52}},
+    "CsSnBr3": {"a": 5.88, "params": {"eps_s": 1.73, "eps_p": 7.11, "t_ss": -0.21, "t_sp": 0.50, "t_ppsigma": 0.77, "t_pppi": 0.11, "lambda_SOC": 0.52}},
+    "CsSnI3":  {"a": 6.27, "params": {"eps_s": 1.68, "eps_p": 6.23, "t_ss": -0.15, "t_sp": 0.48, "t_ppsigma": 0.83, "t_pppi": 0.10, "lambda_SOC": 0.49}},
+    "CsPbCl3": {"a": 5.71, "params": {"eps_s": 2.46, "eps_p": 7.57, "t_ss": -0.31, "t_sp": 0.49, "t_ppsigma": 0.72, "t_pppi": 0.10, "lambda_SOC": 0.16}},
+    "CsPbBr3": {"a": 5.98, "params": {"eps_s": 2.36, "eps_p": 6.88, "t_ss": -0.30, "t_sp": 0.52, "t_ppsigma": 0.79, "t_pppi": 0.11, "lambda_SOC": 0.16}},
+    "CsPbI3":  {"a": 6.38, "params": {"eps_s": 2.18, "eps_p": 6.05, "t_ss": -0.22, "t_sp": 0.48, "t_ppsigma": 0.85, "t_pppi": 0.10, "lambda_SOC": 0.14}}
+  }
+}

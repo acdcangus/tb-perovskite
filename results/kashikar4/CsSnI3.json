@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-05-23T00:42:27.079591+00:00",
-  "git_commit": "de9fa167f671d95977052c4a98aa189869a97b92-dirty",
+  "timestamp_utc": "2026-05-23T01:04:47.057829+00:00",
+  "git_commit": "6a2c4f73a5ec99139cb6a9f9f77371daea3ee318-dirty",
   "package_version": "0.1.0",
   "python": "3.14.5",
   "numpy": "2.4.6",

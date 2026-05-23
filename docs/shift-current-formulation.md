@@ -5,12 +5,14 @@
 **目的:** 既存 TB エンジン + velocity operator（A2）から、ハライドペロブスカイトの
 shift current 伝導度 σ⁽²⁾_abc(ω)（bulk photovoltaic effect, BPVE）を計算する定式化。
 
-> **注意（文献取得状況, `progress/2026-05-23_1130_theme_F_pdf_status.md`）:** 本 draft の主方法論
-> 参照は **Passos et al. 2018（arXiv:1712.04924, 取得・検証済み）**。shift current の原典
-> **Young & Rappe 2012** と検証アンカー **Tan & Rappe 2016** は **PDF 未取得**（Cowork が示した
-> arXiv ID 1207.5462 / 1612.09194 は検証の結果**別分野の無関係論文**で削除済み）。よって
-> 本 draft の σ⁽²⁾ 表式は **directive 引用式 + Sipe-Shkrebtii 標準形 + Passos 2018** から
-> 再構成したものであり、Young&Rappe / Tan&Rappe の式番号・検証値は PDF 取得後に照合する。
+> **注意（文献取得状況, 更新 2026-05-23 後半）:** Cowork correction #2 が正しい arXiv ID を
+> 1次情報確認で提供し、**主要文献は全て取得・タイトル検証済み**:
+> Passos 2018 (arXiv:1712.04924, primary), Young & Rappe 2012 (arXiv:1202.3168, shift current 原典),
+> Fregoso 2017 (arXiv:1701.00172, shift vector 形式), Tan & Rappe 2016 (npj OA,
+> `doi_10.1038_npjcompumats.2016.26.pdf`, 検証アンカー・レビュー)。
+> Cowork が当初示した ID 1207.5462 / 1612.09194 は検証の結果**無関係論文**で削除済み。
+> σ⁽²⁾ 表式は Sipe-Shkrebtii 標準形 + Passos 2018 から再構成。Young&Rappe/Tan&Rappe の
+> **具体的検証値（MAPbI₃ ピーク等）は F4 で精密照合**（PDF は取得済み）。
 
 ---
 
@@ -81,8 +83,9 @@ shift current σ⁽²⁾_abc は **3階極性テンソル** → **空間反転�
    ハルシネーションproof**（対称性は厳密に保証されるべき）。
 2. **極性変位で発現**: δ>0 で σ⁽²⁾_{zzz}(ω) ≠ 0、δ→0 で連続的に 0 へ。
 3. **ピーク位置 = バンド端近傍**: σ⁽²⁾ の立ち上がりが直接ギャップ ~Eg。
-4. **Tan & Rappe 2016 MAPbI₃**（**PDF 取得後**）: shift current ピーク位置（~2-3 eV）と振幅
-   （~10-100 μA/V²）を ±0.1 eV / order-of-magnitude で照合。**現状プレースホルダ**。
+4. **Tan & Rappe 2016 MAPbI₃**（**PDF 取得済み** `doi_10.1038_npjcompumats.2016.26.pdf`）:
+   shift current ピーク位置（~2-3 eV）・振幅（~10-100 μA/V²）を ±0.1 eV / order-of-magnitude で
+   照合。**具体値は F4 で本文/図から精密に読み取り確定**（実装後）。
 5. **sum rule / gauge 不変性**: velocity gauge (Passos) と length gauge の一致確認（Passos 2018 の主題）。
 
 ## 6. 既知の限界（Blount 1962 統一ナラティブの継続）
@@ -105,8 +108,8 @@ TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**�
 2. **SK 距離スケーリング指数 η_l の出典**: 歪み下の hopping 修正に必要だが Kashikar/Nestoklon は
    固定結合長。Harrison 標準値（s,p,d で d⁻²等）を採用してよいか、材料別フィットが要るか。
    → 出典確定まで F3 実装は保留（推測しない）。
-3. **Young & Rappe 2012 / Tan & Rappe 2016 / Fregoso 2017 の正しい PDF**（§冒頭注記）。
-   検証アンカー（MAPbI₃ ピーク）と式番号・符号の照合に必須。
+3. ~~Young & Rappe / Tan & Rappe / Fregoso PDF~~ → **全て取得・検証済み**（correction #2 の正 ID）。
+   検証アンカー（MAPbI₃ ピーク）の具体値読み取りは F4 で実施。
 
 ## 参考文献（出典; 取得状況明記）
 - **D. J. Passos, G. B. Ventura, J. M. V. P. Lopes, J. M. B. Lopes dos Santos**, "Nonlinear optical
@@ -115,11 +118,14 @@ TB の位置演算子 `r = i∂_k`（+ξ）は **intra-atomic 成分を欠く**�
   connection, covariant derivative, Blount 分解。
 - A. M. Sheikhabadi, Z. Bagheri, A. Sadeghi, "Theory of nonlinear optical response", arXiv:2207.00331
   (2022). — **sub**（disorder 入り 2nd-order response の formalism。取得・検証済み）。
-- J. E. Young, A. M. Rappe, *Phys. Rev. Lett.* **109**, 116601 (2012). — shift current 第一原理公式
-  （**PDF 未取得**, ID 要確認）。
-- J. E. Sipe, A. I. Shkrebtii, *Phys. Rev. B* **61**, 5337 (2000). — 非線形応答 k 空間表式（未取得）。
-- F. Tan, A. M. Rappe et al., *npj Comput. Mater.* **2**, 16026 (2016). — ペロブスカイト shift current
-  TB 計算・検証アンカー（**PDF 未取得**, OA のはず）。
-- B. M. Fregoso, T. Morimoto, J. E. Moore, *Phys. Rev. B* **96**, 075421 (2017). — shift vector 形式（未取得, ID 要確認）。
+- S. M. Young, A. M. Rappe, *Phys. Rev. Lett.* **109**, 116601 (2012); arXiv:**1202.3168**.
+  — shift current BPVE の第一原理公式（**取得・検証済み**: "First principles calculation of the
+  shift current photovoltaic effect in ferroelectrics"）。
+- J. E. Sipe, A. I. Shkrebtii, *Phys. Rev. B* **61**, 5337 (2000). — 非線形応答 k 空間表式（未取得; 式は Passos 2018 経由）。
+- L. Z. Tan, F. Zheng, S. M. Young, F. Wang, S. Liu, A. M. Rappe, *npj Comput. Mater.* **2**, 16026
+  (2016); DOI:10.1038/npjcompumats.2016.26（**取得・検証済み**, `doi_10.1038_npjcompumats.2016.26.pdf`）。
+  — polar materials の shift current レビュー・**検証アンカー（MAPbI₃, F4 で精密照合）**。
+- B. M. Fregoso, T. Morimoto, J. E. Moore, *Phys. Rev. B* **96**, 075421 (2017); arXiv:**1701.00172**.
+  — shift vector の幾何学的解釈・gauge invariance（**取得・検証済み**）。
 - E. I. Blount, *Solid State Phys.* **13**, 305 (1962); *Phys. Rev.* **126**, 1636 (1962). — 統一限界。
 - S. Rajpurohit et al., arXiv:2105.11310. — bulk photovoltaic 背景（既収集）。

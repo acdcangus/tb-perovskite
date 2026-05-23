@@ -104,3 +104,15 @@ mkdir -p analysis
 `C:\Users\kteru\tb-perovskite\references\CLAUDE.md`
 
 進めていって何か判断に迷ったら、ユーザーに確認してから進めてください。よろしくお願いします。
+
+## arXiv PDF 取得時の必須チェック（2026-05-23 追加; ハルシネーション防止）
+
+新規 arXiv ID で PDF を取得する場合は必ず:
+1. `curl -sL https://arxiv.org/pdf/<ID> -o references/pdfs/arxiv_<ID>.pdf`
+2. `sleep 3`（レート制限回避）
+3. **取得直後にタイトル検証**: `pdftotext -layout`（無ければ pymupdf）で先頭を表示し、
+   期待タイトルと一致するか確認。
+4. 不一致なら即削除し、`progress/.../pdf_id_mismatch.md` で正しい ID 確認を依頼。
+
+根拠: directive の arXiv ID が 2 回続けて別分野の無関係論文を指していた事例
+（1207.5462=統計, 1612.09194=billiards 数学）を、取得時タイトル検証で排除できた。

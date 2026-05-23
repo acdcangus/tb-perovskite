@@ -204,3 +204,13 @@ Cowork directive (1055/1110) に基づき取得・**タイトル検証済み**:
 **取得時 ID 誤りの記録（ハルシネーション防止）:** Cowork が「可能性/推定」とした
 arXiv:1207.5462（実際は統計の論文）, arXiv:1612.09194（実際は billiards の数学論文）は
 Young & Rappe 2012 / Fregoso 2017 では**なかった**ため削除。正しい ID は Cowork 確認待ち。
+
+### 追補 — 正しい arXiv ID（Cowork correction #2, 2026-05-23, 取得・タイトル検証済み）
+
+| arXiv ID / DOI | 著者 | タイトル | 用途 |
+|---|---|---|---|
+| 1202.3168 | S. M. Young, A. M. Rappe (PRL 109, 116601, 2012) | First principles calculation of the shift current photovoltaic effect in ferroelectrics | shift current 原典 |
+| 1701.00172 | B. M. Fregoso, T. Morimoto, J. E. Moore (PRB 96, 075421, 2017) | Quantitative relationship between polarization differences and the zone-averaged shift photocurrent | shift vector 幾何 |
+| doi:10.1038/npjcompumats.2016.26 | L. Z. Tan, ..., A. M. Rappe (npj Comput. Mater. 2, 16026, 2016) | Shift current bulk photovoltaic effect in polar materials—hybrid and oxide perovskites and beyond | Theme F 検証アンカー（レビュー, npj OA） |
+
+（旧 directive の誤 ID 1207.5462 / 1612.09194 は無関係論文。タイトル検証で排除済み。）

@@ -52,7 +52,7 @@ graph TD
 
 ---
 
-## 3. 結果
+## 3. 結果（主結果 = C' 8 材料マップ、校正点 = D' CsPbI₃）
 
 ### 3.1 有効質量マップ（`theme_I_effective_mass MANIFEST` より、信頼可）
 
@@ -92,6 +92,8 @@ graph TD
 ## 4. 何が新しいか
 - 9 材料の **TB 有効質量マップ**（信頼可）と、**Wannier-Mott E_b の系統比較**。
 - **ε_eff vs bare ε の落とし穴**を定量化し、Materials Project DFPT で誤差源を分離（μ=TB / ε=MP）した hybrid 手法。
+- **C' を主結果（8 材料の相対トレンド）・D' を校正点（CsPbI₃ で実効 ε による絶対値の実験整合）として併記する hybrid 提示**は、
+  bare ε∞ の系統的過大評価を honest に扱いつつ実用的な material ランキングを与える、本研究の方法論的貢献。
 
 ## 5. 限界と今後の課題
 - **bare ε → E_b 絶対値は上限**（過大）。実効 ε_eff（フォノン遮蔽込み）は CsPbI₃ 型しか文献にない。

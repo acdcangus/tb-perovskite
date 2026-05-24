@@ -263,3 +263,29 @@ R 点では Bloch 位相が $\pi$ に固定されるため、R 点ギャップ�
 **SK-TB + Harrison スケーリング推定**。構造的挙動（$\epsilon=0$ 回復・線形性・符号）は模型内で厳密だが、
 $a_g$ の**絶対値は近似**（DFT-fit TB への Harrison 適用は粗い）で、DFT/実験との定量一致は主張しない（要第一原理 $a_g$ 比較）。
 
+## 17. 有限 z スラブ / 超格子 (`slab.py`, 仕様 F5 / F13 / F14-A)
+
+立方ペロブスカイトを z 方向に有限化（or 周期積層）し、面内 $(k_x,k_y)$ を良い量子数に保つ。**2D RP 量子閉じ込め $E_g(N)$（F5）**、
+**周期スタックのミニバンド（F13）**、**z 電場下の Stark スラブ（F14 モード A）** を提供。
+
+**手法（厳密な層分解）**: 3D Bloch H をゲージ変換 $U(k_z)=\mathrm{diag}(e^{-ik_z z_\alpha})$（X_z ハライド軌道は $z=a/2$, 他は $0$）で
+$2\pi/a$ 周期化 → 厳密 Fourier 分解で intra-cell ブロック $H_\parallel(k_x,k_y)$ と inter-cell ホッピング $T(k_x,k_y)$ に分離:
+$H(\mathbf{k})=H_\parallel+T e^{ik_z a}+T^\dagger e^{-ik_z a}$。スラブはこれで作るブロック三重対角行列（open/periodic）。
+分解は機械精度の**再構成テスト**で自己検証（誤れば一致しない）。出典: **Smith-Mailhiot, RMP 62, 173 (1990)**（超格子 TB）;
+**Even-Pedesseau-Katan, ChemPhysChem 15, 3733 (2014)**（2D RP 量子閉じ込め; spacer は hard barrier=open BC として扱う）;
+Blancon et al., Science 355, 1288 (2017)（$E_g(n)$）; F14 場は Neugebauer-Scheffler, PRB 46, 16067 (1992)（scalar potential）。
+
+> **引用の訂正（ハルシネーション点検）**: 仕様書は 2D RP 量子閉じ込めを「Even et al., JPCC 118, 11566 (2014)」と引用するが、
+> その表題の論文は実際は **ChemPhysChem 15, 3733 (2014)**（JPCC 118,11566 は別テーマ＝相転移の Even 論文）。検証済みの ChemPhysChem を採用。
+
+### V&V（`tests/test_slab.py`, 7 ケース）
+- **層ブロック再構成**: $H_\parallel+T e^{ik_z a}+\mathrm{h.c.}$ == 3D H（機械精度）。
+- **周期スタック == 3D バンド**: $N$ セル periodic スラブ固有値 == $k_z=2\pi m/(Na)$ の 3D バンド和（F13, $N=3,5,8$）。
+- **ミニバンド崩壊**: inter-layer 結合 $\to0$ で $k_z$ 分散消失（$H_\parallel$ 準位が $N$ 重）。
+- **閉じ込め収束**: open スラブのギャップが厚み $N$ で収束（F5, バルク極限）。
+- **Stark（F14-A）**: $E=0$ で無電場スラブ回復、有限 $E$ でスペクトル幅 $\sim eE(N-1)a$ 増大。
+
+### honest 限界
+spacer/passivation は hard-barrier（open BC）理想化（Even 2014）。検証は model-internal（厳密再構成・periodic==3D・バルク極限）。
+$E_g(n)$ の絶対値は SK-TB/Blount caveat。F14 はモード A（Stark スラブ）のみ; モード B（バルク Berry 位相分極, KSV1993）は未実装。
+

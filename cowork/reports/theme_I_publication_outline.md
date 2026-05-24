@@ -7,7 +7,7 @@
 
 ## Abstract（~200 字）
 立方ハライドペロブスカイト CsBX₃（B=Ge/Sn/Pb, X=Cl/Br/I）の励起子結合エネルギー E_b を、tight-binding（Kashikar-13）
-有効質量と Materials Project の DFPT 高周波誘電率 ε∞ を組み合わせた Wannier-Mott 模型で系統評価。誤差源を μ（TB）と
+TB（Kashikar 2021 の 13 軌道 active basis）有効質量と Materials Project の DFPT 高周波誘電率 ε∞ を組み合わせた Wannier-Mott 模型で系統評価。誤差源を μ（TB）と
 ε∞（外部 DFPT, 単一手法）に分離。E_b は Cl 系で最大（CsPbCl₃ 119 meV）、Sn-I で最小（CsSnI₃ 4 meV）。bare ε∞ 由来で
 絶対値は上限だが相対トレンドは頑健。CsPbI₃ は実効 ε≈6.1 で E_b=22 meV と実験整合し校正点を与える。LED（大 E_b）/
 太陽電池（小 E_b）の材料選択指針を提示。
@@ -40,11 +40,11 @@
 実効 ε による校正点で実験整合を示した。鉛フリー光デバイス材料選択の計算指針。
 
 ## 6. References（主要）
-- Yang 2017 PRB 96 035301; Tanaka 2003 SSC 127 619（Wannier-Mott / 実験 E_b）
+- Yang 2017 PRB 96 035301; Tanaka 2003 SSC 127 619（Wannier-Mott / 実験 E_b; いずれも in-repo 外, 要原典確認）
 - Cho 2019 arXiv:1908.09436（GW-BSE, 実効 ε）
 - Jain 2013 APL Mater. 1 011002（Materials Project）
-- Kashikar 2021 arXiv:2101.08562（TB）; Blount 1962 PR 126 1636（TB 限界）
-- Kirstein 2022（g 因子普遍関係, 同材料群の関連）
+- Kashikar 2021 arXiv:2101.08562（TB, 13 軌道 active basis）; Blount 1962 PR 126 1636（TB 限界; in-repo 外）
+- Kirstein et al. arXiv:2112.15384, in-repo（g 因子 Eg 普遍関係, 同材料群の関連）
 
 ## 既存ドキュメントとの差分（学術論文ならでは）
 - 技術報告書 `theme_I_exciton.md`: 実装・bundle 中心。PI 解説 `PI_explained_theme_I.md`: 非専門向け。

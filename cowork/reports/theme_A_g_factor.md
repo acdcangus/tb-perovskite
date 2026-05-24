@@ -12,7 +12,7 @@
 - **新規性:** Ge/Sn 系の g因子の系統予測は 2026-05 時点で未報告。鉛フリースピン光デバイスの設計指針。
 
 ## 2. 方法
-- **エンジン:** 既存の検証済み TB（Kashikar 13軌道 / Nestoklon sp³d⁵s\*、163テスト通過）。
+- **エンジン:** 既存の検証済み TB（Kashikar 13軌道 active basis（同論文は 4 軌道 minimal も提案）/ Nestoklon sp³d⁵s\*、231 テスト通過（執筆時点））。
 - **g因子:**
   - 主手法 = **k·p 普遍式**（Kirstein Eq.(5) 正孔, Eq.(6) 電子）。`g_factor.py::g_factor_kp`。
     `g_e=−2/3+(4/3)P²/(C·Eg)+Δg_e`, `g_h=2−(4/3)(P²/C)[1/Eg−1/(Eg+Δ)]`, C=ℏ²/m₀=7.62 eV·Å²。

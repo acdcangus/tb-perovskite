@@ -10,7 +10,7 @@ g因子（Theme A）と同じ TB Hamiltonian + velocity operator から、立方
 光デバイス（吸収端・屈折率）の設計指標。励起子効果は含めない（将来 BSE 拡張）。
 
 ## 2. 方法
-- ε_i: Apergi 2023 (arXiv:2309.14002) Eq.(3),(4)。**ED 項の速度行列要素 = `velocity.py` の ∂H/∂k**
+- ε_i: Apergi 2023 (arXiv:2309.14002, in-repo; 表題は chiral perovskite の円二色性 TB) の速度行列要素ベース ε(ω) Eq.(3),(4)。一般 Kubo-Greenwood は Kubo1957/Greenwood1958（in-repo 外）。**ED 項の速度行列要素 = `velocity.py` の ∂H/∂k**
   を再利用（Theme A と同一インフラ）。ε_r は Kramers-Kronig。`src/perovskite_tb/optical.py`。
 - k 積分: Monkhorst-Pack。Lorentzian smearing η。前因子 πe²/ε₀=568.4 eV·Å（次元解析・f-sum で検証）。
 - 出典: Apergi 2023; Cho 2019 (arXiv:1908.09436); Blount 1962 (Phys. Rev. 126, 1636)。
@@ -35,7 +35,7 @@ g因子（Theme A）と同じ TB Hamiltonian + velocity operator から、立方
 
 ## 4. 論文値との比較
 - ε_∞ の**ハロゲン順序 I>Br>Cl** は実験/DFT と一致（Cowork 推奨ベンチマーク合格）。
-- 絶対 ε_∞（~1.5-4.7）は実験 ~5-6 より過小 → f-sum ~20% と整合（Blount 1962）。
+- 絶対 ε_∞（~1.5-4.7）は実験報告値 ~5-6（要原典確認, in-repo 外）より過小 → f-sum ~20% と整合（Blount 1962, in-repo 外）。
 - 吸収係数 α は可視〜近 UV で ~10⁵ cm⁻¹ オーダー（高エネルギー側）→ 文献オーダーと整合。
 
 ## 5. 物理的考察

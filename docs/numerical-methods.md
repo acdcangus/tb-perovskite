@@ -267,19 +267,24 @@ $\alpha$ と**先頭次**弱結合質量 $1+\alpha/6$ のみ実装・検証（in
 立方 Kashikar-13 模型に一様（hydrostatic）歪み $\epsilon$ を加え、R 点ギャップ応答 $E_g(\epsilon)$ と変形ポテンシャル
 $a_g=dE_g/d\epsilon$ を計算する。ホッピングは **Harrison d⁻² 普遍則**（W. A. Harrison,
 *Electronic Structure and the Properties of Solids*, Freeman 1980）で $t_*\to t_*(1+\epsilon)^{-2}$、
-オンサイト/SOC は不変。変形ポテンシャル枠組みは Bir-Pikus 1974、ペロブスカイト歪み文脈は Buin 2014 / Grumet 2018。
+オンサイト/SOC は不変。変形ポテンシャル枠組みは Bir-Pikus 1974。圧力係数の検証は
+**Pieniazek et al., J. Phys. Chem. Lett. 14, 6470 (2023), DOI 10.1021/acs.jpclett.3c01258**（MAPbI₃ 実験 dE_g/dP）と
+**Liu et al., Molecules 28, 7643 (2023), DOI 10.3390/molecules28227643**（cubic 体積弾性率）を使用。
+
+> **引用の訂正（ハルシネーション点検, 2026-05-24）**: 旧稿は歪み変形ポテンシャルの出典に「Buin, Nano Lett. 14, 6281 (2014)」「Grumet, PRB 98, 155143 (2018)」を挙げていたが、web/crossref 検証で **どちらも歪みとは無関係**と判明（Buin=trap-free 合成、Grumet=自己無撞着 GW 法論文）。両者を削除し、上記 Pieniazek/Liu に置換。
 
 R 点では Bloch 位相が $\pi$ に固定されるため、R 点ギャップの歪み応答は **Harrison ホッピング繰り込み**から来る
 （格子定数変化は R 点ギャップには直接効かない）。
 
-### V&V（`tests/test_bandengr.py`, 8 ケース）
+### V&V（`tests/test_bandengr.py`, 9 ケース）
 - Harrison 則 $t_*(1+\epsilon)^{-2}$（オンサイト/SOC 不変）。
 - $\epsilon=0$ で無歪みギャップ（CsPbI₃ 0.6298 eV, theme_F 一致）を厳密回復。
 - 小 $\epsilon$ で $E_g(\epsilon)$ 線形（変形ポテンシャルが well-defined）、引張/圧縮で逆符号、全材料で $a_g$ 有限。
+- **【追加】文献比較**（`test_strain_gap_sensitivity_lit`）: **符号**——TB は $dE_g/d\epsilon>0$（引張で gap 増 ⟺ $dE_g/dP<0$, 加圧で redshift）で実験（Pieniazek 2023）・CsPbI₃ DFT と**一致**。**大きさ**——cited $B$ で換算した TB $dE_g/dP\simeq-210$ meV/GPa（CsPbX₃）vs 実験 MAPbI₃ $-13\!\sim\!-41$ → 同符号・同オーダだが TB が 5–16× 過大。
 
 ### honest 限界
-**SK-TB + Harrison スケーリング推定**。構造的挙動（$\epsilon=0$ 回復・線形性・符号）は模型内で厳密だが、
-$a_g$ の**絶対値は近似**（DFT-fit TB への Harrison 適用は粗い）で、DFT/実験との定量一致は主張しない（要第一原理 $a_g$ 比較）。
+**SK-TB + Harrison スケーリング推定**。構造的挙動（$\epsilon=0$ 回復・線形性）と**符号は厳密かつ実験一致**（カテゴリ C）。
+ただし $a_g$ の**絶対値は過大評価**（カテゴリ D→C）: cubic-frozen TB には **octahedral tilting の自由度がなく**、ボンド長変化（急峻）のみを捉えるため。実材料は tilting で圧力を緩和し正味の係数が小さくなる。材料も異なる（CsPbI₃ TB vs MAPbI₃ 実験, 後者は tilted orthorhombic 相）。符号とオーダのみ主張。
 
 ## 17. 有限 z スラブ / 超格子 (`slab.py`, 仕様 F5 / F13 / F14-A)
 

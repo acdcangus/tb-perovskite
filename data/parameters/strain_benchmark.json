@@ -1,0 +1,25 @@
+{
+  "_README": "Benchmark for the F12 strain band-engineering deformation potential (bandengr.py, T1-2). The core TB (Kashikar-13, Harrison d^-2 hopping scaling) gives the band-gap response to hydrostatic strain; we compare its SIGN and ORDER OF MAGNITUDE to a verified experimental band-gap pressure coefficient. Absolute magnitude is NOT a quantitative match (see honest_note).",
+  "_citation_correction": "The PI sheet (09) cited 'Buin, Nano Lett. 14, 6281 (2014)' and 'Grumet, PRB 98, 155143 (2018)' for dEg/depsilon. Verified via web/crossref (2026-05-24): Buin 2014 = 'Materials Processing Routes to Trap-Free Halide Perovskites' (trap/defect states, NOT strain); Grumet PRB 98,155143 (2018) = 'Beyond the quasiparticle approximation: Fully self-consistent GW calculations' (GW method, NOT perovskite strain). Both are mis-citations and are NOT used.",
+  "experimental_pressure_coefficient": {
+    "material": "MAPbI3 (orthorhombic thin film)",
+    "dEg_dP_meV_per_GPa": {"T120K": -13.3, "T80K": -29.8, "T40K": -36.3, "DFT_0K": -41},
+    "sign": "negative (gap DECREASES under pressure / red-shift)",
+    "source": "A. Pieniazek, F. Dybala, M. P. Polak, et al., 'Bandgap Pressure Coefficient of a CH3NH3PbI3 Thin Film Perovskite', J. Phys. Chem. Lett. 14(28), 6470-6476 (2023), DOI 10.1021/acs.jpclett.3c01258 (verified web 2026-05-24)"
+  },
+  "cubic_bulk_modulus_GPa": {
+    "CsPbCl3": 16.008, "CsPbBr3": 13.361, "CsPbI3": 9.870,
+    "source": "Y. Liu, C. Fang, S. Lin, et al., 'Calculation of Mechanical Properties, Electronic Structure and Optical Properties of CsPbX3 (X=F,Cl,Br,I)', Molecules 28(22), 7643 (2023), DOI 10.3390/molecules28227643 (Voigt-Reuss-Hill; verified web 2026-05-24)"
+  },
+  "tb_results": {
+    "_method": "bandengr.hydrostatic_deformation_potential (Harrison d^-2, central difference at eps=0); pressure_coefficient = a_g * (-1/(3B)).",
+    "CsPbI3":  {"a_g_meV_per_pct": 62.5, "dEg_dP_meV_per_GPa": -211.2},
+    "CsPbBr3": {"a_g_meV_per_pct": 86.3, "dEg_dP_meV_per_GPa": -215.4},
+    "CsPbCl3": {"a_g_meV_per_pct": 98.7, "dEg_dP_meV_per_GPa": -205.6}
+  },
+  "comparison": {
+    "sign": "MATCH -- TB dEg/dP < 0 (tensile raises gap) agrees with experiment and CsPbI3 DFT redshift. Category C (sign), verified.",
+    "magnitude": "TB |dEg/dP| ~ 210 meV/GPa vs experimental MAPbI3 13-41 meV/GPa -> TB overestimates ~5-16x. NOT a 30% match. Category D->C.",
+    "honest_note": "TB is cubic-FROZEN with NO octahedral tilting, so it captures only the (steep) bond-length deformation; real perovskites relieve pressure largely via tilting, which partially compensates -> the net experimental coefficient is much smaller. Material also differs (CsPbI3 TB vs MAPbI3 exp), and the experiment is the tilted orthorhombic phase. Harrison scaling of a band-fit TB is additionally crude. Only sign + order are claimed."
+  }
+}

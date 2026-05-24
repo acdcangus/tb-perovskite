@@ -244,7 +244,7 @@ graph TD
 
 | 文献 | 寄与 |
 |---|---|
-| Boyer-Richard 2016 (arXiv:1606.07664) | ペロブスカイト TB の基礎 |
+| Boyer-Richard 2016 (J. Phys. Chem. Lett., DOI 10.1021/acs.jpclett.6b01749; in-repo PDF `doi_10.1021_acs.jpclett.6b01749_BoyerRichard2016.pdf`) | ペロブスカイト TB の基礎 |
 | Kashikar et al. 2021 (arXiv:2101.08562) | 13 軌道 TB パラメータセット（本研究の主エンジン） |
 | Nestoklon 2020 (arXiv:2012.14705) | sp³d⁵s\* TB（クロスチェック用） |
 | Kirstein et al. 2021 (arXiv:2112.15384) | Pb 系 g 因子の Eg 普遍関係 |
@@ -253,7 +253,7 @@ graph TD
 | Apergi et al. 2023 (arXiv:2309.14002) | TB-based 光学応答（Phase 1.5 の理論基盤） |
 | Fregoso 2017 (arXiv:1701.00172) | shift current の一般化微分公式（Theme F の核心） |
 | Tan & Rappe 2015/2016 | DFT による shift current ベンチマーク |
-| Blount 1962 (Phys. Rev. 126, 1636) | TB の電流演算子の不完全性（本研究で実測） |
+| Blount 1962（書誌 要原典確認・in-repo 外: 正準は *Solid State Phys.* 13, 305 (1962) "Formalisms of Band Theory" の可能性; 一部レポートの *Phys. Rev.* 126, 1636 表記は未検証） | TB の電流演算子の不完全性（本研究で実測） |
 
 ---
 

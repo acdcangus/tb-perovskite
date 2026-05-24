@@ -100,7 +100,7 @@ g_e の単一曲線は普遍 P=6.8 を仮定した帰結だった。TB-derived P
 ### Blount 1962 統一クロス検証（手法論の柱）
 g因子 atomistic Roth-Lax の過小評価（〜3×）と光学 f-sum の ~20% 取得は、いずれも TB の
 velocity operator `v≈∂H/∂k` が **intra-atomic position-matrix 成分を欠く**（E. I. Blount,
-*Solid State Phys.* **13**, 305 (1962); *Phys. Rev.* **126**, 1636 (1962)）ことに起因する同一の限界。
+*Solid State Phys.* **13**, 305 (1962) または *Phys. Rev.* **126**, 1636 (1962) — 書誌要原典確認・in-repo 外）ことに起因する同一の限界。
 論文では以下を明記する（Methods/Discussion, Cowork review #5 提案）:
 > "Our TB results display two systematic underestimates: the Roth-Lax g-factor from
 > dH/dk is ~3x too small relative to the k.p formula, and the optical f-sum rule is

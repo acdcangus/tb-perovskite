@@ -115,5 +115,5 @@ graph TD
 - S. M. Young, A. M. Rappe 2012, *PRL* 109, 116601（arXiv:1202.3168）— shift current 第一原理公式。
 - L. Z. Tan et al. 2016, *npj Comput. Mater.* 2, 16026（DOI:10.1038/npjcompumats.2016.26）— BPVE レビュー・対称則。
 - B. M. Fregoso et al. 2017, *PRB* 96, 075421（arXiv:1701.00172）— Eq.(C2) TB 一般化微分・Rice-Mele 閉形式（本実装の一次出典）。
-- E. I. Blount 1962, *Phys. Rev.* 126, 1636 — TB 位置演算子の限界。
+- E. I. Blount 1962 — TB 位置演算子の限界（書誌要原典確認・in-repo 外: *Solid State Phys.* 13, 305 / *Phys. Rev.* 126, 1636 の両表記が混在）。
 - Production bundle: `results/production/theme_F_shift_current/2026-05-23_ef575e3/`、技術報告書: `cowork/reports/theme_F_shift_current.md`、定式化: `docs/shift-current-formulation.md`。

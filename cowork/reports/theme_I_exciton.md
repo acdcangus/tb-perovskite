@@ -74,9 +74,9 @@ bundle `theme_I_exciton/2026-05-23_f66690c`。CsPbI₃ に Cho 2019 の実効 ε
 - **論文化骨子**: `cowork/reports/theme_I_publication_outline.md`。
 
 ## 6. References
-- Wannier-Mott 適用例（Yang 2017 PRB 96 035301 = 記憶ベース, 要原典確認）。Tanaka et al. 2003, SSC 127, 619（巻号確認済; 対象は MAPbBr₃/MAPbI₃, CsPbCl₃ ではない）。
+- Wannier-Mott 実験適用例: Baranowski et al., *Photonics Research* 8, A50 (2020)（CsPbCl₃, E_b=64 meV; OA 確認済）; Tanaka et al. 2003, SSC 127, 619（巻号確認済; MAPbBr₃/MAPbI₃, CsPbCl₃ ではない）。〔旧 Yang 2017 PRB 96,035301 は web 未確認の記憶ベースのため削除〕
 - J. Cho et al. 2019, arXiv:1908.09436（実効 ε≈6.1, D' 校正）。
 - A. Jain et al. 2013, *APL Mater.* 1, 011002（Materials Project, DFPT 誘電率, C'）。
-- R. Kashikar et al. 2021, arXiv:2101.08562（TB モデル）。E. I. Blount 1962（TB 限界; 書誌 要原典確認・in-repo 外: *Solid State Phys.* 13, 305 / *Phys. Rev.* 126, 1636 の両表記が混在）。
+- R. Kashikar et al. 2021, arXiv:2101.08562（TB モデル）。E. I. Blount 1962（TB 限界; *Solid State Phys.* **13**, 305 (1962) "Formalisms of band theory", DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし（旧 *Phys. Rev.* 126, 1636 表記は誤り））。
 - Production bundles: `theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`（C'）, `theme_I_exciton/2026-05-23_f66690c`（D'）,
   `theme_I_effective_mass/2026-05-23_1e9c65c`（μ）。ε∞ 出典詳細: `data/parameters/eps_inf_external.json`。

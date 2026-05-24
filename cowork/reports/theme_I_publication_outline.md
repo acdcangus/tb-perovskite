@@ -40,10 +40,10 @@ TB（Kashikar 2021 の 13 軌道 active basis）有効質量と Materials Projec
 実効 ε による校正点で実験整合を示した。鉛フリー光デバイス材料選択の計算指針。
 
 ## 6. References（主要）
-- Tanaka 2003 SSC 127, 619（巻号確認済; MAPbBr₃/MAPbI₃ 励起子, CsPbCl₃ ではない）。Wannier-Mott 適用例（Yang 2017 PRB 96 035301 は要原典確認・web 未確認）
+- Tanaka 2003 SSC 127, 619（巻号確認済; MAPbBr₃/MAPbI₃ 励起子, CsPbCl₃ ではない）; Baranowski et al. *Photonics Research* 8, A50 (2020)（CsPbCl₃ magneto-optical, E_b=64 meV, OA 確認済）。〔旧 Yang 2017 は web 未確認のため削除〕
 - Cho 2019 arXiv:1908.09436（GW-BSE, 実効 ε）
 - Jain 2013 APL Mater. 1 011002（Materials Project）
-- Kashikar 2021 arXiv:2101.08562（TB, 13 軌道 active basis）; Blount 1962（TB 限界; 書誌要原典確認・in-repo 外: SSP 13,305 / PR 126,1636 表記混在）
+- Kashikar 2021 arXiv:2101.08562（TB, 13 軌道 active basis）; Blount 1962（TB 限界; SSP **13**, 305 (1962) "Formalisms of band theory" DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし（旧 PR 126,1636 は誤り））
 - Kirstein et al. arXiv:2112.15384, in-repo（g 因子 Eg 普遍関係, 同材料群の関連）
 
 ## 既存ドキュメントとの差分（学術論文ならでは）

@@ -1,7 +1,7 @@
 {
   "_README": "External dielectric constants for the Wannier-Mott exciton binding (Theme I, option c). Values ONLY from cited sources (no fabrication). Web research done by Claude Code per PI instruction 2026-05-24 ('webresearch\u81ea\u5206\u3067\u3084\u3063\u3066').",
   "_extraction_date": "2026-05-24",
-  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment ~64-77 meV (magneto-optical study, reportedly Photonics Research 2020 -- WEB-SEARCH DERIVED, primary source NOT yet read/verified; note Tanaka 2003 SSC 127,619 is MAPb not CsPbCl3); whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (within experimental range 7.4-50 meV, Cho 2019 arXiv:1908.09436 [in-repo PDF, verified]; Cho's own mu=0.10 gives 37 meV). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
+  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment 64 meV (Baranowski et al., Photonics Research 8, A50 (2020), magneto-optical; OA-verified bibliography+value; note Tanaka 2003 SSC 127,619 is MAPb not CsPbCl3); whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (within experimental range 7.4-50 meV, Cho 2019 arXiv:1908.09436 [in-repo PDF, verified]; Cho's own mu=0.10 gives 37 meV). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
   "materials": {
     "CsPbI3": {
       "eps_inf": 6.1,
@@ -27,7 +27,7 @@
       "source": "PMC12757862 (LST: eps_inf=2.40, eps_static=7.2); PMC9071989 (eps~2.513 from real part of eps(w), DFT TB09)",
       "method": "DFT TB09 bare electronic eps_inf",
       "E_b_meV_if_used": 273,
-      "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment ~64-77 meV (magneto-optical study, reportedly Photonics Research 2020 -- WEB-SEARCH DERIVED, primary source NOT yet read/verified; Tanaka 2003 SSC 127,619 is MAPb not CsPbCl3) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b.",
+      "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment 64 meV (Baranowski et al., Photonics Research 8, A50 (2020), magneto-optical; OA-verified; Tanaka 2003 SSC 127,619 is MAPb not CsPbCl3) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b.",
       "eps_inf_MP_DFPT": {
         "value": 3.64,
         "mp_id": "mp-675022",

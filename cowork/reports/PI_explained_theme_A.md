@@ -137,5 +137,5 @@ graph TD
 - M. O. Nestoklon et al. 2023（arXiv:2305.10586, in-repo; CsPbX₃ ナノ結晶の ETB+k·p による g 因子の量子閉じ込め拡張）。
 - R. Roth 1960, *Phys. Rev.* 118, 1534（in-repo `references/pdfs/classic_Roth1960_PR118_1534.pdf`; g 因子 k·p 原典）。
   関連: Roth–Lax–Zwerdling 1959（PR 114, 90 — 巻号は要原典確認、in-repo 外）。
-- E. I. Blount 1962（TB 位置演算子の限界; 書誌要原典確認・in-repo 外: *Solid State Phys.* 13, 305 / *Phys. Rev.* 126, 1636 の両表記が混在）。
+- E. I. Blount 1962（TB 位置演算子の限界; *Solid State Phys.* **13**, 305 (1962) "Formalisms of band theory", DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし（旧 *Phys. Rev.* 126, 1636 表記は誤り））。
 - Production bundle: `results/production/theme_A_g_factor/2026-05-23_31374dc/`、技術報告書: `cowork/reports/theme_A_g_factor.md`。

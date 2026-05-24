@@ -173,7 +173,7 @@ graph TD
 
 **★ 方法論的発見（重要）:**
 - Wannier-Mott 模型 `E_b = (μ/m₀)/ε² × Ry` の **ε は「フォノン込みの effective screening (ε_eff)」** であって、文献が報告する「**bare 電子的 ε_∞**」とは違う
-- 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（CsPbCl₃ 励起子の文献報告値 ~64–77 meV（magneto-optical 研究, 例 Photonics Research 8, A50 (2020); 要原典確認。Tanaka 2003 は MAPb 系で別物）の ~4 倍過大）
+- 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（CsPbCl₃ 励起子の実験値 64 meV（Baranowski et al., *Photonics Research* 8, A50 (2020), magneto-optical; OA 確認済。Tanaka 2003 は MAPb 系で別物）の ~4 倍過大）
   - なお **bare ε∞ 自体も手法で散乱**する: CsPbCl₃ では LST 由来 2.4（出典 PMC12757862）に対し MP DFPT は 3.64（→ E_b 119 meV）。主結果 C' は **MP DFPT の単一手法**で全材料を揃え、手法間散乱を排して相対トレンドの defensibility を確保している
 - → 鉛フリー族の絶対 E_b マップは「フォノン込み ε_eff」のデータが必要 → **Materials Project DFPT で 8/9 材料を一貫した手法で取り直し済**（PI が API キー提供 → option C' として**完了**: bundle `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`。CsSnCl₃ のみ MP に DFPT 誘電データなく除外）
 
@@ -266,7 +266,7 @@ graph TD
 | Apergi et al. 2023 (arXiv:2309.14002) | TB-based 光学応答（Phase 1.5 の理論基盤） |
 | Fregoso 2017 (arXiv:1701.00172) | shift current の一般化微分公式（Theme F の核心） |
 | Tan & Rappe 2015/2016 | DFT による shift current ベンチマーク |
-| Blount 1962（書誌 要原典確認・in-repo 外: 正準は *Solid State Phys.* 13, 305 (1962) "Formalisms of Band Theory" の可能性; 一部レポートの *Phys. Rev.* 126, 1636 表記は未検証） | TB の電流演算子の不完全性（本研究で実測） |
+| Blount 1962（*Solid State Phys.* **13**, 305 (1962) "Formalisms of band theory", DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし。旧 *Phys. Rev.* 126, 1636 表記は誤りと判明） | TB の電流演算子の不完全性（本研究で実測） |
 
 ---
 

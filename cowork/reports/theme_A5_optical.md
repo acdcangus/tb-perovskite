@@ -13,7 +13,7 @@ g因子（Theme A）と同じ TB Hamiltonian + velocity operator から、立方
 - ε_i: Apergi 2023 (arXiv:2309.14002, in-repo; 表題は chiral perovskite の円二色性 TB) の速度行列要素ベース ε(ω) Eq.(3),(4)。一般 Kubo-Greenwood は Kubo1957/Greenwood1958（in-repo 外）。**ED 項の速度行列要素 = `velocity.py` の ∂H/∂k**
   を再利用（Theme A と同一インフラ）。ε_r は Kramers-Kronig。`src/perovskite_tb/optical.py`。
 - k 積分: Monkhorst-Pack。Lorentzian smearing η。前因子 πe²/ε₀=568.4 eV·Å（次元解析・f-sum で検証）。
-- 出典: Apergi 2023; Cho 2019 (arXiv:1908.09436); Blount 1962（書誌 要原典確認・in-repo 外: *Solid State Phys.* 13, 305 / *Phys. Rev.* 126, 1636 の両表記が混在）。
+- 出典: Apergi 2023; Cho 2019 (arXiv:1908.09436); Blount 1962（*Solid State Phys.* **13**, 305 (1962) "Formalisms of band theory", DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし（旧 *Phys. Rev.* 126, 1636 表記は誤り））。
 
 ## 3. 主要結果
 ### 3.1 検証（`tests/test_optical.py`, 4 通過）

@@ -95,5 +95,5 @@ f-sum 則は「吸収スペクトルを全部足すと電子の数に一致す�
 
 ## 7. 出典
 - M. Apergi et al. 2023（arXiv:2309.14002, in-repo; 表題は chiral perovskite の円二色性 TB だが、本研究は同論文の **速度行列要素ベース ε(ω) の具体形 Eq.3/4** を参照）。一般 Kubo-Greenwood 式は Kubo 1957 / Greenwood 1958（in-repo 外）。
-- E. I. Blount 1962（TB 位置演算子の限界; 書誌要原典確認・in-repo 外: *Solid State Phys.* 13, 305 / *Phys. Rev.* 126, 1636 の両表記が混在）。
+- E. I. Blount 1962（TB 位置演算子の限界; *Solid State Phys.* **13**, 305 (1962) "Formalisms of band theory", DOI 10.1016/S0081-1947(08)60459-2; OA 書誌確認済・in-repo PDF なし（旧 *Phys. Rev.* 126, 1636 表記は誤り））。
 - Production bundle: `results/production/phase_1.5_optical/2026-05-23_31374dc/`、技術報告書: `cowork/reports/theme_A5_optical.md`。

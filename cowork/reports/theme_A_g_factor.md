@@ -2,7 +2,7 @@
 
 **ステータス:** 部分完了（A1-A5 実装・解析済み、draft v1。Cowork レビュー待ち）
 **実施期間:** 2026-05-23
-**コミット範囲:** 83553f0 .. (本コミット)
+**コミット範囲:** 83553f0 .. 31374dc（production bundle commit; これ以降の review-round 改訂は HEAD で追跡）
 **担当:** Claude Code / 監督: Cowork
 
 ## 1. 動機と仮説

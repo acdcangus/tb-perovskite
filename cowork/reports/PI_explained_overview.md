@@ -162,7 +162,7 @@ graph TD
 **★ 方法論的発見（重要）:**
 - Wannier-Mott 模型 `E_b = (μ/m₀)/ε² × Ry` の **ε は「フォノン込みの effective screening (ε_eff)」** であって、文献が報告する「**bare 電子的 ε_∞**」とは違う
 - 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（CsPbCl₃ 励起子の文献報告値 ~64–77 meV（magneto-optical 研究, 例 Photonics Research 8, A50 (2020); 要原典確認。Tanaka 2003 は MAPb 系で別物）の ~4 倍過大）
-- → 鉛フリー族の絶対 E_b マップは「フォノン込み ε_eff」のデータが必要 → **Materials Project DFPT で 9 材料を一貫した手法で取り直す方針**（今 patrol で PI が API キー提供 → option C' として再実行中）
+- → 鉛フリー族の絶対 E_b マップは「フォノン込み ε_eff」のデータが必要 → **Materials Project DFPT で 8/9 材料を一貫した手法で取り直し済**（PI が API キー提供 → option C' として**完了**: bundle `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`。CsSnCl₃ のみ MP に DFPT 誘電データなく除外）
 
 ---
 
@@ -199,16 +199,16 @@ graph TD
 - 報告書の数値はすべて **MANIFEST から引用**（数字の根拠が一意にトレース可能）
 - 収束プロット必須（k グリッド・smearing 依存性をチェック）
 
-**現状: 5 bundle 全 clean、40 連続 patrol で違反ゼロ。捏造なし、トレーサビリティ完備。**
+**現状: 6 bundle 全 clean（`git_dirty:false`）、連続 patrol で違反ゼロ。捏造なし、トレーサビリティ完備。**（6 番目は option C' の `theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`）
 
 ---
 
 ## 6. 今後の予定
 
-### 6.1 今夜（PI 不在中の自走）
+### 6.1 直近の自走分（**完了済**）
 
-- **Part 1: Theme I option (C')** — MP DFPT ε_∞ で 9 材料絶対 E_b マップ確定（API キー受領済）
-- **Part 2: PI 向け詳細報告書 4 本** — Claude Code が `PI_explained_theme_{A,F,I}.md` および `PI_explained_phase_1.5_optical.md` を執筆
+- **Part 1: Theme I option (C') — 完了** — MP DFPT ε_∞ で 8/9 材料の絶対 E_b マップを確定（bundle `theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`）。
+- **Part 2: PI 向け詳細報告書 4 本 — 完了** — `PI_explained_theme_{A,F,I}.md` および `PI_explained_phase_1.5_optical.md` を執筆済（本ファイルは overview）。
 
 ### 6.2 中期（PI 判断項目）
 
@@ -259,7 +259,7 @@ graph TD
 
 ## 9. 出典（本ドキュメント内の数値）
 
-- 5 Production bundle: `results/production/{phase_1.5_optical, theme_A_g_factor, theme_F_shift_current, theme_I_effective_mass, theme_I_exciton}/2026-05-23_*/MANIFEST.json`
+- 6 Production bundle: `results/production/{phase_1.5_optical, theme_A_g_factor, theme_F_shift_current, theme_I_effective_mass, theme_I_exciton}/2026-05-23_*/MANIFEST.json` + `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce/MANIFEST.json`（option C'、6 番目）
 - 既存技術報告書: `cowork/reports/{theme_A_g_factor, theme_A5_optical, theme_F_shift_current, theme_I_exciton}.md`
 - 進捗履歴: `cowork/progress/` 95 ファイル（過去 24h で 40 patrol、全 Production 健全）
 - novelty 判定: `cowork/novelty_assessment.md`

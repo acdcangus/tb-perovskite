@@ -2,7 +2,7 @@
 
 **ステータス:** 部分完了（B1-B5 実装・検証・9材料スキャン済み、draft v1。Cowork レビュー待ち）
 **実施期間:** 2026-05-23
-**コミット範囲:** 11ba555 .. (本コミット)
+**コミット範囲:** 11ba555 .. 31374dc（production bundle commit; これ以降の review-round 改訂は HEAD で追跡）
 
 ## 1. 動機
 g因子（Theme A）と同じ TB Hamiltonian + velocity operator から、立方晶 CsBX₃ の

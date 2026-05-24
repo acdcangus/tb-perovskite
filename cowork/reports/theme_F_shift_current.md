@@ -42,7 +42,7 @@ single-thread BLAS（性能上必須）。3 段収束: k=24/32/48, η=0.05/0.08/
 
 ## 3. 主要結果（F5 Production, n_kpts=48, η=0.10, δ=0.15, 相対単位）
 
-bundle: `results/production/theme_F_shift_current/2026-05-23_<hash>/`。δ=0 で σ_zzz=6.9e-15（中心対称消失）。
+bundle: `results/production/theme_F_shift_current/2026-05-23_ef575e3/`。δ=0 で σ_zzz=6.9e-15（中心対称消失）。
 
 | 材料 | gap@R (eV) | ピーク σ_zzz (rel) | ピーク ω (eV) | ∫_[Eg,2Eg] (rel) |
 |---|---|---|---|---|
@@ -128,4 +128,4 @@ PYTHONPATH=src python -m pytest tests/test_shift_current.py tests/test_shift_cur
 - 定式化: `docs/shift-current-formulation.md`
 - 出典: Fregoso 2017 (arXiv:1701.00172), Tan & Rappe 2016 (npj CM 2:16026),
   Young & Rappe 2012 (PRL 109 116601 / arXiv:1202.3168), Kashikar 2021 (arXiv:2101.08562)
-- Production: `results/production/theme_F_shift_current/<date>_<hash>/`（MANIFEST.json）
+- Production: `results/production/theme_F_shift_current/2026-05-23_ef575e3/`（MANIFEST.json; git_dirty:false）

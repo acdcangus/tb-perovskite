@@ -3,7 +3,7 @@
 > 作業状況と「論文値の再現結果」を一目で分かるようにまとめたファイルです。
 > コミットごとに更新します（携帯からの確認用）。
 
-**最終更新:** 2026-05-23
+**最終更新:** 2026-05-24
 **作業ブランチ:** main
 
 ---
@@ -15,16 +15,18 @@
 | 論文サーベイ（TBアルゴリズム・パラメータ抽出） | ✅ 完了 |
 | パラメータ JSON 化（出典付き） | ✅ 完了 |
 | TB 計算エンジン実装（Kashikar 13/4軌道, Nestoklon sp³/sp³d⁵s\*） | ✅ 完了 |
-| 論文値の再現テスト (V&V) | ✅ 完了（**228 テスト全通過**） |
+| 論文値の再現テスト (V&V) | ✅ 完了（**330 テスト全通過**） |
 | バンド構造プロット出力 | ✅ 完了（全21図 + 再現性メタデータ） |
-| ドキュメント整備 (docs/) | ✅ 完了（13本、自己レビュー2回クリアで承認） |
+| ドキュメント整備 (docs/) | ✅ 完了（永続9本 + 補助/拡張レポート、自己レビュー済） |
 | **Theme A: Landé g 因子 9 材料マップ** | ✅ 完了（Production bundle 化済み） |
 | **Phase 1.5: 光学応答 ε(ω) Kubo-Greenwood** | ✅ 完了（Production bundle 化済み） |
 | **Theme F: shift current / BPVE** | ✅ 完了（F1–F6, Production bundle 化済み） |
 | **Theme I: 有効質量マップ + 励起子 E_b** | ✅ 有効質量マップ確定 + E_b 相対トレンド + CsPbI₃ 校正(22meV); 絶対 E_b は ε_eff 不足で未確定 |
+| **拡張物性 (extention 仕様)** | ✅ Berry/AHC/SHC・Wilson/Z₂・熱電・Rashba・Edelstein・CPGE・polaron・歪み・スラブ・KSV分極 を実装（docs §9–18） |
+| **追加検証 (09: Tier-1/2 全7件)** | ✅ 完了（コアTB駆動で文献定量比較; 詳細は extention/10） |
 
-**`pytest`: 228 passed.** JSON 入力 → CLI でバンド図生成まで一通り動作。
-全21図 + 物性（g 因子・光学・shift current）を再現性メタデータ付きで出力済み。
+**`pytest`: 330 passed.** JSON 入力 → CLI でバンド図生成まで一通り動作。
+全21図 + 物性（g 因子・光学・shift current・拡張物性群）を再現性メタデータ付きで出力済み。
 Cowork（監督役）と協調し、論文値の検証を最優先（**ハルシネーション禁止**）で進行中。
 
 ---
@@ -93,14 +95,39 @@ CsPbI₃ の伝導帯 SO 分裂 1.50 eV は Nestoklon の 1.48 eV とも整合�
 
 ---
 
+## 2.6 拡張物性 + 追加検証（extention 仕様 / 09 タスク）
+
+コアTBの固有値・波動関数の上に **10 物性モジュール**を実装し（`docs/numerical-methods.md` §9–18）、
+09 の追加検証 Tier-1/2 を **全7件**完了。**検証は文献値との定量比較（コアTB駆動）**で、SK-TB/Blount の
+構造的限界に触れる絶対値は**誠実にカテゴリ D 維持**（無理にA化しない）。
+
+| 機能 | 達成カテゴリ | ハイライト |
+|---|---|---|
+| F6 polaron α | **A / B** | MAPbI₃ <1%（Frost）; **TB由来 m\* で CsPbBr₃ α=1.66**（差はバンド質量比で説明）|
+| F9 熱電 (WF) | **A** | Wiedemann-Franz Lorenz 数 0.5% |
+| F7 CPGE (Weyl) | **A部分** | 量子化 |Tr|≈1/4π を 20% |
+| F5 閉じ込め E_g(n) | C→B | Blancon 減衰指数 15%以内（トレンド）|
+| F14-B 強誘電 ΔP | C→B | 符号反転 + DFT と同オーダ（数 μC/cm²）|
+| F11 Edelstein χ/σ | B | 2D Rashba 解析値 mα/(4μ) と一致 |
+| F1/F2 Z₂ parity | B | Wilson-Dirac 相図再現（手法; 実材料は反転演算子未確定で保留）|
+| F12 歪み dE_g/dε | C / D | 符号一致（加圧で gap 減, 実験 Pieniazek 2023）; 大きさは過大 |
+| F4 Rashba α_R | C / D | CBM>VBM 順序一致; 絶対値 ~40×小 |
+
+**引用訂正4件**（no-hallucination, web/crossref 検証）: Blancon(Science→Nat.Commun.2018), Buin/Grumet 削除（歪みと無関係論文）, Sendner(MA系のみ)。
+→ 解説・検証の全体像: **`extention/10_additional_features_report.md`**（物理・検証・定量結果・コアTB結合 end-to-end を平易に）。
+
+---
+
 ## 3. 成果物の場所
 
 - **パラメータ（出典付き JSON）**: `data/parameters/`（`SOURCES.md` に出典・検証アンカー）
 - **バンド図**: `results/kashikar13/`（9材料）, `results/kashikar4/`（9材料）,
   `results/nestoklon/`（CsPbI₃ × 3セット）。各図に再現性メタデータ JSON が付属。
 - **コード**: `src/perovskite_tb/`
-- **テスト**: `tests/`（`pytest` で実行）
-- **使い方**: `README.md`、設計は `.steering/20260523-initial-implementation/`
+- **テスト**: `tests/`（`pytest` で実行, 330 ケース）
+- **拡張物性の式・V&V**: `docs/numerical-methods.md` §9–18; ベンチマーク値: `data/parameters/*_benchmark.json`
+- **拡張機能 解説レポート**: `extention/10_additional_features_report.md`; 実装報告 `extention/08_*`; 検証仕分け `extention/08_validation_status_quantitative.md`
+- **使い方**: `README.md`、設計は各 `.steering/`（全作業に requirements/design/tasklist 完備）
 
 ### 再現コマンド例
 ```bash

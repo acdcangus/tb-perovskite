@@ -63,7 +63,7 @@ graph TD
 
 ### 3.1 主結果（ピーク |σ_zzz|, δ=0.15, 相対単位, `MANIFEST key_numbers` より）
 
-| 順位 | 材料 | ピーク σ_zzz | gap (eV) |
+| 順位 | 材料 | ピーク σ_zzz | TB gap@R (δ=0.15) (eV) |
 |---|---|---|---|
 | 1 | **CsSnI₃** | −3.43 | 0.17 |
 | 2 | **CsGeI₃** | −2.67 | 0.64 |
@@ -76,6 +76,8 @@ graph TD
 | 9 | CsPbCl₃ | −0.11 | 2.13 |
 
 （図: bundle 内 `outputs/figures/sigma_zzz_9materials.png`）
+
+> **注:** この「gap」は **Kashikar TB に [001] δ=0.15 Å 極性変位を与えた下での R 点 N_OCC ギャップ**であり、Theme A の実験 Eg（CsPbI₃ 1.73 eV）や Phase 1.5 の無歪み吸収端（同 1.79 eV）とは**別量**です（極性変位でギャップが縮むため CsPbI₃ で 0.63 eV）。3 つの「ギャップ」の使い分けは overview §3.1 の用語表を参照。MANIFEST 注記どおり、全材料で CBM-VBM ギャップである保証はありません。
 
 ### 3.2 物理的読み解き
 - **★ 鉛フリー Sn/Ge ハライド（特にヨウ化物）が Pb 系より大きい**。CsSnI₃・CsGeI₃ が群を抜く。

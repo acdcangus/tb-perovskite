@@ -87,6 +87,8 @@ graph TD
 （図: `results/g_factors/figures/fig1_g_factor_universality.png`（g_e/g_h 普遍性）、
 `fig2_gh_deviation_vs_delta.png`（ズレ vs SOC Δ））
 
+> **不確かさの注:** Sn/Ge の SOC Δ は Kashikar 3λ 由来で ±20% の不確かさを持つ。これに対する g_h の幅は bundle CSV の `g_h_lo/g_h_hi` に記録され、最大で CsSnI₃ の g_h=0.48 [0.26, 0.72]（±約 0.23）、最小で CsGeCl₃ の ±約 0.03。**主結果（鉛フリー Sn/Ge の上方乖離 +1.8 級）はこの幅に対して頑健**。
+
 ### 3.2 結果の物理的読み解き
 - **電子 g_e は「見かけの普遍性」**: 9 材料すべてが、バンドギャップ Eg だけで決まる 1 本の曲線（k·p 普遍曲線）に
   ほぼ載る（図1a）。Eg が小さいほど g_e が大きい（CsSnI₃ で 4.56、CsPbCl₃ で 0.99）。

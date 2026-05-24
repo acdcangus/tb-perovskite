@@ -106,6 +106,18 @@ graph TD
 
 **1 つの TB ハミルトニアン H(k) から、4 つの物性すべてが派生**します。これが TB の強み（一貫性）です。
 
+#### ★「バンドギャップ」という語の使い分け（重要）
+
+テーマによって「gap / Eg / 吸収端」が**別々の量**を指します。同じ材料でも値が異なるので混同しないでください（CsPbI₃ を例に）:
+
+| 用語 | 定義 | 出典 | CsPbI₃ 値 |
+|---|---|---|---|
+| 実験 Eg | 実験/文献のバンドギャップ（**Theme A の k·p 入力**） | `data/parameters/experimental_band_data.json`（DOI:10.1038/s41467-022-30701-0, α相） | **1.73 eV** |
+| TB 吸収端（δ=0, 無歪み） | Kashikar TB の無歪み R 点ギャップ＝光吸収の立ち上がり（**Phase 1.5**, k 細分化収束後） | `phase_1.5_optical` MANIFEST | **1.79 eV** |
+| TB gap@R（δ=0.15, 極性変位下） | Kashikar TB + [001] 極性変位下の R 点 N_OCC ギャップ（**Theme F**; MANIFEST 注記どおり全材料で CBM-VBM 保証はない） | `theme_F_shift_current` MANIFEST | **0.63 eV** |
+
+（**Theme I** は gap 自体は使わず、R 点のバンド曲率から有効質量を出す。）
+
 ### 3.2 各テーマの「30 秒紹介」
 
 #### Theme A: Landé g 因子マップ — スピンと磁場の結合
@@ -162,6 +174,7 @@ graph TD
 **★ 方法論的発見（重要）:**
 - Wannier-Mott 模型 `E_b = (μ/m₀)/ε² × Ry` の **ε は「フォノン込みの effective screening (ε_eff)」** であって、文献が報告する「**bare 電子的 ε_∞**」とは違う
 - 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（CsPbCl₃ 励起子の文献報告値 ~64–77 meV（magneto-optical 研究, 例 Photonics Research 8, A50 (2020); 要原典確認。Tanaka 2003 は MAPb 系で別物）の ~4 倍過大）
+  - なお **bare ε∞ 自体も手法で散乱**する: CsPbCl₃ では LST 由来 2.4（出典 PMC12757862）に対し MP DFPT は 3.64（→ E_b 119 meV）。主結果 C' は **MP DFPT の単一手法**で全材料を揃え、手法間散乱を排して相対トレンドの defensibility を確保している
 - → 鉛フリー族の絶対 E_b マップは「フォノン込み ε_eff」のデータが必要 → **Materials Project DFPT で 8/9 材料を一貫した手法で取り直し済**（PI が API キー提供 → option C' として**完了**: bundle `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`。CsSnCl₃ のみ MP に DFPT 誘電データなく除外）
 
 ---

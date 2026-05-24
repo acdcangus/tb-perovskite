@@ -80,6 +80,7 @@
 ├── 05_references_index.md             ← PDF↔仕様書 文献索引（未検証マーク付き）
 ├── 06_validation_references.md        ← 妥当性検証用 文献リスト（実験・既存コード・標準値）
 ├── 07_agent_handoff.md                ← **NEW** 開発エージェントへの引渡し指示書
+├── 08_tb-perovskite_implementation_report.md  ← **NEW(実装)** tb-perovskite 拡張実装報告書（Claude Code, 2026-05-24; 12 feature-slot / 10 モジュール / 313 tests）
 └── references_pdf/                    ← 参考文献PDF（26 ファイル）
 ```
 

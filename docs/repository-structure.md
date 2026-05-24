@@ -20,6 +20,7 @@
 │   ├── exciton.py             Wannier-Mott 励起子（Theme I）
 │   ├── berry.py               Berry 曲率 → AHC / SHC / 離散 Chern（spec F1 / Theme H）
 │   ├── topology.py            Wilson ループ / Wannier 電荷中心 / Chern（spec F2 部分）
+│   ├── thermo.py              Boltzmann 熱電輸送 S/σ/κ_e（spec F9, CRTA）
 │   ├── materials_project.py   MP DFPT ε∞ 取得（Theme I, option C'）
 │   ├── cli.py / __main__.py / _meta.py / __init__.py
 │

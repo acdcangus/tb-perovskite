@@ -146,3 +146,21 @@ $F_{12}=\mathrm{Im}\ln[U_1 U_2(k{+}1)U_1(k{+}2)^{-1}U_2^{-1}]$、$C=-\tfrac{1}{2
 - **Soluyanov-Vanderbilt 時間反転 Z₂（partner switching）**: 手法は実装可能だが、**検証用の既知 3D-Z₂ 参照模型**が必要 → 保留。
 - → 立方 CsBX₃ の topological 分類（CsPbI₃ の inverted gap 等, Jin 2012）は上記確定後の follow-up。本コミットは**検証済みの Wilson ループ基盤**まで。
 
+## 11. Boltzmann 熱電輸送 (`thermo.py`, 仕様 F9)
+
+定緩和時間近似 (CRTA) の半古典 Boltzmann 輸送を、既存バンド + 群速度（velocity.py）から計算する
+（**Madsen, Singh, Comp. Phys. Commun. 175, 67 (2006)**, DOI 10.1016/j.cpc.2006.03.007, BoltzTraP 形式）。
+輸送分布関数 $\Sigma_{xx}(\varepsilon)=\frac1{N_k}\sum_{n,k}v_x^2\,\delta(\varepsilon-E_{nk})$、
+モーメント $L^{(a)}=\int d\varepsilon\,(-\partial f/\partial\varepsilon)(\varepsilon-\mu)^a\Sigma$ から
+
+$$\sigma_{xx}/\tau=e^2 L^{(0)},\quad S_{xx}=-\frac{1}{eT}\frac{L^{(1)}}{L^{(0)}},\quad
+\kappa^e_{xx}/\tau=\frac1T\Big[L^{(2)}-\frac{(L^{(1)})^2}{L^{(0)}}\Big].$$
+
+単位: エネルギー eV, 温度 K, $k_B$ eV/K。Seebeck は $k_B/e$ 単位（86.17 μV/K）、Lorenz 数は $(k_B/e)^2$ 単位で返す。
+**絶対値は緩和時間 $\tau$（材料・散乱依存）が必要でスコープ外** → 相対値（/τ）のみ（既存 SHC/shift current の絶対値限界と同じ立場, honest）。
+
+### V&V（`tests/test_thermo.py`, 6 ケース）
+- **Wiedemann-Franz 則**: 縮退極限で Lorenz 数 → $\pi^2/3\,(k_B/e)^2$（解析 $\Sigma=\varepsilon^{3/2}$ で rtol 0.5%; バンド詳細に依らない厳密 anchor）。
+- **Sommerfeld Seebeck**: $S\sim-(\pi^2/3)(k_BT)\,d\ln\Sigma/d\varepsilon|_\mu$、3D 放物バンドで符号・大きさ一致。
+- 正孔バンドで $S>0$（符号）、$\sigma,\kappa^e>0$、$\Sigma$ ビルダの $\varepsilon^{3/2}$ 形状、立方 CsPbI₃ で実行整合。
+

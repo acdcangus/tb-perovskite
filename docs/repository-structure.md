@@ -27,6 +27,7 @@
 │   ├── polaron.py             Fröhlich ポーラロン結合 α / 弱結合質量（spec F6）
 │   ├── bandengr.py            歪みバンド工学 E_g(ε) / 変形ポテンシャル（spec F12）
 │   ├── slab.py                有限 z スラブ/超格子 量子閉じ込め・ミニバンド・Stark（spec F5/F13/F14-A）
+│   ├── polarization.py        Berry 位相分極 KSV / Zak 位相（spec F14-B）
 │   ├── materials_project.py   MP DFPT ε∞ 取得（Theme I, option C'）
 │   ├── cli.py / __main__.py / _meta.py / __init__.py
 │

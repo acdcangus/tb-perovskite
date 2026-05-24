@@ -287,5 +287,20 @@ Blancon et al., Science 355, 1288 (2017)（$E_g(n)$）; F14 場は Neugebauer-Sc
 
 ### honest 限界
 spacer/passivation は hard-barrier（open BC）理想化（Even 2014）。検証は model-internal（厳密再構成・periodic==3D・バルク極限）。
-$E_g(n)$ の絶対値は SK-TB/Blount caveat。F14 はモード A（Stark スラブ）のみ; モード B（バルク Berry 位相分極, KSV1993）は未実装。
+$E_g(n)$ の絶対値は SK-TB/Blount caveat。F14 はモード A（Stark スラブ）= slab.py、モード B（バルク Berry 位相分極）= `polarization.py`（§18）。
+
+## 18. Berry 位相分極（KSV）(`polarization.py`, 仕様 F14 モード B)
+
+現代分極理論（**King-Smith, Vanderbilt, PRB 47, 1651 (1993)**, DOI 10.1103/PhysRevB.47.1651）の電子分極を、
+占有バンドの Wilson ループ Berry/Zak 位相（`topology.py` 再利用）として計算する。$P_z=(e/2\pi)\langle\phi_{\rm Zak}\rangle_{(k_x,k_y)}$。
+
+### V&V（`tests/test_polarization.py`, 4 ケース）
+- **SSH 模型**（**Su-Schrieffer-Heeger, PRL 42, 1698 (1979)**）: Zak 位相が 0/π に量子化、位相転移 $v=w$ を跨いで **π ジャンプ**（位相幾何学的分極差, 厳密アンカー）。
+- **Rice-Mele 模型**（オンサイト staggering で反転破れ）: Zak 位相が**連続的にシフト**（非量子化分極）。
+- ペロブスカイトの電子 Zak 位相が finite・実・決定論的。
+
+### honest 限界（重要）
+ペロブスカイトで返すのは**電子 Berry 位相のみ**（固定軌道ゲージ）。物理的に量子化された分極は KSV の枠で
+**イオン寄与 + 分極量子 $eR/V_{\rm cell}$** を要し、total のみが gauge 不変・量子化。実際、立方ペロブスカイトの裸の電子 Zak は
+0/π にならない（X_z 軌道位置 $z=a/2$ 由来のゲージオフセット）→ **量子化は主張せず**、量子化は SSH で検証、用途は分極**差** ΔP（gauge 不変な観測量）。
 

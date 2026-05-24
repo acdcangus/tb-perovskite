@@ -23,11 +23,11 @@ from typing import Callable, Mapping
 import numpy as np
 
 from . import models_kashikar as mk
+from ._constants import HBAR2_OVER_M0  # noqa: F401  (re-export; single source of truth)
 from ._soc import soc_p_from_lambda3  # noqa: F401  (kept for parity/documentation)
 
-# hbar^2 / m0 in eV * Angstrom^2  (= 2 * 3.80998 eV.A^2). Used to convert the
-# momentum matrix element P = hbar*p/m0 [eV.A] into the Kane term P^2/(hbar^2/m0).
-HBAR2_OVER_M0 = 7.619964  # eV * Angstrom^2
+# HBAR2_OVER_M0 (hbar^2/m0 in eV*Angstrom^2) converts the momentum matrix element
+# P = hbar*p/m0 [eV.A] into the Kane term P^2/(hbar^2/m0). Defined in _constants.py.
 
 
 # --------------------------------------------------------------------------- #

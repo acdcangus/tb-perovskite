@@ -28,8 +28,9 @@ from typing import Callable, Sequence
 
 import numpy as np
 
+from ._constants import HBAR2_OVER_M0  # hbar^2/m0 in eV.Ang^2 (single source of truth)
+
 RYDBERG_EV = 13.605693       # hydrogen Rydberg (eV)
-HBAR2_OVER_M0 = 7.619964     # hbar^2/m0 in eV.Ang^2 (same constant as velocity.py)
 
 
 def effective_mass(H_fn: Callable[[np.ndarray], np.ndarray], a: float, band_idx: int,

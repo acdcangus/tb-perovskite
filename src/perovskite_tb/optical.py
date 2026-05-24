@@ -28,9 +28,10 @@ from typing import Callable
 
 import numpy as np
 
+from ._constants import HBAR2_OVER_M0  # eV.A^2 (single source of truth)
+
 # pi * e^2 / eps0 in eV.Angstrom.  e^2/(4 pi eps0) = 14.39964 eV.A (Coulomb const).
 PI_E2_OVER_EPS0 = np.pi * (4.0 * np.pi * 14.39964)  # = 568.41 eV.A
-HBAR2_OVER_M0 = 7.619964  # eV.A^2
 
 
 def monkhorst_pack(n: int) -> np.ndarray:

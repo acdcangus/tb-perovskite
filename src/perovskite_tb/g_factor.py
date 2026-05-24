@@ -37,8 +37,9 @@ from typing import Callable
 
 import numpy as np
 
+from ._constants import HBAR2_OVER_M0 as C_HBAR2_OVER_M0  # eV*A^2 (single source of truth)
+
 G0 = 2.0023193  # free-electron g-factor
-C_HBAR2_OVER_M0 = 7.619964  # eV * Angstrom^2  (= hbar^2/m0)
 _LEVI_CIVITA = {  # gamma -> list of (alpha, beta, sign)
     0: [(1, 2, +1.0), (2, 1, -1.0)],  # x
     1: [(2, 0, +1.0), (0, 2, -1.0)],  # y
@@ -92,6 +93,11 @@ def compute_g_factor(hamiltonian: np.ndarray,
                      orbital_L: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
                      degeneracy_tol: float = 1e-4) -> dict:
     """Roth-Lax g-tensor for the Kramers doublet starting at ``band_index``.
+
+    Implements the effective g-factor of Roth, Lax & Zwerdling, Phys. Rev. 114,
+    90 (1959) (the ``M_gamma`` formula in the module docstring): the band-edge
+    Zeeman matrix is the spin term ``g0*sigma`` plus the interband (velocity)
+    orbital sum ``dG``.
 
     Parameters
     ----------

@@ -184,7 +184,49 @@
 | T2-3 F14-B 強誘電 ΔP | C→B（符号反転 + DFT と同オーダ）| `polarization.ferroelectric_polarization_difference` |
 | T2-4 F11 χ/σ 比 | B（2D Rashba 解析値 mα/(4μ) 一致）| `edelstein.longitudinal_conductivity` / `edelstein_ratio` |
 
-**V&V カテゴリ更新**: A は F6 polaron（公式 <1% + TB-駆動 α）・F9 WF（0.5%）が中心。多くは SK-TB/Blount の構造限界で符号/順序/トレンド/量子化/τ非依存比（B/C）に留まり、絶対値は honest に D 維持（09 の「全 A 化」想定に対する誠実な現実; 捏造回避）。引用訂正: Blancon(Science→NatCommun), Buin/Grumet 削除（無関係論文）, Sendner(MA 系のみ)。関連 commit: `7eef9b5`(T1-1), `b8baaca`(T1-3), `a4f1fc1`(T1-2), `591b3a9`(T2-2), `163d8d1`(T2-4), `be6dcc0`(T2-1), `251140f`(T2-3)。
+### 7.1 タスク別詳細
+
+#### T1-1 — F5 2D-RP 閉じ込め E_g(n)（`slab.py`, `test_blancon_layer_dependence`）
+- **コア TB**: Kashikar-13 CsPbI₃ スラブ（hard-barrier）の閉じ込めギャップ E_g(N) を R 点面内射影 (π/a,π/a) で算出。
+- **出典（検証済）**: J.-C. Blancon et al., "Scaling law for excitons in 2D perovskite quantum wells", **Nat. Commun. 9, 2254 (2018), DOI 10.1038/s41467-018-04659-x**（自由粒子ギャップ n=1: 2.540, n=4: 2.078, n=5: 1.846 eV; Fig.3a/4 から検証）。
+- **V&V / カテゴリ**: 減衰べき指数 p_TB≈0.93 vs p_exp≈0.85（自由粒子基準 E∞≈1.65–1.70 eV）→ **15%以内**。**C→B（トレンド限定）**。図 `results/figures/blancon_E_g_n.png`、benchmark `data/parameters/blancon2018_2drp_gaps.json`。
+- **限界**: 無機 CsPbI₃ アナログ vs MAPbI₃ 系 RP（材料差）+ SK-TB → 絶対 E_g(n) は非主張。p_exp は E∞ に敏感（1.60→0.71, 1.70→0.91）。**commit `7eef9b5`**。
+
+#### T1-2 — F12 歪み変形ポテンシャル dE_g/dε（`bandengr.py`, `test_strain_gap_sensitivity_lit`）
+- **コア TB**: Harrison d⁻² でスケールした Kashikar-13 の R 点ギャップ応答 → `pressure_coefficient(params,a,B)` で dE_g/dP に換算。
+- **出典（検証済）**: 実験 A. Pieniazek et al., **J. Phys. Chem. Lett. 14, 6470 (2023), DOI 10.1021/acs.jpclett.3c01258**（MAPbI₃ dE_g/dP = −13〜−41 meV/GPa）; 体積弾性率 Y. Liu et al., **Molecules 28, 7643 (2023), DOI 10.3390/molecules28227643**（CsPbI₃ 9.87, CsPbBr₃ 13.36, CsPbCl₃ 16.01 GPa）。
+- **V&V / カテゴリ**: 符号一致（加圧で gap 減 = dE_g/dε>0）**C**。大きさは TB dE_g/dP≈−210 meV/GPa vs 実験 −13〜−41 → **~5–16× 過大（D）**。benchmark `data/parameters/strain_benchmark.json`。
+- **限界**: cubic-frozen TB は **octahedral tilting 自由度なし**でボンド長寄与のみ捉える → 過大評価。**引用訂正**: Buin 2014（trap-free 合成）・Grumet PRB 98,155143（GW 手法論文, crossref 確認）は歪みと無関係 → 削除。**commit `a4f1fc1`**。
+
+#### T1-3 — F6 TB-駆動 Fröhlich polaron α（`polaron.py`/`bandstructure.py`, `test_cspbbr3_alpha_from_core_tb_mass` 他）
+- **コア TB**: `bandstructure.effective_mass`（R 点放物線フィット, 合成放物線で厳密検証）で **全 9 CsBX₃ の m\*** を算出（`results/tb_effective_masses.json`; 例 CsPbBr₃ 0.151, CsPbI₃ 0.106, CsSnI₃ 0.035, 全て等方）。
+- **出典（検証済）**: Frost, **PRB 96, 195202 (2017)**（α 公式）; Sendner, **Nat. Commun. 12, 4945 (2021)**（CsPbBr₃ ε∞=4.8, ε_S=20.5, LO=19.2 meV）。
+- **V&V / カテゴリ**: CsPbBr₃ TB-駆動 α_TB=1.66 vs 文献 2.0 → 差 −17% は **完全にバンド質量比** √(0.151/0.22)=0.83 で説明（公式は m\*=0.22 で文献を <1% 再現）。**A（公式）/ B**。
+- **限界**: 9 材料 α マップは **Cs 系無機の cited 誘電/LO データが一次出典に存在しない**ため完成不可（Sendner 2016/Wright 2016/arXiv:2201.06360 はいずれも MA 系のみ）→ 捏造回避で部分。**commit `b8baaca`**。
+
+#### T2-1 — F4 Rashba α_R バルク DFT 比較（`rashba.py`, `test_bulk_dft_comparison`）
+- **コア TB**: [001] 極性（P4mm）Kashikar-13 の doublet 分裂から α_R=ΔE/(2|k|)。
+- **出典（検証済）**: P. Bhumla et al., **arXiv:2108.03683 (2021)**（無機強誘電バルク CsPbF₃: α_R CBM=1.05, VBM=0.41 eVÅ）。**表面** Rashba（Niesner PRL 117,126401, ~11 eVÅ）は別系で除外。
+- **V&V / カテゴリ**: **CBM>VBM 順序**は DFT 一致 **C**。絶対値 TB CBM≈0.027 eVÅ は DFT 1.05 の **~1/40（D）**。benchmark `data/parameters/rashba_bulk_benchmark.json`。
+- **限界**: 剛体副格子変位モデル（実強誘電歪みに未校正）+ Blount → 過小評価。**commit `be6dcc0`**。
+
+#### T2-2 — F1/F2 Fu-Kane parity Z₂（`topology.py`, `test_wilson_dirac_parity_z2` 他）
+- **手法検証（トイ模型）**: `parity_delta_at_trim` / `z2_invariant_from_parities` を実装。反転対称 3D Wilson-Dirac (BHZ 型) 模型で固有ベクトル抽出パリティ=解析値 −sign(M)、強指数 ν₀ が解析相図（1<|m₀|<3 で STI）を再現。Berry 曲率の質量符号反転も確認。
+- **出典（検証済）**: Fu, Kane, **PRB 76, 045302 (2007)**（parity 規準）; Fu, Kane, Mele, **PRL 98, 106803 (2007)**（3D Z₂）。
+- **カテゴリ B**。docs §10 の「未実装」解消。**限界**: 実ペロブスカイト（Kashikar 基底）への適用は反転演算子の表現が未確定のため保留（捏造せず）。**commit `591b3a9`**。
+
+#### T2-3 — F14-B 強誘電 ΔP（`polarization.py`, `test_ferroelectric_delta_p_*`）
+- **コア TB**: 極性 Kashikar-13 の電子 Zak 位相差 ΔP_z=(e/2πA)(φ(d)−φ(0)) を μC/cm² で算出。
+- **出典（検証済）**: Bhumla et al., **arXiv:2108.03683 (2021)**（CsPbF₃ P=34 μC/cm²）; 典型 FE ハライドは数 μC/cm²。
+- **V&V / カテゴリ**: 変位 0 で ΔP=0、**ΔP(−d)=−ΔP(+d)**（FE 符号反転, gauge 不変, 小 d で反対称）、大きさ ~1–8 μC/cm²（DFT と同オーダ）。**C→B**。benchmark `data/parameters/polarization_fe_benchmark.json`。
+- **限界**: **電子寄与のみ**（DFT 値は ionic+electronic の total）→ 定量一致は非主張。**commit `251140f`**。
+
+#### T2-4 — F11 Edelstein 効率 χ_yx/σ_xx（`edelstein.py`, `test_rashba_edelstein_ratio_analytic` 他）
+- **コア TB / 手法**: `longitudinal_conductivity` を同じ CRTA Fermi 窓で実装し、`edelstein_ratio`=χ_yx/σ_xx（τ・k 格子正規化がキャンセル）。
+- **出典（検証済）**: Edelstein, **Solid State Commun. 73, 233 (1990)**。
+- **V&V / カテゴリ**: 2D Rashba で χ_yx/σ_xx = **mα_R/(4μ)**（自前導出）を 15%以内（α=0.05 で 3.6%）再現、χ_xx/σ_xx≈0、α に線形。極性 CsPbI₃（P4mm）効率は TB 予測値（実験照合は文献待ち）。**B**。**commit `163d8d1`**。
+
+**V&V カテゴリ更新**: A は F6 polaron（公式 <1% + TB-駆動 α）・F9 WF（0.5%）が中心。多くは SK-TB/Blount の構造限界で符号/順序/トレンド/量子化/τ非依存比（B/C）に留まり、絶対値は honest に D 維持（09 の「全 A 化」想定に対する誠実な現実; 捏造回避）。
 
 ---
 

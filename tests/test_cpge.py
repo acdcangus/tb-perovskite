@@ -62,8 +62,19 @@ def test_centrosymmetric_zero():
 
 def _weyl_trace(chirality, omega, n=41, kmax=1.0):
     sz = chirality * SZ
-    H_fn = lambda k: k[0] * SX + k[1] * SY + k[2] * sz       # noqa: E731
-    dH_fn = lambda k, a: [SX, SY, sz][a]                      # noqa: E731
+
+    def H_fn(k):  # batch-aware: (3,)->(2,2), (K,3)->(K,2,2)
+        kv = np.asarray(k, float); kk = np.atleast_2d(kv)
+        H = (kk[:, 0, None, None] * SX + kk[:, 1, None, None] * SY
+             + kk[:, 2, None, None] * sz)
+        return H[0] if kv.ndim == 1 else H
+
+    def dH_fn(k, a):  # velocity vertices are k-independent here
+        M = [SX, SY, sz][a]
+        kv = np.asarray(k, float)
+        return M if kv.ndim == 1 else np.broadcast_to(M, (kv.shape[0], 2, 2))
+
+    H_fn._batched = dH_fn._batched = True
     ks = np.linspace(-kmax, kmax, n)
     dk = ks[1] - ks[0]
     kpts = np.array([[a, b, c] for a in ks for b in ks for c in ks])

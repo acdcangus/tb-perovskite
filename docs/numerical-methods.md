@@ -2,6 +2,20 @@
 
 理論モデル（[theoretical-model.md](theoretical-model.md)）を数値的に解く手法を定義する。
 
+## 目次
+
+**コア（SK-TB バンド構造）**
+1. Slater-Koster 二中心積分 / 2. スピン軌道相互作用 (SOC) / 3. Bloch ハミルトニアン組立・電子占有 /
+4. 対角化 / 5. k 経路 / 6. バンドギャップ / 7. 安定性・誤差・計算量 / 8. 採用理由と代替
+
+**物性モジュール（拡張機能 F1–F14, 各 §で式・出典・V&V・限界）**
+9. Berry 曲率・AHC・SHC (`berry.py`) / 10. Wilson ループ・WCC (`topology.py`) /
+11. Boltzmann 熱電 (`thermo.py`) / 12. Rashba (`rashba.py`) / 13. Edelstein (`edelstein.py`) /
+14. CPGE (`cpge.py`) / 15. Fröhlich ポーラロン (`polaron.py`) / 16. 歪みバンド工学 (`bandengr.py`) /
+17. スラブ・超格子・Stark (`slab.py`) / 18. Berry 位相分極 KSV (`polarization.py`)
+
+各物性モジュールの一覧・commit・テスト数は `extention/08_tb-perovskite_implementation_report.md` を参照。
+
 ---
 
 ## 1. Slater-Koster 二中心積分

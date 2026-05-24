@@ -22,6 +22,20 @@ Slater-Koster 法**で計算する Python パッケージです。
 
 材料・パラメータ・k 経路はすべて **JSON で入力**します。
 
+## 計算できる物性（共有 `velocity.py` の上に構築）
+
+| カテゴリ | モジュール | 物理量 |
+|---|---|---|
+| g 因子 / 光学 | `g_factor.py`, `optical.py` | Landé g 因子、複素誘電関数 ε(ω) |
+| 非線形・光電流 | `shift_current.py`, `cpge.py` | シフト電流 / BPVE、円偏光光起電力 (CPGE) |
+| Berry 位相・トポロジー | `berry.py`, `topology.py`, `polarization.py` | Berry 曲率・AHC・SHC・離散 Chern、Wilson ループ / WCC、KSV 分極 |
+| スピン軌道輸送 | `rashba.py`, `edelstein.py` | Rashba 分裂 α_R、Edelstein 電流誘起スピン分極 |
+| 輸送・電子格子 | `thermo.py`, `polaron.py` | Boltzmann 熱電 (S/σ/κ_e)、Fröhlich ポーラロン結合 |
+| 励起子・構造 | `exciton.py`, `bandengr.py`, `slab.py` | Wannier-Mott 励起子、歪みバンド工学、2D RP スラブ / 超格子 / Stark |
+
+各物性の式・出典・V&V は [docs/numerical-methods.md](docs/numerical-methods.md)（§9–§18）と
+[extention/08_tb-perovskite_implementation_report.md](extention/08_tb-perovskite_implementation_report.md) を参照。
+
 ## クイックスタート
 
 ```bash

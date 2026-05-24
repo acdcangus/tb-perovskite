@@ -81,31 +81,41 @@ def cpge_tensor(kpts, H_fn, dHk_fn, omega, eta, *, n_occ=None, e_fermi=None,
     with hbar=e=1 and prefactor pi; ``measure`` multiplies (e.g. dk^3/(2pi)^3
     for an absolute BZ integral, else the per-k average is returned).
     """
-    beta = np.zeros((3, 3))
+    kpts = np.asarray(kpts, dtype=float)
     nk = len(kpts)
-    for kv in kpts:
-        H = H_fn(kv)
-        evals, evecs = np.linalg.eigh(0.5 * (H + H.conj().T))
-        dH = [dHk_fn(kv, a) for a in range(3)]
-        V = [evecs.conj().T @ dH[a] @ evecs for a in range(3)]
-        occ = (evals < e_fermi) if e_fermi is not None else \
-            (np.arange(evals.size) < n_occ)
-        for n in np.where(occ)[0]:
-            for m in np.where(~occ)[0]:
-                Emn = evals[m] - evals[n]
-                if Emn <= 1e-9:
-                    continue
-                w = _gaussian(omega - Emn, eta)
-                if w < 1e-12:
-                    continue
-                Delta = np.array([V[a][n, n].real - V[a][m, m].real for a in range(3)])
-                r_nm = cross_gap_connection(V, evals, n, m)
-                r_mn = cross_gap_connection(V, evals, m, n)
-                # eps_jkl r^k_nm r^l_mn = (r_nm x r_mn)_j = -i Omega^j_n, so
-                # -Im(cross) = Omega^j_n in the Xiao (berry.py) convention
-                # (verified by the general == two-band cross-check on a Weyl model).
-                rr = -np.imag(np.cross(r_nm, r_mn))
-                beta += np.pi * np.outer(Delta, rr) * w  # f_nm = +1 (n occ, m empty)
+
+    # Build (K, d, d) stacks for H and dH/dk (use a batch-aware builder if the
+    # callable advertises it, else stack per-k); then batched eigh + velocities.
+    def _stack(fn, *args):
+        if getattr(fn, "_batched", False):
+            return np.asarray(fn(kpts, *args))
+        return np.stack([fn(k, *args) for k in kpts])
+
+    Hs = _stack(H_fn)
+    Hs = 0.5 * (Hs + Hs.conj().transpose(0, 2, 1))
+    evals, evecs = np.linalg.eigh(Hs)                       # (K,d), (K,d,d)
+    Uh = evecs.conj().transpose(0, 2, 1)
+    V = [Uh @ _stack(dHk_fn, a) @ evecs for a in range(3)]  # band-basis velocities
+
+    d = evals.shape[1]
+    if e_fermi is not None:
+        occ = evals < e_fermi                               # (K,d)
+    else:
+        occ = np.broadcast_to(np.arange(d)[None, :] < n_occ, evals.shape)
+
+    # Pairwise (n,m) tensors, vectorised over k (this replaces the n,m,k loops).
+    En, Em = evals[:, :, None], evals[:, None, :]           # E_n, E_m at [k,n,m]
+    Emn, dE = Em - En, En - Em
+    valid = (occ[:, :, None] & ~occ[:, None, :]) & (Emn > 1e-9)   # n occ, m unocc, resonant
+    w = _gaussian(omega - Emn, eta) * valid                 # 0 where invalid
+    safe_dE = np.where(np.abs(dE) > 1e-12, dE, 1.0)
+    # Delta^a_nm = V^a_nn - V^a_mm ; cross-gap connections r^a_nm, r^a_mn
+    Vd = [np.real(np.diagonal(V[a], axis1=1, axis2=2)) for a in range(3)]   # (K,d)
+    Delta = np.stack([Vd[a][:, :, None] - Vd[a][:, None, :] for a in range(3)], axis=-1)
+    r_nm = np.stack([-1j * V[a] / safe_dE for a in range(3)], axis=-1)       # -i V_nm/(E_n-E_m)
+    r_mn = np.stack([-1j * V[a].transpose(0, 2, 1) / (-safe_dE) for a in range(3)], axis=-1)
+    rr = -np.imag(np.cross(r_nm, r_mn, axis=-1))            # = Omega^j_n (Xiao convention)
+    beta = np.pi * np.einsum("knmi,knmj->ij", Delta * w[..., None], rr)
     return beta * measure / nk
 
 

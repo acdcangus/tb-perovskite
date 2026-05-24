@@ -82,3 +82,59 @@ def test_polar_perovskite_runs():
     E, sy, vx = edelstein.band_data_polar_kashikar13(kpts, p, a, 0.4, spin_axis=1, vel_axis=0)
     chi = edelstein.edelstein_susceptibility(E, sy, vx, mu=float(np.median(E)), T=300.0)
     assert np.isfinite(chi)
+
+
+# --- T2-4: tau-independent Edelstein efficiency chi_yx/sigma_xx ----------------
+
+def _rashba_parabolic_band_data(m, alpha, N, kmax):
+    """Batched 2D Rashba H = (k^2/2m) I + alpha(kx sy - ky sx); S = sigma/2."""
+    ks = np.linspace(-kmax, kmax, N)
+    KX, KY = np.meshgrid(ks, ks, indexing="ij")
+    kx, ky = KX.ravel(), KY.ravel()
+    I2 = np.eye(2)
+    H = ((kx ** 2 + ky ** 2)[:, None, None] / (2 * m)) * I2 \
+        + alpha * (kx[:, None, None] * SY - ky[:, None, None] * SX)
+    E, U = np.linalg.eigh(H)
+    Sy = np.real(np.einsum("kan,ab,kbn->kn", U.conj(), 0.5 * SY, U))
+    Sx = np.real(np.einsum("kan,ab,kbn->kn", U.conj(), 0.5 * SX, U))
+    dHx = (kx[:, None, None] / m) * I2 + alpha * SY
+    vx = np.real(np.einsum("kan,kab,kbn->kn", U.conj(), dHx, U))
+    return E, Sy, Sx, vx
+
+
+def test_rashba_edelstein_ratio_analytic():
+    """chi_yx/sigma_xx == m*alpha/(4 mu) for the 2D Rashba model (S=sigma/2).
+
+    Derived leading-order (small alpha, both subbands at mu>0); tau and the
+    k-grid normalisation cancel in the ratio.
+    """
+    from perovskite_tb._constants import KB_EV
+    m, mu, N = 1.0, 2.0, 251
+    T = 0.02 / KB_EV   # thermo uses T in Kelvin; k_B T = 0.02 eV
+    alpha = 0.05
+    kmax = 1.8 * np.sqrt(2 * m * mu) + 4 * alpha * m + 1.0
+    E, Sy, Sx, vx = _rashba_parabolic_band_data(m, alpha, N, kmax)
+    ratio = edelstein.edelstein_ratio(E, Sy, vx, mu, T)
+    analytic = m * alpha / (4 * mu)
+    assert np.isclose(ratio, analytic, rtol=0.15), f"ratio={ratio:.5f} vs {analytic:.5f}"
+    # no longitudinal spin response
+    chi_xx = edelstein.edelstein_susceptibility(E, Sx, vx, mu, T)
+    sig = edelstein.longitudinal_conductivity(E, vx, mu, T)
+    assert abs(chi_xx) / sig < 1e-6, f"chi_xx/sigma={chi_xx / sig:.2e} (expected 0)"
+    # linear in alpha: doubling alpha doubles the efficiency
+    E2, Sy2, _, vx2 = _rashba_parabolic_band_data(m, 2 * alpha, N, kmax)
+    ratio2 = edelstein.edelstein_ratio(E2, Sy2, vx2, mu, T)
+    assert np.isclose(ratio2 / ratio, 2.0, rtol=0.15), f"not linear: {ratio2 / ratio:.3f}"
+
+
+def test_polar_perovskite_efficiency_finite():
+    """chi_yx/sigma_xx (tau-independent) for the core-TB polar perovskite is finite."""
+    from perovskite_tb.io_params import get_material, load_parameter_file
+    m = get_material(load_parameter_file("data/parameters/kashikar2021_cubic_13orb.json"), "CsPbI3")
+    p, a = m["params"], m["a"]
+    rng = np.random.default_rng(1)
+    kpts = rng.uniform(-0.4, 0.4, size=(200, 3)) * (2 * np.pi / a)
+    E, sy, vx = edelstein.band_data_polar_kashikar13(kpts, p, a, 0.4, spin_axis=1, vel_axis=0)
+    mu = float(np.percentile(E, 80))  # sit in the conduction states
+    ratio = edelstein.edelstein_ratio(E, sy, vx, mu, T=300.0)
+    assert np.isfinite(ratio)

@@ -31,6 +31,11 @@ Validity / honesty:
   * Absolute magnitude needs a material/scattering tau (out of scope) -> the
     response is returned divided by (e tau); trust symmetry/structure (chi=0 vs
     perpendicular chi) and relative trends.  Blount TB limitation applies.
+  * The tau-INDEPENDENT Edelstein EFFICIENCY chi_{ab}/sigma_{bb}
+    (:func:`edelstein_ratio`) removes the relaxation time and the k-grid
+    normalisation; for the 2D Rashba model it reduces to the analytic
+    m*alpha_R/(4 mu) (small alpha, S=sigma/2), which is verified in the tests,
+    making the ratio a quantitatively-anchored figure of merit.
 """
 
 from __future__ import annotations
@@ -52,6 +57,34 @@ def edelstein_susceptibility(
     """
     w = thermo._minus_dfde(np.asarray(energies), mu, T)
     return -float(np.sum(w * np.asarray(spin_a) * np.asarray(velocity_b))) / energies.shape[0]
+
+
+def longitudinal_conductivity(
+    energies: np.ndarray, velocity_b: np.ndarray, mu: float, T: float,
+) -> float:
+    """CRTA longitudinal conductivity sigma_bb/(e^2 tau) = (1/N_k) sum (-df/dE) v_b^2.
+
+    Same Fermi window and k-measure as :func:`edelstein_susceptibility`, so the
+    ratio chi_{ab}/sigma_bb is independent of the relaxation time tau and of the
+    overall k-grid normalisation (the Edelstein "efficiency").
+    """
+    w = thermo._minus_dfde(np.asarray(energies), mu, T)
+    return float(np.sum(w * np.asarray(velocity_b) ** 2)) / energies.shape[0]
+
+
+def edelstein_ratio(
+    energies: np.ndarray, spin_a: np.ndarray, velocity_b: np.ndarray,
+    mu: float, T: float,
+) -> float:
+    """tau-independent Edelstein efficiency chi_{ab}/sigma_bb (= delta S_a per unit j_b).
+
+    Equals [chi_{ab}/(e tau)] / [sigma_bb/(e^2 tau)] with e=1; the relaxation time
+    and the k-grid normalisation cancel.  For the 2D Rashba model this reduces to
+    the analytic m*alpha_R/(4 mu) (small alpha, S = sigma/2); see tests.
+    """
+    sig = longitudinal_conductivity(energies, velocity_b, mu, T)
+    chi = edelstein_susceptibility(energies, spin_a, velocity_b, mu, T)
+    return chi / sig
 
 
 def band_data_polar_kashikar13(

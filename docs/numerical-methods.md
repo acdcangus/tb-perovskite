@@ -211,14 +211,19 @@ $\chi_{ab}/(e\tau)=-\frac1{N_k}\sum_{n,k}(-\partial f/\partial E)\langle S_a\ran
 中心反転系では $\langle S\rangle(-k)=\langle S\rangle(k)$（偶）・$v(-k)=-v(k)$（奇）→ 積分が奇 → $\chi=0$。
 Rashba 系では電流に**直交**するスピン応答（$\chi_{yx}\neq0,\chi_{xx}=0$, Rashba-Edelstein）。
 
-### V&V（`tests/test_edelstein.py`, 4 ケース）
+**τ 非依存効率（追加, T2-4）**: 縦伝導度 $\sigma_{bb}/(e^2\tau)=\frac1{N_k}\sum(-\partial f/\partial E)v_b^2$（`longitudinal_conductivity`）を同じ Fermi 窓で計算し、
+比 $\chi_{ab}/\sigma_{bb}$（`edelstein_ratio`）を取ると $\tau$ と k 格子正規化がキャンセル＝**Edelstein 効率**（単位電流あたりの誘起スピン）。
+
+### V&V（`tests/test_edelstein.py`, 6 ケース）
 - **中心反転（非縮退）模型 d(k)=(cos kx,cos ky,M)** → $\chi=0$（機械精度）。
 - **Rashba 模型** → $\chi_{yx}\neq0$, $|\chi_{xx}|\ll|\chi_{yx}|$（直交）、$\chi_{yx}(-\alpha)=-\chi_{yx}(\alpha)$（符号反転）。
+- **【追加】解析比**（`test_rashba_edelstein_ratio_analytic`）: 2D Rashba で $\chi_{yx}/\sigma_{xx}=m\alpha_R/(4\mu)$（自前導出, S=σ/2, 小 α）を **15%以内**で再現、$\chi_{xx}/\sigma_{xx}\simeq0$（機械精度）、α に線形。
+- **【追加】極性ペロブスカイト効率**: コア TB の P4mm CsPbI₃ で $\chi_{yx}/\sigma_{xx}$（τ 非依存）が有限。
 - 極性 CsPbI₃（P4mm, 非縮退）で実行整合。
 
 ### 適用範囲・限界（honest）
 per-band 公式は**非縮退バンド**前提。立方 Pm-3m は全 k で Kramers 縮退（応答は対称性で 0 だが per-band では gauge 依存）→
-ペロブスカイトは**反転破れ極性 (P4mm)** 相で評価。絶対値は $\tau$ 依存でスコープ外（/eτ で返す）→ 対称性・直交構造・相対のみ信頼。
+ペロブスカイトは**反転破れ極性 (P4mm)** 相で評価。絶対 $\chi$ は $\tau$ 依存でスコープ外（/eτ で返す）。**比 $\chi/\sigma$ は $\tau$ がキャンセル**し 2D Rashba 解析値に対し定量検証済（カテゴリ B；ペロブスカイト効率は TB 予測値で実験照合は文献が見つかれば追加）。Blount TB 限界は絶対値に残る。
 
 ## 14. 円偏光光起電力効果 (CPGE) / injection current (`cpge.py`, 仕様 F7)
 

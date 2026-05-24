@@ -72,3 +72,60 @@ def polarization_phase_z(params, a, *, n_occ=slab.N_OCC_PER_CELL, n_kxy=6, n_kz=
     # average on the unit circle (phase is mod 2pi)
     mean = np.angle(np.mean(np.exp(1j * np.array(phis))))
     return float(mean), np.array(phis)
+
+
+# Electron charge (C); Zak phase -> areal polarization conversion.
+_E_COULOMB = 1.602176634e-19
+
+
+def _occupied_along_kz_builder(H_fn, a, kx, ky, n_occ, n_kz):
+    """Occupied eigenvectors along k_z for an arbitrary H builder (cubic z-gauge).
+
+    Uses the same gauge U(k_z)=diag(exp(-i k_z z_alpha)) as :func:`occupied_along_kz`
+    with the *cubic* orbital z-positions, applied consistently so that the
+    electronic Zak-phase DIFFERENCE between two structures is well defined.
+    """
+    z2 = slab._orbital_z(a)
+    kzs = (2.0 * np.pi / a) * np.arange(n_kz) / n_kz
+    occ = np.empty((n_kz, 26, n_occ), dtype=complex)
+    for i, kz in enumerate(kzs):
+        Hk = np.asarray(H_fn(np.array([kx, ky, kz])))
+        U = np.diag(np.exp(-1j * kz * z2))
+        Hg = U @ Hk @ U.conj().T
+        _, vecs = np.linalg.eigh(0.5 * (Hg + Hg.conj().T))
+        occ[i] = vecs[:, :n_occ]
+    return occ
+
+
+def ferroelectric_polarization_difference(
+    params, a, displacement, *, reference=0.0,
+    n_occ=slab.N_OCC_PER_CELL, n_kxy=4, n_kz=24,
+):
+    r"""Electronic Delta P_z (uC/cm^2) for a [001] polar displacement (modern theory).
+
+    Computes the KSV electronic polarization difference between the polar
+    (``displacement``, Angstrom, B-cation shift -> P4mm) and the centrosymmetric
+    ``reference`` structure as
+        Delta P_z = (e / (2 pi A_cell)) * (phi(displacement) - phi(reference)),
+    with A_cell = a^2 the [001] cross-sectional area and phi the transverse-BZ-
+    averaged Zak phase.  Returns micro-Coulomb / cm^2.
+
+    HONEST scope: this is the ELECTRONIC contribution only (the ionic point-charge
+    term is separate); the gauge-invariant, physically meaningful content is the
+    polarization DIFFERENCE and, in particular, its reversal under displacement
+    reversal (Delta P(-d) = -Delta P(+d), the defining ferroelectric property,
+    exact as d->0).  Absolute magnitude carries the usual SK-TB/Blount caveat.
+    """
+    from .shift_current import make_polar_kashikar13_builders
+
+    def zak_avg(delta):
+        H_fn, _, _ = make_polar_kashikar13_builders(params, a, polar_displacement_z=delta)
+        kxy = (2.0 * np.pi / a) * np.arange(n_kxy) / n_kxy
+        phis = [zak_phase(_occupied_along_kz_builder(H_fn, a, kx, ky, n_occ, n_kz))
+                for kx in kxy for ky in kxy]
+        return np.angle(np.mean(np.exp(1j * np.array(phis))))
+
+    dphi = np.angle(np.exp(1j * (zak_avg(displacement) - zak_avg(reference))))
+    # e/(2 pi A): A = (a[Angstrom]*1e-8 cm)^2 ; e in C -> *1e6 for micro-Coulomb
+    factor = (_E_COULOMB / (2.0 * np.pi)) * 1e6 / (a * 1e-8) ** 2
+    return float(dphi * factor)

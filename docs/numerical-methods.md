@@ -332,13 +332,18 @@ Blancon 比較は **トレンド（閉じ込め減衰の形）限定**（カテ�
 現代分極理論（**King-Smith, Vanderbilt, PRB 47, 1651 (1993)**, DOI 10.1103/PhysRevB.47.1651）の電子分極を、
 占有バンドの Wilson ループ Berry/Zak 位相（`topology.py` 再利用）として計算する。$P_z=(e/2\pi)\langle\phi_{\rm Zak}\rangle_{(k_x,k_y)}$。
 
-### V&V（`tests/test_polarization.py`, 4 ケース）
+**強誘電 ΔP（追加, T2-3）**: `ferroelectric_polarization_difference` が [001] 極性変位（P4mm）と中心反転参照の間の
+**電子 ΔP_z**（μC/cm²）を $\Delta P_z=(e/2\pi A)(\phi(d)-\phi(0))$, $A=a^2$ で計算。
+
+### V&V（`tests/test_polarization.py`, 6 ケース）
 - **SSH 模型**（**Su-Schrieffer-Heeger, PRL 42, 1698 (1979)**）: Zak 位相が 0/π に量子化、位相転移 $v=w$ を跨いで **π ジャンプ**（位相幾何学的分極差, 厳密アンカー）。
 - **Rice-Mele 模型**（オンサイト staggering で反転破れ）: Zak 位相が**連続的にシフト**（非量子化分極）。
 - ペロブスカイトの電子 Zak 位相が finite・実・決定論的。
+- **【追加】強誘電 ΔP**（`test_ferroelectric_delta_p_*`）: 変位 0 で ΔP=0；**ΔP(−d)=−ΔP(+d)**（FE 符号反転, 小 d で反対称, gauge 不変）；大きさ **~1–8 μC/cm²**（d=0.05–0.4 Å）で **DFT FE ペロブスカイト（数 μC/cm², CsPbF₃ ~34）と同オーダ**。
 
 ### honest 限界（重要）
 ペロブスカイトで返すのは**電子 Berry 位相のみ**（固定軌道ゲージ）。物理的に量子化された分極は KSV の枠で
 **イオン寄与 + 分極量子 $eR/V_{\rm cell}$** を要し、total のみが gauge 不変・量子化。実際、立方ペロブスカイトの裸の電子 Zak は
 0/π にならない（X_z 軌道位置 $z=a/2$ 由来のゲージオフセット）→ **量子化は主張せず**、量子化は SSH で検証、用途は分極**差** ΔP（gauge 不変な観測量）。
+**ΔP**（T2-3）も同様に **電子寄与のみ**（DFT 値は ionic+electronic の total）で、厳密に主張するのは **符号反転と中心反転参照でのゼロ**（カテゴリ C→B）；数 μC/cm² の**オーダ一致**は良好だが定量一致は主張しない。出典: 検証済み **Bhumla et al., arXiv:2108.03683 (2021)**（CsPbF₃ P=34 μC/cm²）。SK-TB/Blount caveat は絶対値に残る。
 

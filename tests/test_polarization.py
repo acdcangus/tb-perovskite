@@ -66,3 +66,38 @@ def test_perovskite_electronic_zak_well_defined():
     pz2, _ = polarization.polarization_phase_z(p, a, n_kxy=4, n_kz=16)
     assert np.isfinite(pz1) and -np.pi - 1e-9 <= pz1 <= np.pi + 1e-9
     assert pz1 == pz2  # deterministic
+
+
+def _mat(name="CsPbI3"):
+    m = get_material(load_parameter_file("data/parameters/kashikar2021_cubic_13orb.json"), name)
+    return m["params"], m["a"]
+
+
+def test_ferroelectric_delta_p_reference_zero():
+    """No displacement -> Delta P = 0 (centrosymmetric reference)."""
+    p, a = _mat()
+    dP = polarization.ferroelectric_polarization_difference(p, a, 0.0)
+    assert abs(dP) < 1e-9, f"PE reference Delta P should be 0, got {dP:.2e}"
+
+
+def test_ferroelectric_delta_p_sign_reversal_and_magnitude():
+    """T2-3: electronic Delta P reverses with the polar direction and is ~uC/cm^2.
+
+    Rigorous gauge-invariant content: Delta P(-d) = -Delta P(+d) (the defining FE
+    property, exact as d->0).  Magnitude: a few uC/cm^2, the same order as DFT FE
+    perovskite polarizations (e.g. CsPbF3 ~34, typical halide FE a few uC/cm^2;
+    Bhumla et al., arXiv:2108.03683).  Electronic contribution only (ionic
+    separate) -> sign+order claimed, not a quantitative match.
+    """
+    p, a = _mat()
+    dP_plus = polarization.ferroelectric_polarization_difference(p, a, +0.05)
+    dP_minus = polarization.ferroelectric_polarization_difference(p, a, -0.05)
+    # (1) reverses sign with the polar direction (small d -> near-antisymmetric)
+    assert dP_plus * dP_minus < 0, f"no sign reversal: {dP_plus:.3f}, {dP_minus:.3f}"
+    assert np.isclose(dP_plus, -dP_minus, rtol=0.15), \
+        f"not antisymmetric at small d: {dP_plus:.3f} vs {-dP_minus:.3f}"
+    # (2) physical order of magnitude (a few uC/cm^2)
+    assert 0.1 < abs(dP_plus) < 30.0, f"Delta P={dP_plus:.3f} uC/cm^2 out of FE range"
+    # (3) grows with the displacement magnitude
+    dP_big = polarization.ferroelectric_polarization_difference(p, a, +0.20)
+    assert abs(dP_big) > abs(dP_plus)

@@ -244,3 +244,22 @@ $$\alpha=\frac{1}{4\pi\epsilon_0}\,\frac12\Big(\frac1{\epsilon_\infty}-\frac1{\e
 $\alpha$ と**先頭次**弱結合質量 $1+\alpha/6$ のみ実装・検証（intermediate 結合 α~2 では完全 Feynman variational が必要 → 移動度は未実装, cf. PolaronMobility.jl）。
 9 材料 α マップは各材料の **cited な $\epsilon_{\rm S}$・$\omega_{\rm LO}$** が必要 → CsPbBr₃ は収集済（上記）、他材料は一次出典が揃い次第追加（`_pending` 参照）。捏造防止のため未収集材料は計算しない。
 
+## 16. 歪みバンド工学（変形ポテンシャル） (`bandengr.py`, 仕様 F12)
+
+立方 Kashikar-13 模型に一様（hydrostatic）歪み $\epsilon$ を加え、R 点ギャップ応答 $E_g(\epsilon)$ と変形ポテンシャル
+$a_g=dE_g/d\epsilon$ を計算する。ホッピングは **Harrison d⁻² 普遍則**（W. A. Harrison,
+*Electronic Structure and the Properties of Solids*, Freeman 1980）で $t_*\to t_*(1+\epsilon)^{-2}$、
+オンサイト/SOC は不変。変形ポテンシャル枠組みは Bir-Pikus 1974、ペロブスカイト歪み文脈は Buin 2014 / Grumet 2018。
+
+R 点では Bloch 位相が $\pi$ に固定されるため、R 点ギャップの歪み応答は **Harrison ホッピング繰り込み**から来る
+（格子定数変化は R 点ギャップには直接効かない）。
+
+### V&V（`tests/test_bandengr.py`, 8 ケース）
+- Harrison 則 $t_*(1+\epsilon)^{-2}$（オンサイト/SOC 不変）。
+- $\epsilon=0$ で無歪みギャップ（CsPbI₃ 0.6298 eV, theme_F 一致）を厳密回復。
+- 小 $\epsilon$ で $E_g(\epsilon)$ 線形（変形ポテンシャルが well-defined）、引張/圧縮で逆符号、全材料で $a_g$ 有限。
+
+### honest 限界
+**SK-TB + Harrison スケーリング推定**。構造的挙動（$\epsilon=0$ 回復・線形性・符号）は模型内で厳密だが、
+$a_g$ の**絶対値は近似**（DFT-fit TB への Harrison 適用は粗い）で、DFT/実験との定量一致は主張しない（要第一原理 $a_g$ 比較）。
+

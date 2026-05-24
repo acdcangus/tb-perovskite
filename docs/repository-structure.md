@@ -25,6 +25,7 @@
 │   ├── edelstein.py           Edelstein 電流誘起スピン分極 χ（spec F11, CRTA）
 │   ├── cpge.py                円偏光光起電力 CPGE / injection current（spec F7）
 │   ├── polaron.py             Fröhlich ポーラロン結合 α / 弱結合質量（spec F6）
+│   ├── bandengr.py            歪みバンド工学 E_g(ε) / 変形ポテンシャル（spec F12）
 │   ├── materials_project.py   MP DFPT ε∞ 取得（Theme I, option C'）
 │   ├── cli.py / __main__.py / _meta.py / __init__.py
 │

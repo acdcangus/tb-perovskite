@@ -164,3 +164,22 @@ $$\sigma_{xx}/\tau=e^2 L^{(0)},\quad S_{xx}=-\frac{1}{eT}\frac{L^{(1)}}{L^{(0)}}
 - **Sommerfeld Seebeck**: $S\sim-(\pi^2/3)(k_BT)\,d\ln\Sigma/d\varepsilon|_\mu$、3D 放物バンドで符号・大きさ一致。
 - 正孔バンドで $S>0$（符号）、$\sigma,\kappa^e>0$、$\Sigma$ ビルダの $\varepsilon^{3/2}$ 形状、立方 CsPbI₃ で実行整合。
 
+## 12. Rashba / 中心反転破れスピン分裂 (`rashba.py`, 仕様 F4)
+
+中心反転が破れた系のスピンテクスチャ $\langle S\rangle(\mathbf{k})$ と線形 $k$ スピン分裂係数 $\alpha_R$ を計算する
+（**Bychkov, Rashba, JETP Lett. 39, 78 (1984)**: $H_R=\alpha_R(\boldsymbol\sigma\times\mathbf{k})\cdot\hat z$,
+バンド端 doublet は $\Delta E=2\alpha_R|k|$ で分裂しスピンは $k$ に直交; **Niesner et al., PRL 117, 126401 (2016)**,
+DOI 10.1103/PhysRevLett.117.126401, ペロブスカイト Rashba）。`berry.spin_operators` と
+`shift_current.make_polar_kashikar13_builders`（spinful P4mm）を再利用。
+
+立方 Pm-3m CsBX₃ は中心反転 P + 時間反転 T → 全 k で Kramers 縮退 → $\alpha_R=0$。[001] 極性変位 (P4mm) で P が破れ、
+$|k|>0$ で分裂（TRIM $k=0$ は Kramers 定理で保護され分裂ゼロ）。
+
+### V&V（`tests/test_rashba.py`, 8 ケース）
+- **解析 2 バンド Rashba** で入力 $\alpha_R$ を厳密回復、スピンは $k$ に直交（spin-momentum locking）。
+- **立方 CsBX₃ → 分裂 0**（Kramers, 複数 doublet で <1e-6）。
+- **極性 CsBX₃ → 分裂あり**（>1e-4）、$\Gamma$ でゼロ、$|k|$ とともに増大（k 線形）。
+
+### honest 限界
+$\alpha_R$ の絶対値は整合するベンチ（文献は**表面** Rashba、本実装は**バルク極性**変形）が無く + Blount 限界 → 対称性（0 vs ≠0）・spin-momentum locking・相対トレンドのみ信頼、絶対値は indicative。
+

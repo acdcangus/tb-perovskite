@@ -1,6 +1,6 @@
 # tb-perovskite — 拡張機能 実装報告書
 
-**作成日**: 2026-05-24
+**作成日**: 2026-05-24 ／ **最終更新**: 2026-05-24（実装後のリファクタリング・効率化を反映, §6 追加）
 **実装者**: Claude Code（実装エージェント）
 **対象仕様**: `03_tb-perovskite_spec.md`（F1–F14）+ `07_agent_handoff.md`（実装手順・ハルシネーション防止指針）
 **リポジトリ**: `tb-perovskite`（既存 Slater–Koster / Jancu TB ペロブスカイトコード）
@@ -9,7 +9,8 @@
 
 ## 0. エグゼクティブサマリ
 
-仕様書 `03_tb-perovskite_spec.md` の F1–F14 のうち、**現実時間で「文献グラウンディング + 厳密 V&V + 無捏造」を満たせる 12 feature-slot を実装完了**した（10 新モジュール、新規テスト 82、全 **313 passed**、既存 231 テスト不変）。
+仕様書 `03_tb-perovskite_spec.md` の F1–F14 のうち、**現実時間で「文献グラウンディング + 厳密 V&V + 無捏造」を満たせる 12 feature-slot を実装完了**した（10 新モジュール、新規モジュールテスト 82、全 **314 passed**、既存 231 テスト不変）。
+実装後に**可読性リファクタリング + 効率化パス**（挙動・数値は完全等価を検証, §6）を実施済み。
 
 | 状態 | 機能 |
 |---|---|
@@ -91,11 +92,11 @@
 ## 2. 統計と再現性
 
 - **新モジュール**: 10（`berry, topology, thermo, rashba, edelstein, cpge, polaron, bandengr, slab, polarization`.py）
-- **新規テスト**: 82（22+12+6+8+4+4+7+8+7+4）/ **総テスト**: **313 passed**（既存 231 不変）
+- **新規テスト**: 82（22+12+6+8+4+4+7+8+7+4, 新モジュール）+ 1（§6 の nestoklon batch 等価ガード）/ **総テスト**: **314 passed**（既存 231 不変）
 - **再現コマンド**:
   ```bash
   pip install -e .
-  python -m pytest -q                       # 全 313
+  python -m pytest -q                       # 全 314
   python -m pytest tests/test_berry.py -q   # 機能別
   ```
 - **ドキュメント**: `docs/numerical-methods.md` §9–§18（各機能の式・出典・V&V・限界）; `docs/repository-structure.md`（モジュール一覧）; `.steering/20260524-*/`（各機能の requirements）
@@ -137,4 +138,36 @@
 
 ---
 
-**(EOF)** — Reviewed for hallucination per `07_agent_handoff.md` §0.1; all cited DOIs/arXiv IDs verified 2026-05-24.
+## 6. 実装後のリファクタリング・効率化（2026-05-24）
+
+初回実装（§1）の後、**挙動・数値を完全に保ったまま**可読性と速度を改善した。各変更は、(a) リファクタは既存
+314 テストを回帰チェックとして、(b) 効率化は「旧実装の出力を先に保存 → 新実装が機械精度で一致」を確認する
+等価性ガードで担保した（物理は不変）。
+
+### 6.1 可読性（DRY, 挙動不変）
+- **`berry.py`**: ほぼ同一だった `berry_curvature_kubo` / `spin_berry_curvature_kubo` を共通ヘルパ `_kubo_sum(evals, Ax, Vy, tol)` に統合（差は x 側頂点のみ）。
+- **`_constants.py`**: `RYDBERG_EV / G0 / KB_EV / COULOMB_EV_ANG` を集約（exciton/g_factor/thermo/optical が import）。`optical.py` の `14.39964` 二重リテラルを解消。
+- **`tests/_helpers.py`**: 共通 Pauli 行列・QWZ ビルダ・材料ローダを集約し、property 系テストの重複を解消。
+
+### 6.2 効率化（物理的に等価, 数値検証済み）
+| 対象 | 手法 | 効果 | 等価性検証 |
+|---|---|---|---|
+| **`shift_current.py`** nestoklon 極性ビルダ | k 方向にベクトル化し `(K,3)→(K,2N,2N)`（SOC は k 非依存で一度だけ構築・broadcast）, `_batched=True` で既存 batched パスを使用 | フルスイート **~217s → ~105s（約 2×）**, 最重テスト `test_polar_displacement` **71s → 18s** | 旧 per-k 出力と最大誤差 **1.4e-14**（H は完全一致）, 永続ガード `test_nestoklon_polar_builder_batched_matches_single` |
+| **`cpge.py`** `cpge_tensor` | per-k + occ/unocc ループを batched eigh + einsum(k,n,m) に書換 | `test_weyl_quantization` **8.7s → 0.83s（約 10×）** | 旧ループ出力と最大誤差 **8.3e-16** |
+| **`thermo.py`** `transport_distribution` | per-sample Gaussian ループをチャンク化ベクトル演算に | 該当テスト **1.85s → 1.46s** | 同一の Gaussian 和（formula 不変） |
+| **`cpge.py`** ε 縮約 | `Σ ε_jkl r^k r^l` を `np.cross` に | 微小 + 可読性↑ | 同一縮約 |
+
+すべて **Production の数値・既存 231 テストは不変**、新規含め **314 passed**。
+
+### 6.3 ドキュメント追従
+- `docs/numerical-methods.md`: 冒頭に目次（コア §1–8 + 物性モジュール §9–18）を追加。
+- `README.md`: 「計算できる物性」表（10+ モジュール ↔ 物理量）を追加し、本報告書と numerical-methods §9–18 へリンク。
+
+### 6.4 フォルダ構成・ドキュメント構成の評価
+- `src/perovskite_tb/` のフラット構成（~30 モジュール）は既存規約と整合 → **サブパッケージ化は不要**（import パス・規約を壊す割に利得が薄い）。
+- `.steering/` の蓄積は CLAUDE.md 規約どおりの作業履歴。`data/parameters/` は整然、API キーは gitignore（漏洩なし）、PDF は非追跡（肥大化なし）。
+- 関連 commit: `6fd36e5`（可読①②③ + thermo/cpge 初期効率化）, `3c8b58d`（nestoklon batch）, `b12e04e`（cpge ベクトル化 + docs）。
+
+---
+
+**(EOF)** — Reviewed for hallucination per `07_agent_handoff.md` §0.1; all cited DOIs/arXiv IDs verified 2026-05-24. §6 efficiency changes verified numerically equivalent to the pre-refactor implementation (machine precision).

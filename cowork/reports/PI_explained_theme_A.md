@@ -32,7 +32,7 @@ Production bundle `results/production/theme_A_g_factor/2026-05-23_31374dc/MANIFE
 
 ### 1.2 なぜハライドペロブスカイトで調べるか
 ハライドペロブスカイト（CsPbI₃ など）は太陽電池で大注目の材料だが、**重い原子（Pb など）由来の強い
-スピン軌道相互作用（SOC, 後述）**を持つため、スピン物性が豊か。最近、磁気光学実験（Kirstein 2022 ら）で
+スピン軌道相互作用（SOC, 後述）**を持つため、スピン物性が豊か。最近、磁気光学実験（Kirstein et al., arXiv:2112.15384）で
 g 因子が精密測定され、**「g 因子はバンドギャップ Eg だけでほぼ決まる」普遍関係**が鉛系で見つかった。
 - 量子ビット（スピンで情報を保持）や、円偏光で電流を作るデバイスに g 因子は直結。
 - GaAs など既存半導体では g 因子の理解が進んでいるが、ペロブスカイト、特に**鉛フリー（Sn/Ge）**は未解明。
@@ -58,7 +58,7 @@ graph TD
   A[Kashikar-13 TB パラメータ 9材料] --> B[R点でハミルトニアン対角化<br/>バンド & 波動関数]
   B --> C1[Roth-Lax 原子論的 g 因子<br/>軌道角運動量の行列要素]
   B --> C2[Kane パラメータ P を速度演算子から抽出]
-  C2 --> D[k·p 普遍式で g_e, g_h<br/>Kirstein 2021 Eq.5/6]
+  C2 --> D[k·p 普遍式で g_e, g_h<br/>k·p 普遍式（docs/g-factor-formulation.md）]
   C1 --> E[g_e, g_h 比較・系統マップ]
   D --> E
   E --> F[普遍関係からのズレを定量化]
@@ -100,7 +100,7 @@ graph TD
   Δ 小 → ズレ大 を示す。
 
 ### 3.3 既知文献・実験値との比較
-- 鉛系 CsPbX₃ の g_e/g_h は Kirstein 2022（Nature 誌）の実験・k·p 普遍関係とよく一致（普遍曲線に載る）。
+- 鉛系 CsPbX₃ の g_e/g_h は Kirstein et al.（arXiv:2112.15384, in-repo）の k·p 普遍関係とよく一致（普遍曲線に載る）。
 - 鉛フリー Sn/Ge は実験データが乏しく、本研究は **TB に基づく予測**を提供（実験検証待ち）。
 - なお Roth-Lax 原子論的 g 因子は実験より絶対値が小さく出る（例: 普遍関係に比べ過小）。これは TB の構造的限界
   （§5, Blount 1962）であり、**符号・トレンドは信頼できるが絶対値は割り引いて読む**。そのため主結論は k·p 普遍式
@@ -109,7 +109,7 @@ graph TD
 ---
 
 ## 4. 何が新しいか（論文化視点）
-- 既存（Kirstein 2022, Nestoklon 2023 ら）は **鉛系**で g 因子の普遍関係を確立。
+- 既存（Kirstein et al. arXiv:2112.15384, Nestoklon 2023 ら）は **鉛系**で g 因子の普遍関係を確立。
 - 本研究は **鉛フリー（Sn/Ge）9 材料**へ拡張し、**正孔 g_h の普遍関係が SOC の弱い系で系統的に破れる**ことを
   TB で初めて系統マップ化。鉛フリー spin デバイス設計の指針になりうる（詳細は `cowork/novelty_assessment.md`）。
 
@@ -130,8 +130,11 @@ graph TD
 
 ## 7. 出典
 - R. Kashikar et al. 2021, **arXiv:2101.08562**（TB モデル本体）— 9 材料の SK パラメータ。
-- E. Kirstein et al. 2022, *Nature* 暦 / k·p 普遍関係（g_e, g_h の普遍式 Eq.5/6, P=6.8 eV·Å, Δ=1.5 eV）。
+- E. Kirstein et al., **arXiv:2112.15384**（in-repo `references/pdfs/arxiv_2112.15384.pdf`「The Landé factors of electrons
+  and holes in lead halide perovskites: universal dependence on the band gap」）。本研究で用いた k·p 普遍式の定数
+  （P=6.8 eV·Å, Δ=1.5 eV）と式の詳細は `docs/g-factor-formulation.md`（プロジェクト内で検証済み）を参照。
 - M. O. Nestoklon et al. 2023（TB から g 因子確認）。
-- R. Roth, B. Lax, S. Zwerdling 1959, *Phys. Rev.* 114, 90（Roth-Lax g 因子の原典）; Roth 1960 PR 118, 1534。
+- R. Roth 1960, *Phys. Rev.* 118, 1534（in-repo `references/pdfs/classic_Roth1960_PR118_1534.pdf`; g 因子 k·p 原典）。
+  関連: Roth–Lax–Zwerdling 1959（PR 114, 90 — 巻号は要原典確認、in-repo 外）。
 - E. I. Blount 1962, *Phys. Rev.* 126, 1636（TB 位置演算子の限界）。
 - Production bundle: `results/production/theme_A_g_factor/2026-05-23_31374dc/`、技術報告書: `cowork/reports/theme_A_g_factor.md`。

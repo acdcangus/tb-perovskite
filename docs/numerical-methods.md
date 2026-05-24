@@ -128,3 +128,21 @@ $F_{12}=\mathrm{Im}\ln[U_1 U_2(k{+}1)U_1(k{+}2)^{-1}U_2^{-1}]$、$C=-\tfrac{1}{2
 ### 9.6 計算量
 1 k 点あたり 26×26 対角化 `O(N³)` + Berry 和 `O(N²)`。9 材料 × BZ メッシュは個人 PC で数分〜1h（GPU 不要）。
 
+## 10. Wilson ループ・Wannier 電荷中心 (`topology.py`, 仕様 F2 部分)
+
+`berry.py` の link 変数を再利用し、占有多様体の**非アーベル Wilson ループ**（閉ループ上の重なり行列の積）と、
+その固有位相＝**Wannier 電荷中心 (WCC)**、WCC/分極の巻き付き数＝Chern 数を計算する
+（**Yu, Qi, Bernevig, Fang, Dai, PRB 84, 075119 (2011)**, DOI 10.1103/PhysRevB.84.075119;
+**Soluyanov, Vanderbilt, PRB 83, 235401 (2011)**, DOI 10.1103/PhysRevB.83.235401）。
+各 link は SVD 極分解で unitary 化（有限 N でも厳密 unitary, det 位相＝分極は不変）。
+
+### V&V（`tests/test_topology.py`, 12 ケース）
+- QWZ 模型で **Wilson ループ Chern == Fukui plaquette Chern**（2 独立手法の相互一致, 整数）。
+- QWZ 相図（|C|=1 for |u|<2, u=0 符号反転, |u|>2 で 0）。
+- Wilson ループの unitary 性・分極位相の U(1) gauge 不変性・WCC ∈ (−½,½]。
+
+### スコープ外（ハルシネーション防止のため意図的に未実装）
+- **Fu-Kane parity Z₂**: Kashikar 軌道基底での**空間反転演算子の表現**が in-repo 情報から確定できない（推測は捏造リスク）→ 反転表現を一次文献で確定するまで保留。
+- **Soluyanov-Vanderbilt 時間反転 Z₂（partner switching）**: 手法は実装可能だが、**検証用の既知 3D-Z₂ 参照模型**が必要 → 保留。
+- → 立方 CsBX₃ の topological 分類（CsPbI₃ の inverted gap 等, Jin 2012）は上記確定後の follow-up。本コミットは**検証済みの Wilson ループ基盤**まで。
+

@@ -1,0 +1,26 @@
+{
+  "_README": "Benchmark for the F4 Rashba coefficient (rashba.py, T2-1). The core TB models a [001]-polar (P4mm) CsBX3 with a rigid sublattice displacement; we compare its bulk Rashba alpha_R to a verified BULK DFT value for an inorganic polar perovskite. Surface-Rashba measurements are explicitly EXCLUDED (different system).",
+  "bulk_dft_reference": {
+    "material": "CsPbF3 (ferroelectric R3c, inorganic -- closest to the Cs-based core TB)",
+    "alpha_R_eVA": {"CBM": 1.05, "VBM": 0.41},
+    "polarization_uC_cm2": 34,
+    "source": "P. Bhumla, D. Gill, S. Sheoran, S. Bhattacharya, 'Origin of Rashba Spin-Splitting and Strain Tunability in Ferroelectric Bulk CsPbF3', arXiv:2108.03683 (2021) (verified web 2026-05-24).",
+    "note": "Inorganic Cs perovskite, BULK polar phase -- the appropriate comparison class for the Kashikar Cs-based TB. CBM Rashba (1.05) > VBM (0.41)."
+  },
+  "surface_reference_excluded": {
+    "material": "MAPbBr3 surface (spin-LEED)",
+    "alpha_R_eVA": 11,
+    "source": "D. Niesner et al., Phys. Rev. Lett. 117, 126401 (2016)",
+    "why_excluded": "This is a SURFACE Rashba measurement, not the bulk polar phase the TB models; not a valid magnitude benchmark for a bulk calculation."
+  },
+  "tb_results": {
+    "_method": "rashba.rashba_coefficient on shift_current.make_polar_kashikar13_builders (CsPbI3, [001] polar displacement = 0.4, k=0.02*2pi/a).",
+    "alpha_R_eVA": {"CBM_doublet_20_21": 0.0270, "VBM_doublet_18_19": 0.0002},
+    "note": "alpha_R grows ~linearly with the polar displacement (0.007 at 0.1 -> 0.049 at 0.8)."
+  },
+  "comparison": {
+    "qualitative_sign_structure": "MATCH (category C): cubic Pm-3m gives alpha_R=0 (Kramers), the [001] polar P4mm gives alpha_R != 0 with spin-momentum locking; and the CBM Rashba dominates over the VBM, as in the CsPbF3 DFT (CBM>VBM).",
+    "absolute_magnitude": "TB CBM alpha_R ~0.027 eVA vs bulk DFT ~1.05 eVA -> TB UNDERESTIMATES by ~40x. Does NOT reach order-of-magnitude agreement. Category D.",
+    "honest_note": "The TB polar model is a crude RIGID sublattice displacement (displacement parameter uncalibrated to a real ferroelectric distortion/polarization), and the SK-TB velocity/position operator lacks covalent (Blount) corrections, so the absolute Rashba strength is strongly underestimated. Only the sign, spin-locking, and CBM>VBM ordering are claimed; the absolute alpha_R is not reproduced (consistent with the module's standing honest caveat)."
+  }
+}

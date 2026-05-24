@@ -73,3 +73,31 @@ def test_polar_perovskite_splits_and_vanishes_at_gamma():
 def test_spin_operators_reused_from_berry():
     Sx, Sy, Sz = berry.spin_operators(13)
     assert Sx.shape == (26, 26)
+
+
+def test_bulk_dft_comparison():
+    """T2-1: compare the TB polar Rashba to verified BULK DFT (CsPbF3, inorganic).
+
+    Bulk DFT (Bhumla et al., arXiv:2108.03683, 2021): alpha_R(CBM)=1.05,
+    alpha_R(VBM)=0.41 eVA -> CBM Rashba dominates.  The TB (CsPbI3 [001]-polar)
+    reproduces this QUALITATIVE ordering (CBM >> VBM) but UNDERESTIMATES the
+    absolute alpha_R by ~40x (crude rigid-displacement polar model + Blount).
+    Surface Rashba (Niesner ~11 eVA) is a different system and excluded.
+    """
+    m = get_material(load_parameter_file(K13), "CsPbI3")
+    p, a = m["params"], m["a"]
+    kmag = 0.02 * (2 * np.pi / a)
+    H_fn, _, _ = make_polar_kashikar13_builders(p, a, polar_displacement_z=0.4)
+    aR_cbm = abs(rashba.rashba_coefficient(H_fn, 20, kmag))  # CBM doublet (20,21)
+    aR_vbm = abs(rashba.rashba_coefficient(H_fn, 18, kmag))  # VBM doublet (18,19)
+
+    DFT_CBM, DFT_VBM = 1.05, 0.41  # eVA, Bhumla 2021 bulk CsPbF3
+    # (1) qualitative ordering matches DFT: CBM Rashba dominates over VBM
+    assert aR_cbm > aR_vbm, f"CBM {aR_cbm:.4f} should exceed VBM {aR_vbm:.4f}"
+    assert aR_cbm > 1e-3, "polar CBM Rashba should be clearly nonzero"
+    # (2) honest magnitude: TB underestimates the bulk DFT by >10x (NOT order-match)
+    assert aR_cbm < DFT_CBM / 10.0, \
+        f"TB CBM alpha_R={aR_cbm:.4f} unexpectedly close to DFT {DFT_CBM} (doc says ~40x smaller)"
+    # (3) grows with the polar displacement (k-linear inversion-breaking)
+    H2, _, _ = make_polar_kashikar13_builders(p, a, polar_displacement_z=0.8)
+    assert abs(rashba.rashba_coefficient(H2, 20, kmag)) > aR_cbm

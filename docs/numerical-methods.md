@@ -187,19 +187,22 @@ $$\sigma_{xx}/\tau=e^2 L^{(0)},\quad S_{xx}=-\frac{1}{eT}\frac{L^{(1)}}{L^{(0)}}
 中心反転が破れた系のスピンテクスチャ $\langle S\rangle(\mathbf{k})$ と線形 $k$ スピン分裂係数 $\alpha_R$ を計算する
 （**Bychkov, Rashba, JETP Lett. 39, 78 (1984)**: $H_R=\alpha_R(\boldsymbol\sigma\times\mathbf{k})\cdot\hat z$,
 バンド端 doublet は $\Delta E=2\alpha_R|k|$ で分裂しスピンは $k$ に直交; **Niesner et al., PRL 117, 126401 (2016)**,
-DOI 10.1103/PhysRevLett.117.126401, ペロブスカイト Rashba）。`berry.spin_operators` と
-`shift_current.make_polar_kashikar13_builders`（spinful P4mm）を再利用。
+DOI 10.1103/PhysRevLett.117.126401 ＝**表面** Rashba ~11 eVÅ（バルクベンチではない）。バルク DFT 比較は
+**Bhumla et al., arXiv:2108.03683 (2021)**（無機強誘電バルク CsPbF₃: $\alpha_R$(CBM)=1.05, (VBM)=0.41 eVÅ, P=34 μC/cm²）。
+`berry.spin_operators` と `shift_current.make_polar_kashikar13_builders`（spinful P4mm）を再利用。
 
 立方 Pm-3m CsBX₃ は中心反転 P + 時間反転 T → 全 k で Kramers 縮退 → $\alpha_R=0$。[001] 極性変位 (P4mm) で P が破れ、
 $|k|>0$ で分裂（TRIM $k=0$ は Kramers 定理で保護され分裂ゼロ）。
 
-### V&V（`tests/test_rashba.py`, 8 ケース）
+### V&V（`tests/test_rashba.py`, 9 ケース）
 - **解析 2 バンド Rashba** で入力 $\alpha_R$ を厳密回復、スピンは $k$ に直交（spin-momentum locking）。
 - **立方 CsBX₃ → 分裂 0**（Kramers, 複数 doublet で <1e-6）。
 - **極性 CsBX₃ → 分裂あり**（>1e-4）、$\Gamma$ でゼロ、$|k|$ とともに増大（k 線形）。
+- **【追加】バルク DFT 比較**（`test_bulk_dft_comparison`）: TB は **CBM Rashba > VBM** という DFT(CsPbF₃)の**順序を再現**（定性, C）。ただし TB CBM $\alpha_R\simeq0.03$ eVÅ は バルク DFT ~1.05 eVÅ の **~1/40**（D, 桁不一致）。
 
 ### honest 限界
-$\alpha_R$ の絶対値は整合するベンチ（文献は**表面** Rashba、本実装は**バルク極性**変形）が無く + Blount 限界 → 対称性（0 vs ≠0）・spin-momentum locking・相対トレンドのみ信頼、絶対値は indicative。
+- **符号・構造・順序（C）**: cubic $\alpha_R=0$ → polar ≠0、spin-momentum locking、CBM>VBM 順序は DFT 一致。
+- **絶対値（D）**: TB の $\alpha_R$ はバルク DFT より ~40× 小さい。極性モデルが**剛体副格子変位**（実強誘電歪み/分極に未校正）で、SK-TB 位置演算子に共有結合(Blount)補正がないため過小評価。**表面** Rashba（Niesner ~11 eVÅ）は別系で除外。絶対値は indicative。
 
 ## 13. Edelstein 効果（電流誘起スピン分極） (`edelstein.py`, 仕様 F11)
 

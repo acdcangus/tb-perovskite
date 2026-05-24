@@ -62,10 +62,14 @@ PI 指示で外部 ε_∞ を web research（WebSearch/WebFetch, ~12 件, 出典
   実際はフォノン寄与で ε_∞<ε_eff<ε_static、E_b はやや小さくなる — Tanaka 2003 / Yang 2017）。
 - **限界**: フォノン遮蔽未考慮（上限評価）。Frenkel-Wannier 遷移域材料での妥当性は別途要検討。TB intra-atomic 欠落（Blount）は μ には軽微（曲率は信頼可）、影響は主に ε_∞（→ 外部化で回避）。
 
-## 5. Conclusions
-- 9 材料の **TB 有効質量マップ**（信頼可・publishable, 異方性=1）を確定。Sn 系が最軽量。
-- E_b は **μ(TB)+ε_∞(外部) hybrid** で算出する方針。CsPbI₃ proxy で実験整合（22 meV）を確認。
-  残り 8 材料は Cowork の cited ε_∞ 充填後に Production 化（Y1-c-3 script 準備済み）。
+## 5. Conclusions（option D' closeout）
+- ★ **9 材料の TB 有効質量マップ**（信頼可・publishable, 異方性=1, dk<0.01% 収束）を確定 —
+  bundle `theme_I_effective_mass/2026-05-23_1e9c65c`。Sn 系が最軽量（CsSnI₃ μ=0.015）。
+- **E_b 相対トレンド**（Cl→Br→I 減, Sn-I 最小）— bundle `theme_I_exciton/2026-05-23_f66690c`（TB-optical ε_∞, 相対のみ）。
+- **CsPbI₃ 絶対 E_b 校正点 = 22 meV**（effective ε=6.1, Cho 2019）、実験 ~15–20 meV と整合。
+- **絶対 9 材料 E_b マップは未確定**（§3.2）: 文献の bare ε_∞ では E_b 過大、物理的 ε_eff は鉛フリー族で入手不可。
+  → 将来 Materials Project DFPT（単一手法）or 実験 ε_eff が得られれば `scan_theme_I_binding_energy.py` で即算出可能。
+- **LED 設計示唆**: 大 μ・小 gap（Cl 系, Pb/Ge）ほど E_b 大（励起子発光が明るい傾向）; Sn-I は E_b 最小（自由キャリア寄り）。
 
 ## 6. References
 - Yang et al. 2017, PRB 96, 035301 — halide perovskite Wannier-Mott

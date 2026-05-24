@@ -1,0 +1,31 @@
+{
+  "_README": "Cited Frohlich-polaron input parameters (eps_inf, eps_static, LO phonon, m*) for spec F6 (polaron.py). Values ONLY from cited primary sources (no fabrication); collected by Claude Code via OA per PI authorization 2026-05-24. eps_inf here are the values used in the cited polaron study (may differ from the project's MP-DFPT eps_inf in eps_inf_external.json, which is the bare electronic value from a different method).",
+  "_alpha_formula": "Frost 2017 PRB 96 195202 (arXiv:1704.05404): alpha = (1/4pi eps0)(1/2)(1/eps_inf - 1/eps_static)(e^2/hbar/Omega) sqrt(2 m_b Omega/hbar), Omega = LO angular frequency.",
+  "materials": {
+    "MAPbI3": {
+      "eps_inf": 4.5,
+      "eps_static": 24.1,
+      "omega_LO_THz": 2.25,
+      "omega_LO_meV": 9.3,
+      "m_e_rel": 0.12,
+      "m_h_rel": 0.15,
+      "alpha_e_reported": 2.39,
+      "alpha_h_reported": 2.68,
+      "source": "J. M. Frost, Phys. Rev. B 96, 195202 (2017), arXiv:1704.05404 (verified OA 2026-05-24)",
+      "note": "benchmark used to validate the alpha SI prefactor; not a CsBX3 material"
+    },
+    "CsPbBr3": {
+      "eps_inf": 4.8,
+      "eps_static": 20.5,
+      "omega_LO_meV": 19.2,
+      "omega_LO_cm1": 155,
+      "m_e_rel": 0.22,
+      "m_h_rel": 0.24,
+      "alpha_e_reported": 2.0,
+      "alpha_h_reported": 2.0,
+      "source": "A. D. Sendner et al. (Frohlich interaction dominated by a single phonon mode in CsPbBr3), Nat. Commun. 12, 4945 (2021), PMC8494801 (verified OA 2026-05-24)",
+      "note": "second independent benchmark; single dominant LO mode M0 = 155 cm^-1 (19.2 meV); alpha ~= 2 (intermediate coupling) for both carriers"
+    }
+  },
+  "_pending": "Per-material eps_static and LO frequency for CsPbCl3/CsPbI3/CsGeX3/CsSnX3 not yet collected with a clean primary source (CsPbCl3 highest LO ~25 meV with LO-TO 25->15 meV split per literature, but a fully-cited eps_static/eps_inf pair was not located). frohlich_alpha() can be applied once cited values are added here."
+}

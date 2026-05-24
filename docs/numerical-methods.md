@@ -224,3 +224,23 @@ de Juan の**位相幾何学的量子化**: Weyl 点（Chern 数 $C$）で $\mat
 符号は de Juan と Xiao（berry.py）の Berry 曲率規約差を 2 バンド検証で整合させた。立方ペロブスカイトの $\beta=0$ は
 （Kramers 縮退の per-band gauge 問題回避のため）非縮退中心反転模型で検証、材料適用は極性相で。絶対値は Blount 限界 + 規約依存。
 
+## 15. Fröhlich ポーラロン結合 (`polaron.py`, 仕様 F6)
+
+無次元 Fröhlich 結合定数 $\alpha$ と弱結合ポーラロン質量を、誘電率・LO フォノン・有効質量から計算する
+（**Fröhlich, Adv. Phys. 3, 325 (1954)**; **Feynman 1955/1962**; **Frost, PRB 96, 195202 (2017)**,
+DOI 10.1103/PhysRevB.96.195202, arXiv:1704.05404; 式は ar5iv 原典で確認）:
+
+$$\alpha=\frac{1}{4\pi\epsilon_0}\,\frac12\Big(\frac1{\epsilon_\infty}-\frac1{\epsilon_{\rm S}}\Big)\,
+\frac{e^2}{\hbar\Omega}\sqrt{\frac{2m_b\Omega}{\hbar}},\qquad m_p/m_b\simeq 1+\alpha/6\ (\text{弱結合}).$$
+
+物性値は OA 一次文献から収集（`data/parameters/frohlich_polaron_params.json`, 各値に出典明記）。
+
+### V&V（`tests/test_polaron.py`, 7 ケース）— **2 つの独立ベンチマークで前因子を固定**
+- **MAPbI₃**（Frost 2017）: ε∞=4.5, ε_S=24.1, ν_LO=2.25 THz, m*=0.12/0.15 → **α=2.39 (e), 2.68 (h)** を <1% で再現。
+- **CsPbBr₃**（Sendner et al., Nat. Commun. 12, 4945 (2021), PMC8494801）: ε∞=4.8, ε_S=20.5, ω_LO=19.2 meV, m*=0.22 → **α≈2** を再現（第 2 の独立検証）。
+- 単位変換（THz⇔meV）、スケーリング（√m*、(1/ε∞−1/ε_S)）、弱結合質量極限。
+
+### スコープ・限界（honest）
+$\alpha$ と**先頭次**弱結合質量 $1+\alpha/6$ のみ実装・検証（intermediate 結合 α~2 では完全 Feynman variational が必要 → 移動度は未実装, cf. PolaronMobility.jl）。
+9 材料 α マップは各材料の **cited な $\epsilon_{\rm S}$・$\omega_{\rm LO}$** が必要 → CsPbBr₃ は収集済（上記）、他材料は一次出典が揃い次第追加（`_pending` 参照）。捏造防止のため未収集材料は計算しない。
+

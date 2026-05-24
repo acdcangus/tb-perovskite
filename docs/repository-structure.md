@@ -23,6 +23,7 @@
 │   ├── thermo.py              Boltzmann 熱電輸送 S/σ/κ_e（spec F9, CRTA）
 │   ├── rashba.py              Rashba スピン分裂 α_R / spin texture（spec F4）
 │   ├── edelstein.py           Edelstein 電流誘起スピン分極 χ（spec F11, CRTA）
+│   ├── cpge.py                円偏光光起電力 CPGE / injection current（spec F7）
 │   ├── materials_project.py   MP DFPT ε∞ 取得（Theme I, option C'）
 │   ├── cli.py / __main__.py / _meta.py / __init__.py
 │

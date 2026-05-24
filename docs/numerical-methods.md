@@ -202,3 +202,25 @@ Rashba 系では電流に**直交**するスピン応答（$\chi_{yx}\neq0,\chi_
 per-band 公式は**非縮退バンド**前提。立方 Pm-3m は全 k で Kramers 縮退（応答は対称性で 0 だが per-band では gauge 依存）→
 ペロブスカイトは**反転破れ極性 (P4mm)** 相で評価。絶対値は $\tau$ 依存でスコープ外（/eτ で返す）→ 対称性・直交構造・相対のみ信頼。
 
+## 14. 円偏光光起電力効果 (CPGE) / injection current (`cpge.py`, 仕様 F7)
+
+円偏光下の 2 次注入電流テンソル $\beta_{ij}$（$dJ_i/dt=\beta_{ij}(\mathbf{E}\times\mathbf{E}^*)_j$）を計算する
+（**Sipe, Shkrebtii, PRB 61, 5337 (2000)**, DOI 10.1103/PhysRevB.61.5337; **de Juan, Grushin, Morimoto, Moore,
+Nat. Commun. 8, 15995 (2017)**, DOI 10.1038/ncomms15995, arXiv:1611.05887。式は ar5iv 原典で確認）:
+
+$$\beta_{ij}(\omega)=\frac{\pi e^3}{\hbar V}\epsilon_{jkl}\sum_{\mathbf{k},n,m}f_{nm}\,\Delta^i_{nm}\,r^k_{nm}r^l_{mn}\,
+\delta(\hbar\omega-E_{mn}),\qquad r^a_{nm}=-i\,v^a_{nm}/E_{nm}.$$
+
+2 バンドでは $\beta_{ij}=\frac{i\pi e^3}{\hbar^2 V}\sum_k(\partial_{k_i}E_{12})\,\Omega^j_1\,\delta(\hbar\omega-E_{21})$
+（速度差 × 下バンド Berry 曲率ベクトル）に簡約され、`berry.berry_curvature_kubo` を再利用。
+de Juan の**位相幾何学的量子化**: Weyl 点（Chern 数 $C$）で $\mathrm{Tr}[\beta]=i\pi(e^3/h^2)C$（共鳴窓で $\omega$ 非依存のプラトー）。
+
+### V&V（`tests/test_cpge.py`, 4 ケース）
+- **式の簡約（de Juan）**: $-\mathrm{Im}(\epsilon_{jkl}r^k_{12}r^l_{21})=\Omega^j_1$（一般式 ⇔ 2 バンド Berry 曲率形が一致）。
+- **中心反転（偶 d, 非縮退）→ $\beta=0$**。
+- **Weyl 量子化**: $\mathrm{Tr}[\beta]$ が $\omega$ 非依存プラトー、chirality で符号反転、$|\mathrm{Tr}|\approx\pi e^3/h^2=1/(4\pi)$（$e{=}\hbar{=}1$）を ~20% で数値再現。
+
+### honest 限界
+符号は de Juan と Xiao（berry.py）の Berry 曲率規約差を 2 バンド検証で整合させた。立方ペロブスカイトの $\beta=0$ は
+（Kramers 縮退の per-band gauge 問題回避のため）非縮退中心反転模型で検証、材料適用は極性相で。絶対値は Blount 限界 + 規約依存。
+

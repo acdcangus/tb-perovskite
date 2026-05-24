@@ -116,55 +116,70 @@ def make_polar_nestoklon_builders(params, a: float, basis,
                     s_minus * minus_blocks[2], d_minus)
         return (plus_blocks[axis], d0, minus_blocks[axis], d0)
 
-    def _spinful_with_soc(H0):
-        H = np.kron(np.eye(2, dtype=complex), H0)
-        for atom, soc in [(0, soc_c), (1, soc_a), (2, soc_a), (3, soc_a)]:
-            full_idx = [s * N + atom * n_orb + o for s in (0, 1) for o in p_idx]
-            for ai, A in enumerate(full_idx):
-                for bi, B in enumerate(full_idx):
-                    H[A, B] += soc[ai, bi]
-        return H
+    # k-independent SOC block (2N x 2N), built once and broadcast over k.
+    Hsoc = np.zeros((2 * N, 2 * N), dtype=complex)
+    for atom, soc in [(0, soc_c), (1, soc_a), (2, soc_a), (3, soc_a)]:
+        full_idx = [s * N + atom * n_orb + o for s in (0, 1) for o in p_idx]
+        for ai, A in enumerate(full_idx):
+            for bi, B in enumerate(full_idx):
+                Hsoc[A, B] += soc[ai, bi]
+
+    def _blockdiag2(M0, add_soc):
+        """(K, N, N) -> (K, 2N, 2N) block-diag(M0, M0) (+ Hsoc if add_soc)."""
+        K = M0.shape[0]
+        Hb = np.zeros((K, 2 * N, 2 * N), dtype=complex)
+        Hb[:, :N, :N] = M0
+        Hb[:, N:, N:] = M0
+        if add_soc:
+            Hb += Hsoc       # SOC is k-independent -> only in H, not in dH/d2H
+        return Hb
+
+    # Batch-aware builders: kvec may be (3,) -> (2N,2N) or (K,3) -> (K,2N,2N).
+    # The (K,3) path is fully vectorised (no Python per-k loop), matching the
+    # Kashikar-13 polar builder, so shift_current_zzz's batched path applies.
+    def _bond_block(axis, kk, order):
+        """(K, n_orb, n_orb) cation-anion block (order 0=H, 1=dH/dk, 2=d2H/dk2)."""
+        kd = kk @ np.asarray(mn._AXIS_DIR[axis], float)        # (K,)
+        bp, lp, bm, lm = _bond_phase_lengths(axis)
+        cp, cm = (1.0, 1.0) if order == 0 else \
+            ((1j * lp, -1j * lm) if order == 1 else ((1j * lp) ** 2, (-1j * lm) ** 2))
+        return (bp * (cp * np.exp(1j * kd * lp))[:, None, None]
+                + bm * (cm * np.exp(-1j * kd * lm))[:, None, None])
+
+    def _build_spinless(kk, order, axes):
+        """(K, N, N) spinless block for the requested axes (on-site only at order 0)."""
+        K = kk.shape[0]
+        M0 = np.zeros((K, N, N), dtype=complex)
+        if order == 0:
+            M0[:, slc(0), slc(0)] = np.diag(onsite_c).astype(complex)
+            for ax in range(3):
+                M0[:, slc(ax + 1), slc(ax + 1)] = np.diag(onsite_a).astype(complex)
+        for axis in axes:
+            block = _bond_block(axis, kk, order)
+            M0[:, slc(0), slc(axis + 1)] = block
+            M0[:, slc(axis + 1), slc(0)] = block.conj().swapaxes(1, 2)
+        return M0
 
     def H_fn(kvec):
-        k = np.asarray(kvec, float)
-        H0 = np.zeros((N, N), dtype=complex)
-        H0[slc(0), slc(0)] = np.diag(onsite_c).astype(complex)
-        for ax in range(3):
-            H0[slc(ax + 1), slc(ax + 1)] = np.diag(onsite_a).astype(complex)
-        for axis, direction in mn._AXIS_DIR.items():
-            kd = float(np.dot(k, direction))
-            bp, lp, bm, lm = _bond_phase_lengths(axis)
-            block = bp * np.exp(1j * kd * lp) + bm * np.exp(-1j * kd * lm)
-            H0[slc(0), slc(axis + 1)] = block
-            H0[slc(axis + 1), slc(0)] = block.conj().T
-        return _spinful_with_soc(H0)
+        kv = np.asarray(kvec, float)
+        kk = np.atleast_2d(kv)
+        Hb = _blockdiag2(_build_spinless(kk, 0, range(3)), add_soc=True)
+        return Hb[0] if kv.ndim == 1 else Hb
 
     def dHdk_fn(kvec, alpha):
-        k = np.asarray(kvec, float)
-        dH0 = np.zeros((N, N), dtype=complex)
-        direction = mn._AXIS_DIR[alpha]
-        kd = float(np.dot(k, direction))
-        bp, lp, bm, lm = _bond_phase_lengths(alpha)
-        dblock = bp * (1j * lp) * np.exp(1j * kd * lp) + bm * (-1j * lm) * np.exp(-1j * kd * lm)
-        dH0[slc(0), slc(alpha + 1)] = dblock
-        dH0[slc(alpha + 1), slc(0)] = dblock.conj().T
-        return np.kron(np.eye(2, dtype=complex), dH0)
+        kv = np.asarray(kvec, float)
+        kk = np.atleast_2d(kv)
+        Hb = _blockdiag2(_build_spinless(kk, 1, (alpha,)), add_soc=False)
+        return Hb[0] if kv.ndim == 1 else Hb
 
     def d2Hdk_fn(kvec, alpha):
         """d^2 H / dk_alpha^2 (second k-derivative, same axis twice)."""
-        k = np.asarray(kvec, float)
-        d2H0 = np.zeros((N, N), dtype=complex)
-        direction = mn._AXIS_DIR[alpha]
-        kd = float(np.dot(k, direction))
-        bp, lp, bm, lm = _bond_phase_lengths(alpha)
-        # d^2/dk^2 of  bp e^{i kd lp} + bm e^{-i kd lm}:
-        #   bp (i lp)^2 e^{...} + bm (-i lm)^2 e^{...} = -bp lp^2 e^{...} - bm lm^2 e^{...}
-        d2block = (bp * (1j * lp) ** 2 * np.exp(1j * kd * lp)
-                   + bm * (-1j * lm) ** 2 * np.exp(-1j * kd * lm))
-        d2H0[slc(0), slc(alpha + 1)] = d2block
-        d2H0[slc(alpha + 1), slc(0)] = d2block.conj().T
-        return np.kron(np.eye(2, dtype=complex), d2H0)
+        kv = np.asarray(kvec, float)
+        kk = np.atleast_2d(kv)
+        Hb = _blockdiag2(_build_spinless(kk, 2, (alpha,)), add_soc=False)
+        return Hb[0] if kv.ndim == 1 else Hb
 
+    H_fn._batched = dHdk_fn._batched = d2Hdk_fn._batched = True
     return H_fn, dHdk_fn, d2Hdk_fn
 
 

@@ -79,6 +79,24 @@ def test_polar_kashikar_shift_current_symmetry(cspbi3_kashikar):
     assert np.max(np.abs(sx)) < 1e-8                                       # P4mm forbids xxx
 
 
+def test_nestoklon_polar_builder_batched_matches_single(cspbi3):
+    """Batch-aware (K,3)->(K,N,N) nestoklon polar builder == per-k single calls
+    (guards the vectorisation exactly; the single path is covered by the FD /
+    symmetry tests).  H is also Hermitian for every k."""
+    p, a, basis = cspbi3
+    rng = np.random.default_rng(11)
+    kpts = rng.uniform(-0.5, 0.5, size=(8, 3)) * (2 * np.pi / a)
+    for delta in (0.0, 0.15):
+        Hf, dHf, d2Hf = sc.make_polar_nestoklon_builders(p, a, basis, polar_displacement_z=delta)
+        assert getattr(Hf, "_batched", False)
+        Hb = Hf(kpts)
+        assert np.allclose(Hb, np.stack([Hf(k) for k in kpts]), atol=1e-12)
+        assert np.allclose(Hb, Hb.conj().transpose(0, 2, 1), atol=1e-12)  # Hermitian
+        for al in range(3):
+            assert np.allclose(dHf(kpts, al), np.stack([dHf(k, al) for k in kpts]), atol=1e-12)
+            assert np.allclose(d2Hf(kpts, al), np.stack([d2Hf(k, al) for k in kpts]), atol=1e-12)
+
+
 def test_harrison_scaling():
     assert sc.harrison_scaled_hopping(2.0, 3.0, 3.0) == pytest.approx(2.0)
     # shorter bond -> larger |hopping|

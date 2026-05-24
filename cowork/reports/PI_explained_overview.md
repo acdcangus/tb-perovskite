@@ -161,7 +161,7 @@ graph TD
 
 **★ 方法論的発見（重要）:**
 - Wannier-Mott 模型 `E_b = (μ/m₀)/ε² × Ry` の **ε は「フォノン込みの effective screening (ε_eff)」** であって、文献が報告する「**bare 電子的 ε_∞**」とは違う
-- 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（実験報告値 ~64 meV〔CsPbCl₃ 励起子, 要原典確認〕の ~4 倍過大）
+- 例: CsPbCl₃ で bare ε_∞=2.4 を使うと E_b=273 meV（CsPbCl₃ 励起子の文献報告値 ~64–77 meV（magneto-optical 研究, 例 Photonics Research 8, A50 (2020); 要原典確認。Tanaka 2003 は MAPb 系で別物）の ~4 倍過大）
 - → 鉛フリー族の絶対 E_b マップは「フォノン込み ε_eff」のデータが必要 → **Materials Project DFPT で 9 材料を一貫した手法で取り直す方針**（今 patrol で PI が API キー提供 → option C' として再実行中）
 
 ---

@@ -40,7 +40,7 @@ TB（Kashikar 2021 の 13 軌道 active basis）有効質量と Materials Projec
 実効 ε による校正点で実験整合を示した。鉛フリー光デバイス材料選択の計算指針。
 
 ## 6. References（主要）
-- Yang 2017 PRB 96 035301; Tanaka 2003 SSC 127 619（Wannier-Mott / 実験 E_b; いずれも in-repo 外, 要原典確認）
+- Tanaka 2003 SSC 127, 619（巻号確認済; MAPbBr₃/MAPbI₃ 励起子, CsPbCl₃ ではない）。Wannier-Mott 適用例（Yang 2017 PRB 96 035301 は要原典確認・web 未確認）
 - Cho 2019 arXiv:1908.09436（GW-BSE, 実効 ε）
 - Jain 2013 APL Mater. 1 011002（Materials Project）
 - Kashikar 2021 arXiv:2101.08562（TB, 13 軌道 active basis）; Blount 1962 PR 126 1636（TB 限界; in-repo 外）

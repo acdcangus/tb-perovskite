@@ -115,8 +115,8 @@ graph TD
 - **DFPT / Materials Project**: 密度汎関数摂動論で誘電率等を計算する手法 / そのデータを集めた公開データベース。
 
 ## 7. 出典
-- C. C. Yang et al. 2017, *PRB* 96, 035301（Wannier-Mott; in-repo 外, 要原典確認）。
-- M. Tanaka et al. 2003, *Solid State Commun.* 127, 619（励起子結合の実験; in-repo 外, 要原典確認）。
+- Wannier-Mott の halide perovskite 適用例（**Yang 2017 PRB 96, 035301 は記憶ベース・web 検索で未確認 → 要原典確認/差替**）。
+- K. Tanaka et al. 2003, *Solid State Commun.* **127, 619** (2003)（巻号確認済; ただし対象は **MAPbBr₃/MAPbI₃** の励起子であり CsPbCl₃ ではない点に注意）。
 - J. Cho et al. 2019, arXiv:1908.09436（in-repo; 実効 ε=6.1 は 2D 無機層値, μ=0.10 で E_b=37 meV, 実験 7.4–50 meV）。
 - A. Jain et al. 2013, *APL Mater.* 1, 011002（Materials Project, DFPT 誘電率）。
 - R. Kashikar et al. 2021, arXiv:2101.08562（TB モデル）。

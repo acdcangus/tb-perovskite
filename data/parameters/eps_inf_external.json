@@ -1,7 +1,7 @@
 {
   "_README": "External dielectric constants for the Wannier-Mott exciton binding (Theme I, option c). Values ONLY from cited sources (no fabrication). Web research done by Claude Code per PI instruction 2026-05-24 ('webresearch\u81ea\u5206\u3067\u3084\u3063\u3066').",
   "_extraction_date": "2026-05-24",
-  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment ~64 meV; whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (matches exp ~15-20). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
+  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment ~64-77 meV (magneto-optical study, Photonics Research 2020; NOT Tanaka 2003 which is MAPb); whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (within experimental range 7.4-50 meV, Cho 2019 arXiv:1908.09436; Cho's own mu=0.10 gives 37 meV). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
   "materials": {
     "CsPbI3": {
       "eps_inf": 6.1,
@@ -9,7 +9,7 @@
       "source": "Cho et al. 2019 arXiv:1908.09436 (effective exciton eps=6.1); crystal static eps~6.22 reported by thin-film optical study (ScienceDirect S1876107018306059); MAPbI3 eps_p=6.1 (arXiv:2210.01324)",
       "method": "effective exciton dielectric (eps_eff), multiple converging sources",
       "E_b_meV": 22,
-      "notes": "PHYSICAL: E_b=22 meV matches experiment (~15-20 meV). eps=6.1 is the effective exciton screening (not bare eps_inf).",
+      "notes": "PHYSICAL: E_b=22 meV is within the experimental range 7.4-50 meV (Cho 2019 arXiv:1908.09436; Cho's own mu=0.10 gives 37 meV). eps=6.1 is the effective exciton screening (2D inorganic-layer value; bulk transfer is approximate), not bare eps_inf.",
       "eps_inf_MP_DFPT": {
         "value": 4.432,
         "mp_id": "mp-540839",
@@ -27,7 +27,7 @@
       "source": "PMC12757862 (LST: eps_inf=2.40, eps_static=7.2); PMC9071989 (eps~2.513 from real part of eps(w), DFT TB09)",
       "method": "DFT TB09 bare electronic eps_inf",
       "E_b_meV_if_used": 273,
-      "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment (~64 meV) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b.",
+      "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment ~64-77 meV (magneto-optical study, Photonics Research 2020; NOT Tanaka 2003 which is MAPb) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b.",
       "eps_inf_MP_DFPT": {
         "value": 3.64,
         "mp_id": "mp-675022",

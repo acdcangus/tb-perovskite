@@ -74,7 +74,7 @@ bundle `theme_I_exciton/2026-05-23_f66690c`。CsPbI₃ に Cho 2019 の実効 ε
 - **論文化骨子**: `cowork/reports/theme_I_publication_outline.md`。
 
 ## 6. References
-- C. C. Yang et al. 2017, *PRB* 96, 035301; M. Tanaka et al. 2003, *Solid State Commun.* 127, 619（Wannier-Mott / 実験）。
+- Wannier-Mott 適用例（Yang 2017 PRB 96 035301 = 記憶ベース, 要原典確認）。Tanaka et al. 2003, SSC 127, 619（巻号確認済; 対象は MAPbBr₃/MAPbI₃, CsPbCl₃ ではない）。
 - J. Cho et al. 2019, arXiv:1908.09436（実効 ε≈6.1, D' 校正）。
 - A. Jain et al. 2013, *APL Mater.* 1, 011002（Materials Project, DFPT 誘電率, C'）。
 - R. Kashikar et al. 2021, arXiv:2101.08562（TB モデル）。E. I. Blount 1962, *Phys. Rev.* 126, 1636（TB 限界）。

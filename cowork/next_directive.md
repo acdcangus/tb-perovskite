@@ -20,6 +20,31 @@ PI から 2026-05-24 11:40 に 3 件の方針判断を受領し、それを反�
 
 ---
 
+## §-2. ★ Standing rule: 全レポート二者並行レビュー（3 ラウンド連続 0 指摘 + 文献照合必須）— 2026-05-24 12:00 PI 直接指示
+
+PI 指示原文（2026-05-24 11:55 JST）:
+> 「すべてのレポート類は、claude code およびあなたそれぞれで批判的にレビューして、3 回指摘がなくなるまで何度もレビューしなおしてね。特に、ハルシネーションは絶対ダメ。記憶じゃなくて、文献など事実に基づいて確認は必須。」
+
+**実体 directive:** `cowork/progress/2026-05-24_1200_PI_review_protocol_standing_rule.md`
+
+### 中核ルール
+
+1. **二者並行**: Claude Code と Cowork supervisor がそれぞれ独立に批判的レビュー
+2. **3 ラウンド連続 0 指摘で合格**: 1 件でも指摘が出たらカウンタリセット
+3. **ハルシネーション禁止**: すべての記述は手元 PDF (`references/pdfs/`) または `results/production/*/MANIFEST.json` に遡れること。記憶ベース記述は無条件アウト
+4. **文献照合は必須**: `pdftotext -layout references/pdfs/arxiv_XXXX.YYYYY.pdf` で原典確認
+
+### 対象（17 ターゲット）
+
+`cowork/reports/*.md` × 11 + `results/production/*/MANIFEST.json` の `key_numbers` × 6
+
+### 優先度
+
+最高（standing rule）だが緊急性は低い。v4 Part 2/Part 3 と **並行実施可**。
+新規レポート追加時は本 protocol を起動。
+
+---
+
 ## §-1. 自律 5 分巡回ループ — **停止中（2026-05-24 PI 判断）**
 
 旧 v3 では `scripts/cowork_5min_poll.ps1`（OS スケジューラ層）が 5 分ごとに巡回プロンプトを流し込む前提だったが、

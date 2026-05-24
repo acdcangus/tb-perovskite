@@ -56,6 +56,27 @@ PI 指示で外部 ε_∞ を web research（WebSearch/WebFetch, ~12 件, 出典
   open web に 9 材料の consistent な cubic ε（特に ε_eff）は無い → **Materials Project DFPT（単一手法の ε_∞）か実験 ε_eff が必要**。
 - → **Theme I の確定成果は §3.1 有効質量マップ（信頼可）+ E_b 相対トレンド + CsPbI₃ 校正点（22 meV）**。絶対 E_b 9 材料マップは ε_eff データ不足のため未確定（要 PI 判断: MP 利用 or 相対のみで確定）。
 
+### 3.3 option C': Materials Project DFPT ε_∞ で 8 材料 絶対 E_b マップ
+PI が MP API キー提供 → 単一手法（DFPT）の ε_∞ を 9 材料で取得（`src/perovskite_tb/materials_project.py`）。
+bundle `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce/`（MANIFEST 引用、出典＝各 mp-id）。
+
+| 材料 | μ | ε_∞ (MP DFPT, phase) | E_b (meV) |
+|---|---|---|---|
+| CsPbCl₃ | 0.116 | 3.64 (mp-675022, R32) | 119 |
+| CsGeCl₃ | 0.097 | 3.64 (mp-22988, R3m) | 99 |
+| CsPbBr₃ | 0.074 | 4.21 (mp-567629, Pnma) | 57 |
+| CsPbI₃ | 0.059 | 4.43 (mp-540839, Pnma) | 41 |
+| CsGeI₃ | 0.053 | 5.69 (mp-642690, Cm) | 22 |
+| CsGeBr₃ | 0.060 | 6.55 (mp-570223, **Pm-3m**) | 19 |
+| CsSnBr₃ | 0.030 | 5.91 (mp-27214, **Pm-3m**) | 12 |
+| CsSnI₃ | 0.015 | 7.35 (mp-614013, **Pm-3m**) | 4 |
+| CsSnCl₃ | — | MP に dielectric なし | — |
+
+- **単一手法 DFPT → 相対トレンドは defensible 最高**（directive 0930 §1.1）。E_b は **Cl 系最大（μ 大・ε 小）、Sn-I 最小**（μ=0.015 超軽 + ε=7.35 大）。
+- **★ 絶対値は上限（過大評価）**: MP の ε_∞ は **bare 電子値**（フォノン/イオン遮蔽なし, ε_∞<ε_eff）。CsPbI₃ E_b=41 meV vs 実験 ~15–20 meV（~2–2.7× 過大）。§3.2 の方法論的限界と一貫。
+- **相の注記**: MP は cubic Pm-3m の dielectric を一部材料（CsGeBr₃/CsSnBr₃/CsSnI₃）のみ計算済み。他は ortho/rhombo/monoclinic 基底状態の ε_∞ を ~相非依存 proxy として使用（μ は cubic）。CsSnCl₃ は MP に dielectric なしで除外。
+- **LED 示唆**: bare ε_∞ ベースでも Cl 系（CsPbCl₃ 119, CsGeCl₃ 99 meV）が大 E_b → 励起子発光が明るい候補。Sn-I は E_b 最小（自由キャリア寄り、太陽電池向き）。
+
 ## 4. Discussion
 - **信頼性の分離**: μ は TB 由来で信頼可（異方性=1、dk 収束）。ε_∞ は外部依存（出典トレーサビリティを MANIFEST に明記）。E_b は両者の積。
 - **比較**: CsPbI₃ proxy E_b=22 meV は実験報告（~15–20 meV）と整合。Wannier-Mott は **上限**（ε_∞ のみの遮蔽；

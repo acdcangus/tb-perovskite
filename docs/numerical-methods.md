@@ -287,21 +287,24 @@ $2\pi/a$ 周期化 → 厳密 Fourier 分解で intra-cell ブロック $H_\para
 $H(\mathbf{k})=H_\parallel+T e^{ik_z a}+T^\dagger e^{-ik_z a}$。スラブはこれで作るブロック三重対角行列（open/periodic）。
 分解は機械精度の**再構成テスト**で自己検証（誤れば一致しない）。出典: **Smith-Mailhiot, RMP 62, 173 (1990)**（超格子 TB）;
 **Even-Pedesseau-Katan, ChemPhysChem 15, 3733 (2014)**（2D RP 量子閉じ込め; spacer は hard barrier=open BC として扱う）;
-Blancon et al., Science 355, 1288 (2017)（$E_g(n)$）; F14 場は Neugebauer-Scheffler, PRB 46, 16067 (1992)（scalar potential）。
+**Blancon et al., "Scaling law for excitons in 2D perovskite quantum wells", Nat. Commun. 9, 2254 (2018), DOI 10.1038/s41467-018-04659-x**（$E_g(n)$ トレンド比較; 検証済み 2026-05-24）;
+F14 場は Neugebauer-Scheffler, PRB 46, 16067 (1992)（scalar potential）。
 
-> **引用の訂正（ハルシネーション点検）**: 仕様書は 2D RP 量子閉じ込めを「Even et al., JPCC 118, 11566 (2014)」と引用するが、
-> その表題の論文は実際は **ChemPhysChem 15, 3733 (2014)**（JPCC 118,11566 は別テーマ＝相転移の Even 論文）。検証済みの ChemPhysChem を採用。
+> **引用の訂正（ハルシネーション点検）**:
+> (1) 2D RP 量子閉じ込めを仕様書は「Even et al., JPCC 118, 11566 (2014)」と引用するが、実際は **ChemPhysChem 15, 3733 (2014)**（JPCC 118,11566 は別テーマ＝相転移の Even 論文）。
+> (2) $E_g(n)$ の出典は追加検証指示書(09)では「Blancon, Science 355, 1288 (2017), 10.1126/science.aal4211」とされるが、その DOI は別の Blancon 論文（edge states）。$n$ 依存ギャップは **Nat. Commun. 9, 2254 (2018)**（"Scaling law…"）。検証済みの後者を採用。
 
-### V&V（`tests/test_slab.py`, 7 ケース）
+### V&V（`tests/test_slab.py`, 8 ケース）
 - **層ブロック再構成**: $H_\parallel+T e^{ik_z a}+\mathrm{h.c.}$ == 3D H（機械精度）。
 - **周期スタック == 3D バンド**: $N$ セル periodic スラブ固有値 == $k_z=2\pi m/(Na)$ の 3D バンド和（F13, $N=3,5,8$）。
 - **ミニバンド崩壊**: inter-layer 結合 $\to0$ で $k_z$ 分散消失（$H_\parallel$ 準位が $N$ 重）。
 - **閉じ込め収束**: open スラブのギャップが厚み $N$ で収束（F5, バルク極限）。
+- **【追加】Blancon トレンド比較**（`test_blancon_layer_dependence`）: コア TB の CsPbI3 スラブ閉じ込めギャップ $E_g(N)$ の**減衰べき指数** $p$（$\Delta E_g \sim n^{-p}$）を、検証済み Blancon 2018 自由粒子ギャップ（$n=1,4,5$ exact）と比較。$p_{\rm TB}\simeq0.93$ vs 自由粒子基準 $E_\infty\!\approx\!1.65$–$1.70$ eV で $p_{\rm exp}\simeq0.85$–0.91 → **15%以内一致**（図 `results/figures/blancon_E_g_n.png`）。
 - **Stark（F14-A）**: $E=0$ で無電場スラブ回復、有限 $E$ でスペクトル幅 $\sim eE(N-1)a$ 増大。
 
 ### honest 限界
 spacer/passivation は hard-barrier（open BC）理想化（Even 2014）。検証は model-internal（厳密再構成・periodic==3D・バルク極限）。
-$E_g(n)$ の絶対値は SK-TB/Blount caveat。F14 はモード A（Stark スラブ）= slab.py、モード B（バルク Berry 位相分極）= `polarization.py`（§18）。
+Blancon 比較は **トレンド（閉じ込め減衰の形）限定**（カテゴリ C→B）: 模型は**無機 CsPbI3 アナログ**、実験は **MAPbI3 系 RP**（BA spacer）で材料が異なり、絶対 $E_g(n)$ は SK-TB/Blount caveat（絶対 % 一致は主張しない）。$p_{\rm exp}$ は 3D 基準 $E_\infty$ に敏感（1.60→0.71, 1.65→0.80, 1.70→0.91）。F14 はモード A（Stark スラブ）= slab.py、モード B（バルク Berry 位相分極）= `polarization.py`（§18）。
 
 ## 18. Berry 位相分極（KSV）(`polarization.py`, 仕様 F14 モード B)
 

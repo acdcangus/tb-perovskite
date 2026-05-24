@@ -26,15 +26,24 @@ Sources (verified real, 2026-05-24):
   Carriers in Layered 2D Hybrid Perovskites", ChemPhysChem 15, 3733 (2014),
   DOI 10.1002/cphc.201402428.  (2D-RP quantum confinement; the organic spacer
   is treated here as a hard barrier = open boundary.)
-* J.-C. Blancon et al., Science 355, 1288 (2017) -- n-dependent 2D-RP gap.
+* J.-C. Blancon et al., "Scaling law for excitons in 2D perovskite quantum
+  wells", Nat. Commun. 9, 2254 (2018), DOI 10.1038/s41467-018-04659-x -- the
+  n-dependent free-particle gap of (BA)2(MA)_{n-1}Pb_nI_{3n+1} used for the
+  confinement-trend benchmark (verified web 2026-05-24).  [The n-dependent gap
+  is NOT in the often-conflated Science 355, 1288 (2017) edge-states paper.]
 * (F14-A field) J. Neugebauer, M. Scheffler, PRB 46, 16067 (1992) -- dipole/
   scalar-potential treatment of a field across a slab.
 
 Scope/honesty: the spacer/passivation is the hard-barrier (open-BC) idealisation
 (Even 2014); no explicit organic-cation orbitals or surface reconstruction.
 Validation is model-internal (exact reconstruction, periodic-slab == 3D bands,
-bulk limit); the n-dependent gap follows the confinement trend qualitatively
-(Blancon 2017) but absolute E_g(n) carries the usual SK-TB/Blount caveats.
+bulk limit).  The n-dependent confinement gap E_g(N) is additionally compared to
+the Blancon 2018 free-particle gaps as a TREND (the confinement-decay power-law
+exponent p in Delta E_g ~ n^-p; TB p~0.93 vs experiment p~0.85 at the
+free-particle 3D baseline, agreeing within ~15%).  This is a SHAPE comparison
+only: the model is the inorganic CsPbI3 analog while the experiment is the
+MAPbI3-based RP, and absolute E_g(n) carries the usual SK-TB/Blount caveats
+(category C->B, not an absolute % match).  See test_blancon_layer_dependence.
 """
 
 from __future__ import annotations

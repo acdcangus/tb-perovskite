@@ -1,0 +1,19 @@
+{
+  "_README": "Verified free-particle (continuum) band-gap benchmark for the 2D Ruddlesden-Popper series (BA)2(MA)_{n-1}Pb_nI_{3n+1}, used to validate the n-dependent quantum-confinement TREND of slab.py (spec F5). These are FREE-PARTICLE gaps (exciton binding removed), which is the quantity comparable to the single-particle TB slab gap (the TB has no excitonic correction). Optical-edge / excitonic-peak energies are NOT used here because the 2D exciton binding is large and strongly n-dependent (470 meV at n=1).",
+  "_citation": "J.-C. Blancon, A. V. Stier, H. Tsai, W. Nie, C. C. Stoumpos, B. Traore, L. Pedesseau, M. Kepenekian, F. Katsutani, G. T. Noe, J. Kono, S. Tretiak, S. A. Crooker, C. Katan, M. G. Kanatzidis, J. J. Crochet, A. D. Mohite, 'Scaling law for excitons in 2D perovskite quantum wells', Nature Communications 9, 2254 (2018), DOI 10.1038/s41467-018-04659-x (verified web 2026-05-24).",
+  "_citation_correction": "The PI task sheet 09_additional_validation_tasks.md cited this as 'Science 355, 1288 (2017), DOI 10.1126/science.aal4211'. That DOI is a DIFFERENT Blancon paper ('Extremely efficient internal exciton dissociation through edge states in layered 2D perovskites', Science 355, 1288 (2017)). The 'Scaling law' paper with the n-dependent gaps is the Nature Communications 9, 2254 (2018) reference above. Corrected here per no-hallucination policy.",
+  "_quantity": "free_particle_bandgap_eV",
+  "_source_in_paper": "Figure 3a caption and Figure 4 (n=4 Rydberg fit). Values quoted are those explicitly stated in the accessible text/caption; n=2,3 are NOT listed exactly there and are intentionally omitted (no fabrication).",
+  "free_particle_gaps_eV": {
+    "n1": {"value": 2.540, "uncertainty": 0.004, "note": "488 nm; Fig.3a caption"},
+    "n4": {"value": 2.078, "uncertainty": 0.012, "note": "Fig.4b Rydberg-series fit"},
+    "n5": {"value": 1.846, "uncertainty": 0.004, "note": "672 nm; Fig.3a caption"}
+  },
+  "bulk_3d_baseline_eV": {
+    "MAPbI3_optical_gap": 1.60,
+    "MAPbI3_free_particle_range": [1.60, 1.70],
+    "note": "3D (n->infinity) MAPbI3 reference. Optical gap ~1.6 eV; free-particle (continuum) gap is optical + exciton binding (~16 meV) plus reported spread, taken as 1.60-1.70 eV. Used only as the asymptote when fitting the confinement decay; the comparison is a TREND comparison, not an absolute one."
+  },
+  "_comparison_target": "slab.py confinement gap E_g(N) for the CsPbI3 inorganic analog (hard-barrier idealisation). This is a DIFFERENT material (inorganic CsPbI3 vs MAPbI3-based RP with butylammonium spacers); only the confinement-decay SHAPE/exponent is compared, NOT absolute gaps. SK-TB/Blount caveat applies to absolutes.",
+  "_honest_category": "C->B (trend/shape). The confinement-decay power-law exponent p (Delta E_g(n) ~ n^-p) is compared; exact-% absolute agreement is NOT claimed (different material + SK-TB caveat + experimental baseline sensitivity)."
+}

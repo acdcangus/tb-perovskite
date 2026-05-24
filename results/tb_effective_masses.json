@@ -1,0 +1,66 @@
+{
+  "_README": "Band-edge effective masses m*/m0 computed from the core Kashikar-13 TB (parabolic fit at the R point). TB outputs, not literature values. Used for the TB-driven Frohlich alpha.",
+  "_provenance": {
+    "parameter_file": "data/parameters/kashikar2021_cubic_13orb.json",
+    "model": "kashikar2021_cubic_13orb (arXiv:2101.08562)",
+    "method": "bandstructure.effective_mass, dk=1e-3 /Angstrom, 7-pt parabola at R",
+    "commit": "7eef9b5",
+    "generated_utc": "2026-05-24T12:24:04+00:00"
+  },
+  "effective_masses": {
+    "CsGeCl3": {
+      "a_Angstrom": 5.34,
+      "m_e_rel": 0.2284,
+      "m_h_rel_magnitude": 0.168,
+      "isotropic": true
+    },
+    "CsGeBr3": {
+      "a_Angstrom": 5.6,
+      "m_e_rel": 0.148,
+      "m_h_rel_magnitude": 0.1007,
+      "isotropic": true
+    },
+    "CsGeI3": {
+      "a_Angstrom": 6.0,
+      "m_e_rel": 0.1116,
+      "m_h_rel_magnitude": 0.1002,
+      "isotropic": true
+    },
+    "CsSnCl3": {
+      "a_Angstrom": 5.62,
+      "m_e_rel": 0.1766,
+      "m_h_rel_magnitude": 0.1097,
+      "isotropic": true
+    },
+    "CsSnBr3": {
+      "a_Angstrom": 5.88,
+      "m_e_rel": 0.075,
+      "m_h_rel_magnitude": 0.0496,
+      "isotropic": true
+    },
+    "CsSnI3": {
+      "a_Angstrom": 6.27,
+      "m_e_rel": 0.0349,
+      "m_h_rel_magnitude": 0.0255,
+      "isotropic": true
+    },
+    "CsPbCl3": {
+      "a_Angstrom": 5.71,
+      "m_e_rel": 0.2372,
+      "m_h_rel_magnitude": 0.2253,
+      "isotropic": true
+    },
+    "CsPbBr3": {
+      "a_Angstrom": 5.98,
+      "m_e_rel": 0.151,
+      "m_h_rel_magnitude": 0.1439,
+      "isotropic": true
+    },
+    "CsPbI3": {
+      "a_Angstrom": 6.38,
+      "m_e_rel": 0.1062,
+      "m_h_rel_magnitude": 0.1338,
+      "isotropic": true
+    }
+  }
+}

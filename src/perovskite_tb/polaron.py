@@ -19,9 +19,18 @@ Sources (verified real & open-access, 2026-05-24; formula read from the source):
   Frost MAPbI3: eps_inf=4.5, eps_static=24.1, nu_LO=2.25 THz, m*=0.12 (e)/0.15
   (h) -> alpha = 2.39 (e), 2.68 (h).
 
+TB-driven application (T1-3): the band mass m_b can be taken from the CORE TB
+(``bandstructure.effective_mass`` at the R point) rather than a literature value,
+so alpha is computed end-to-end from the TB.  For CsPbBr3 the TB R-point mass
+m_e=0.151 (lighter than the m*=0.22 Sendner adopted) gives alpha_TB~1.66 vs the
+literature alpha~2.0; since alpha ~ sqrt(m_b), the -17% difference is exactly the
+mass ratio sqrt(0.151/0.22)=0.83.  TB masses for all 9 CsBX3 are tabulated in
+results/tb_effective_masses.json.
+
 Scope / honesty:
   * alpha and the *leading* weak-coupling mass (1+alpha/6) are implemented and
-    validated (alpha reproduces the Frost MAPbI3 benchmark to <1%).
+    validated (alpha reproduces the Frost MAPbI3 benchmark to <1%; the alpha
+    formula also reproduces Sendner's CsPbBr3 alpha given m*=0.22).
   * The full finite-temperature mobility (Feynman variational + Osaka free
     energy + Hellwarth-Biaggio / Kadanoff transport) is intricate and is NOT
     implemented (cf. PolaronMobility.jl); 1+alpha/6 is only leading-order

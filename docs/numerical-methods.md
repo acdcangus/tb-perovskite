@@ -248,15 +248,19 @@ $$\alpha=\frac{1}{4\pi\epsilon_0}\,\frac12\Big(\frac1{\epsilon_\infty}-\frac1{\e
 \frac{e^2}{\hbar\Omega}\sqrt{\frac{2m_b\Omega}{\hbar}},\qquad m_p/m_b\simeq 1+\alpha/6\ (\text{弱結合}).$$
 
 物性値は OA 一次文献から収集（`data/parameters/frohlich_polaron_params.json`, 各値に出典明記）。
+**有効質量 $m_b$ はコア TB から取得可**（`bandstructure.effective_mass`: R 点で $E(k)$ を放物線フィット, $m^*/m_0=(\hbar^2/m_0)/(d^2E/dk^2)$）。
 
-### V&V（`tests/test_polaron.py`, 7 ケース）— **2 つの独立ベンチマークで前因子を固定**
-- **MAPbI₃**（Frost 2017）: ε∞=4.5, ε_S=24.1, ν_LO=2.25 THz, m*=0.12/0.15 → **α=2.39 (e), 2.68 (h)** を <1% で再現。
+### V&V（`tests/test_polaron.py`, 10 ケース）— **2 つの独立ベンチマーク＋コア TB 駆動**
+- **MAPbI₃**（Frost 2017）: ε∞=4.5, ε_S=24.1, ν_LO=2.25 THz, m*=0.12/0.15 → **α=2.39 (e), 2.68 (h)** を <1% で再現（公式の前因子検証, A）。
 - **CsPbBr₃**（Sendner et al., Nat. Commun. 12, 4945 (2021), PMC8494801）: ε∞=4.8, ε_S=20.5, ω_LO=19.2 meV, m*=0.22 → **α≈2** を再現（第 2 の独立検証）。
+- **【追加】有効質量の手法検証**: 合成放物線 $E=(\hbar^2/2m)k^2$（$m_{\rm rel}$=0.25）を厳密回復; cubic CsPbBr₃ R 点 m\* が 100/110/111 で等方（CBM>0, VBM<0）。
+- **【追加】TB 駆動 α**（`test_cspbbr3_alpha_from_core_tb_mass`）: コア TB の R 点質量 $m_e$=0.151 ＋ cited Sendner 誘電/LO → **α_TB=1.66**。Sendner の α≈2.0 との **−17% 差は完全にバンド質量比**（$\alpha\propto\sqrt{m_b}$, $\sqrt{0.151/0.22}=0.83$）。
 - 単位変換（THz⇔meV）、スケーリング（√m*、(1/ε∞−1/ε_S)）、弱結合質量極限。
 
 ### スコープ・限界（honest）
 $\alpha$ と**先頭次**弱結合質量 $1+\alpha/6$ のみ実装・検証（intermediate 結合 α~2 では完全 Feynman variational が必要 → 移動度は未実装, cf. PolaronMobility.jl）。
-9 材料 α マップは各材料の **cited な $\epsilon_{\rm S}$・$\omega_{\rm LO}$** が必要 → CsPbBr₃ は収集済（上記）、他材料は一次出典が揃い次第追加（`_pending` 参照）。捏造防止のため未収集材料は計算しない。
+**コア TB の R 点質量を全 9 CsBX₃ で算出済**（`results/tb_effective_masses.json`; 例 CsPbBr₃ 0.151, CsPbI₃ 0.106, CsSnI₃ 0.035, 全て等方）。これらは DFT/実験値（~0.2）より軽い傾向で、TB 駆動 α は文献 α より小さめに出る（その差はバンド質量比で説明可能）。
+9 材料 α マップの完成は各材料の **cited な $\epsilon_{\rm S}$・$\omega_{\rm LO}$** が必要 → CsPbBr₃ は収集済（上記, TB 駆動 α 算出済）、他 8 材料は一次出典が揃い次第追加（`_pending` 参照）。捏造防止のため未収集材料は計算しない。
 
 ## 16. 歪みバンド工学（変形ポテンシャル） (`bandengr.py`, 仕様 F12)
 

@@ -27,5 +27,16 @@
       "note": "second independent benchmark; single dominant LO mode M0 = 155 cm^-1 (19.2 meV); alpha ~= 2 (intermediate coupling) for both carriers"
     }
   },
-  "_pending": "Per-material eps_static and LO frequency for CsPbCl3/CsPbI3/CsGeX3/CsSnX3 not yet collected with a clean primary source (CsPbCl3 highest LO ~25 meV with LO-TO 25->15 meV split per literature, but a fully-cited eps_static/eps_inf pair was not located). frohlich_alpha() can be applied once cited values are added here."
+  "_tb_driven_alpha": {
+    "_README": "TB-DRIVEN Frohlich alpha (T1-3): the band effective mass m_b is taken from the CORE Kashikar-13 TB (bandstructure.effective_mass at the R point; see results/tb_effective_masses.json), combined with the CITED dielectric/LO data above. This is the property computed END-TO-END from the TB (per the user constraint), distinct from the formula-validation tests that reuse each paper's own m*.",
+    "CsPbBr3": {
+      "m_e_rel_TB": 0.151,
+      "eps_inf": 4.8, "eps_static": 20.5, "omega_LO_meV": 19.2,
+      "alpha_e_TB": 1.66,
+      "alpha_e_literature": 2.0,
+      "deviation_pct": -17,
+      "honest_note": "alpha_TB=1.66 vs Sendner alpha~2.0. The -17% gap is ENTIRELY the band-mass ratio: alpha ~ sqrt(m_b), and the TB R-point mass m_e=0.151 is lighter than the m*=0.22 Sendner adopted; sqrt(0.151/0.22)=0.83. The alpha FORMULA reproduces Sendner exactly given m*=0.22 (test_cspbbr3_sendner_alpha). Category: A for the formula; the TB-driven absolute reflects the TB band mass (SK-TB)."
+    }
+  },
+  "_pending": "TB-driven alpha for the other 8 CsBX3 is gated on CITED eps_static/eps_inf/omega_LO (the TB already provides m* for all 9 in results/tb_effective_masses.json). A clean primary-source dielectric/LO pair was located only for CsPbBr3 (Sendner 2021) so far; CsPbCl3/CsPbI3/CsGeX3/CsSnX3 not yet cited-verified (no fabrication). frohlich_alpha() can be applied to each once cited values are added here."
 }

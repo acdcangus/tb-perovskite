@@ -15,6 +15,7 @@ from typing import Callable
 
 import numpy as np
 
+from ._constants import HBAR2_OVER_M0
 from .kpath import KPath
 
 
@@ -52,6 +53,54 @@ def direct_gap(builder: Callable[[np.ndarray], np.ndarray], kvec: np.ndarray,
     """Direct gap at a single k-point: E[n_filled] - E[n_filled-1]."""
     ev = eigenvalues_at_k(builder, kvec)
     return float(ev[n_filled] - ev[n_filled - 1])
+
+
+_PRINCIPAL_DIRS = {
+    "100": np.array([1.0, 0.0, 0.0]),
+    "110": np.array([1.0, 1.0, 0.0]),
+    "111": np.array([1.0, 1.0, 1.0]),
+}
+
+
+def effective_mass(builder: Callable[[np.ndarray], np.ndarray], k0, band: int,
+                   *, directions=None, dk: float = 1e-3, npts: int = 7) -> dict:
+    r"""Band-edge effective mass m*/m0 from a parabolic fit of E(k) around ``k0``.
+
+    Fits :math:`E(k_0 + t\,\hat d) = E_0 + \tfrac12 (d^2E/dk^2)\, t^2` along each
+    unit direction :math:`\hat d` and returns the curvature mass
+    :math:`m^*/m_0 = (\hbar^2/m_0) / (d^2E/dk^2)` with
+    :math:`\hbar^2/m_0 = 7.62\ \mathrm{eV\,\AA^2}` (``HBAR2_OVER_M0``).
+
+    The returned mass is SIGNED: positive at a conduction-band minimum, negative
+    at a valence-band maximum (the hole mass is its magnitude).  ``band`` is the
+    index into the ascending eigenvalue list at ``k0`` (e.g. CBM = n_filled,
+    VBM = n_filled - 1).  ``k0`` must be in the same (Cartesian, 1/Angstrom)
+    units as the builder expects, so curvatures come out in eV*Angstrom^2.
+
+    Parameters
+    ----------
+    directions : mapping label -> 3-vector, or None for the cubic principal set
+        {100, 110, 111}.  Vectors are normalised internally.
+    dk, npts : finite-difference step (1/Angstrom) and number of sample points
+        (odd; symmetric about k0).
+
+    Returns dict: ``{label: m_rel}`` plus ``"mean"`` (signed average over
+    directions) and ``"curvatures"`` (the fitted d^2E/dk^2 per direction).
+    """
+    k0 = np.asarray(k0, dtype=float)
+    dirs = _PRINCIPAL_DIRS if directions is None else {
+        k: np.asarray(v, float) for k, v in directions.items()}
+    ts = (np.arange(npts) - npts // 2) * dk
+    out, curv = {}, {}
+    for lab, d in dirs.items():
+        dhat = d / np.linalg.norm(d)
+        e = np.array([eigenvalues_at_k(builder, k0 + t * dhat)[band] for t in ts])
+        c2 = np.polyfit(ts, e, 2)[0] * 2.0  # d^2E/dk^2 (eV*Angstrom^2)
+        curv[lab] = float(c2)
+        out[lab] = float(HBAR2_OVER_M0 / c2) if abs(c2) > 1e-12 else float("inf")
+    out["mean"] = float(np.mean([out[l] for l in dirs]))
+    out["curvatures"] = curv
+    return out
 
 
 def fundamental_gap(bs: BandStructure) -> dict:

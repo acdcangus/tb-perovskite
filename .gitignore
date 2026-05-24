@@ -32,3 +32,12 @@ references/texts/
 
 # Cowork 5-min polling logs (regenerated, not source)
 cowork/polling_logs/
+
+# --- Secrets (API keys etc; NEVER commit) ---
+secrets/
+*.api_key
+*.api_key.json
+.env
+.env.*
+data/parameters/mp_api_key.json
+data/parameters/.mp_api_key

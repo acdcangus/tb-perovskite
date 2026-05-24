@@ -55,27 +55,40 @@ def _mu(mat, dk=1e-3):
     return ex.reduced_mass(me, mh)
 
 
-def compute(outdir):
+def compute(outdir, profile="effective"):
+    """profile='effective': use the cited web-research eps_inf (CsPbI3/CsPbCl3 only).
+    profile='MP_DFPT': use the Materials Project DFPT eps_inf (single-method, 8/9)."""
     os.makedirs(outdir, exist_ok=True)
     eps_db = json.load(open(EPS_JSON))["materials"]
     rows, skipped = [], []
     for mat, rec in eps_db.items():
-        eps = rec.get("eps_inf")
-        status = rec.get("status", "")
-        if eps is None or (status not in _USABLE):
-            skipped.append((mat, status))
+        if profile == "MP_DFPT":
+            mpd = rec.get("eps_inf_MP_DFPT") or {}
+            eps = mpd.get("value")
+            status = "MP_DFPT"
+            src = mpd.get("method", "")
+            phase = mpd.get("phase_note", "")
+        else:
+            eps = rec.get("eps_inf")
+            status = rec.get("status", "")
+            if status not in _USABLE:
+                eps = None
+            src = rec.get("source", "")
+            phase = rec.get("notes", "")
+        if eps is None:
+            skipped.append((mat, status if profile != "MP_DFPT" else (rec.get("eps_inf_MP_DFPT") or {}).get("status", "no_value")))
             continue
         mu = _mu(mat)
         Eb = ex.wannier_mott_binding_eV(mu, eps) * 1000.0
         rows.append({"material": mat, "mu": round(mu, 4), "eps_inf": eps,
-                     "eps_inf_source": rec.get("source", ""), "status": status,
-                     "E_b_meV": round(Eb, 1)})
+                     "eps_inf_source": src, "status": status, "E_b_meV": round(Eb, 1),
+                     "phase_note": phase})
         print(f"{mat:9s} mu={mu:.4f} eps_inf={eps:.2f} E_b={Eb:.0f} meV  [{status}]", flush=True)
     for mat, st in skipped:
         print(f"{mat:9s} SKIPPED (eps_inf {st})", flush=True)
     with open(f"{outdir}/binding_energy_9materials.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=["material", "mu", "eps_inf",
-                                           "eps_inf_source", "status", "E_b_meV"])
+                                           "eps_inf_source", "status", "E_b_meV", "phase_note"])
         w.writeheader(); w.writerows(rows)
     if rows:
         fig, ax = plt.subplots(figsize=(7, 4))
@@ -86,7 +99,7 @@ def compute(outdir):
     return rows, skipped
 
 
-def run_production():
+def run_production(profile="MP_DFPT"):
     import glob
     import shutil
     import subprocess
@@ -102,23 +115,25 @@ def run_production():
         sys.exit(1)
 
     stage = tempfile.mkdtemp(prefix="binde_")
-    rows, skipped = compute(stage)
+    rows, skipped = compute(stage, profile=profile)
     if not rows:
-        sys.stderr.write("No usable eps_inf yet (all pending Cowork Chrome search). "
-                         "Bundle not created; re-run after data/parameters/eps_inf_external.json is filled.\n")
+        sys.stderr.write("No usable eps_inf for this profile.\n")
         sys.exit(2)
     shutil.copy2(EPS_JSON, f"{stage}/eps_inf_external.json")
 
     key = {f"{r['material']}_E_b_meV": r["E_b_meV"] for r in rows}
     key.update({f"{r['material']}_mu": r["mu"] for r in rows})
+    key.update({f"{r['material']}_eps_inf": r["eps_inf"] for r in rows})
     key["materials_included"] = [r["material"] for r in rows]
     key["materials_pending_eps_inf"] = [m for m, _ in skipped]
+    key["profile"] = profile
     eps_sources = {r["material"]: r["eps_inf_source"] for r in rows}
+    theme = "theme_I_exciton_MP_DFPT" if profile == "MP_DFPT" else "theme_I_binding_energy"
 
     spec = {
-        "theme": "theme_I_binding_energy",
-        "subtask": "Y1-c-3: Wannier-Mott E_b (TB mu + external eps_inf)",
-        "physics_method": "E_b = (mu/m0)/eps_inf^2 * Ry; mu = TB R-point curvature, eps_inf = external literature",
+        "theme": theme,
+        "subtask": f"Y1-c-3 ({profile}): Wannier-Mott E_b (TB mu + {profile} eps_inf)",
+        "physics_method": "E_b = (mu/m0)/eps_inf^2 * Ry; mu = TB R-point curvature, eps_inf = Materials Project DFPT (single method)",
         "mode": "Production", "retroactive": False,
         "convergence": {"mu_convergence": "inherited from theme_I_effective_mass bundle "
                         "(dk<0.01%, isotropic); E_b formula is closed-form (no extra convergence)"},
@@ -130,22 +145,26 @@ def run_production():
         "key_numbers": key,
         "references": ["Yang et al. 2017 PRB 96 035301", "Tanaka et al. 2003 SSC 127 619",
                        "Cho et al. 2019 (arXiv:1908.09436)", "Kashikar 2021 (arXiv:2101.08562)",
+                       "Materials Project (Jain et al. 2013 APL Mater. 1, 011002), DFPT dielectric",
                        *[f"eps_inf({m}): {s}" for m, s in eps_sources.items()]],
-        "notes": ("Hybrid production: effective masses (mu) are TB-derived from R-point band "
-                  "curvature (Theme A k.p framework). eps_inf values are externally sourced from "
-                  "literature (see references and inputs/eps_inf_external.json) to bypass the "
-                  "Blount-1962 systematic underestimate of the TB-optical f-sum (~0.21, see "
-                  "results/optical). The Wannier-Mott formula E_b=(mu/m0)/eps_r^2*Ry uses "
-                  "eps_r=eps_inf (upper-bound screening; physical screening lies between eps_inf "
-                  "and eps_static via phonon contribution -- Tanaka 2003 / Yang 2017). Absolute E_b "
-                  "is therefore an upper bound; relative trends across materials are robust. "
-                  "Materials with pending eps_inf are excluded (partial production)."),
-        "readme": ("# Theme I (Y1-c-3): Wannier-Mott exciton binding E_b (hybrid)\n\n"
-                   "E_b = (mu/m0)/eps_inf^2 * Ry. mu = TB R-point curvature; eps_inf = external "
-                   "literature (data/parameters/eps_inf_external.json, cited). Partial set = "
-                   "materials with a usable eps_inf.\n\nReproduce: OMP_NUM_THREADS=1 PYTHONPATH=src "
-                   "python scripts/scan_theme_I_binding_energy.py production\n"),
-        "cli": "OMP_NUM_THREADS=1 PYTHONPATH=src python scripts/scan_theme_I_binding_energy.py production",
+        "notes": ("Option C' hybrid production: effective masses (mu) are TB-derived from R-point "
+                  "band curvature (cubic Kashikar-13). eps_inf is the Materials Project DFPT "
+                  "ELECTRONIC (bare) dielectric -- a SINGLE, consistent method across materials, so "
+                  "the RELATIVE E_b trend is maximally defensible. CAVEAT: bare eps_inf < effective "
+                  "exciton eps_eff (no phonon/ionic screening), so the Wannier-Mott E_b="
+                  "(mu/m0)/eps_inf^2*Ry is an UPPER BOUND (overestimate); e.g. CsPbI3 here ~41 meV vs "
+                  "experiment ~15-20 meV. MP computed DFPT dielectric for the cubic phase for some "
+                  "materials (CsGeBr3/CsSnBr3/CsSnI3) and for ortho/rhombo/monoclinic ground states "
+                  "for others; mu is cubic-phase, so eps_inf is used as a ~phase-insensitive proxy "
+                  "(phase recorded per material in inputs/eps_inf_external.json). CsSnCl3 has no MP "
+                  "dielectric (excluded). API key never stored; provenance = mp-id + URL only."),
+        "readme": ("# Theme I (Y1-c-3, option C'): Wannier-Mott E_b with Materials Project DFPT eps_inf\n\n"
+                   "E_b = (mu/m0)/eps_inf^2 * Ry. mu = TB cubic R-point curvature; eps_inf = MP DFPT "
+                   "(single method, 8/9 materials, phases noted). BARE eps_inf -> absolute E_b is an "
+                   "upper bound; relative trend defensible.\n\nReproduce: "
+                   "PYTHONPATH=src python scripts/fetch_mp_eps_inf.py  # needs data/parameters/mp_api_key.json\n"
+                   "PYTHONPATH=src python scripts/scan_theme_I_binding_energy.py production --profile MP_DFPT\n"),
+        "cli": "PYTHONPATH=src python scripts/scan_theme_I_binding_energy.py production --profile MP_DFPT",
     }
     root = build_bundle(spec)
     shutil.rmtree(stage, ignore_errors=True)
@@ -156,9 +175,10 @@ def run_production():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["compute", "production"])
+    ap.add_argument("--profile", choices=["effective", "MP_DFPT"], default="MP_DFPT")
     ap.add_argument("--outdir", default="results/theme_I_binding")
     args = ap.parse_args()
     if args.mode == "compute":
-        compute(args.outdir)
+        compute(args.outdir, profile=args.profile)
     else:
-        run_production()
+        run_production(profile=args.profile)

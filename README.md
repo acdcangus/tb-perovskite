@@ -35,6 +35,8 @@ Slater-Koster 法**で計算する Python パッケージです。
 
 各物性の式・出典・V&V は [docs/numerical-methods.md](docs/numerical-methods.md)（§9–§18）と
 [extention/08_tb-perovskite_implementation_report.md](extention/08_tb-perovskite_implementation_report.md) を参照。
+**追加機能の物理・検証・定量結果・コアTB結合 end-to-end テスト**をわかりやすくまとめた解説レポート →
+[extention/10_additional_features_report.md](extention/10_additional_features_report.md)。
 
 ## クイックスタート
 

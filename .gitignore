@@ -41,3 +41,7 @@ secrets/
 .env.*
 data/parameters/mp_api_key.json
 data/parameters/.mp_api_key
+
+# Claude Code scheduled-task runtime artifacts (session-local)
+.claude/scheduled_tasks.lock
+.claude/scheduled_tasks.json

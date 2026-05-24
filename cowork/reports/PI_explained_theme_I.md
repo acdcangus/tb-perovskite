@@ -44,7 +44,7 @@
 
 ```mermaid
 graph TD
-  A[TB バンド 9材料] --> B[R点曲率 → m_e, m_h, μ]
+  A[TB バンド 9材料<br/>Kashikar 2021 の13軌道 active basis] --> B[R点曲率 → m_e, m_h, μ]
   C[Materials Project DFPT ε∞<br/>API経由・単一手法] --> D
   B --> D[Wannier-Mott E_b=(μ/m0)/ε²·Ry]
   D --> E[9材料 E_b マップ（相対トレンド）]
@@ -74,7 +74,11 @@ graph TD
 | CsPbBr₃ | 4.21 | 57 |
 | CsPbI₃ | 4.43 | 41 |
 | CsGeI₃ | 5.69 | 22 |
+| CsGeBr₃ | 6.55 | 19 |
+| CsSnBr₃ | 5.91 | 12 |
 | CsSnI₃ | 7.35 | **4（最小）** |
+
+（8 材料; CsSnCl₃ は MP に誘電率なく除外。全数値 `theme_I_exciton_MP_DFPT MANIFEST`。）
 
 - **読み解き**: E_b は **Cl 系で大（重い質量・小さい ε）→ LED 向き**、**Sn-I で最小（超軽量質量・大きい ε）→ 太陽電池向き**。
 - **相対トレンドは defensible**（MP の単一手法 DFPT ε を使用）。
@@ -82,7 +86,7 @@ graph TD
 ### 3.3 ★ 方法論的発見（honest）
 - Wannier-Mott が要するのは励起子が感じる**実効遮蔽 ε_eff**だが、文献・DFPT が出すのは**bare（裸の）電子誘電率 ε∞**。
   ε∞ < ε_eff なので、**bare ε で計算すると E_b が過大評価**になる。
-- 校正点 CsPbI₃: 実効 ε≈6.1（励起子論文 Cho 2019）なら E_b=**22 meV（実験 ~15–20 と一致）**、MP の bare ε=4.43 だと
+- 校正点 CsPbI₃: 本研究 μ=0.0592 と Cho 2019 の実効 ε=6.1 で E_b=**22 meV**（Cho 自身は μ=0.10 で 37 meV; 実験 7.4–50 meV, Cho 2019。ε=6.1 は 2D 無機層値で bulk 転用は近似）。MP の bare ε=4.43 だと
   41 meV（~2 倍過大）。→ **絶対値は上限、相対トレンドが頑健**、と正直に位置づけ。
 - なぜ MP を使ったか: web 調査で「9 材料の一貫した ε は文献に散在・paywall・相不一致」と判明 → 単一手法（MP DFPT）で
   consistency を確保（PI 提供の API キー）。
@@ -111,9 +115,9 @@ graph TD
 - **DFPT / Materials Project**: 密度汎関数摂動論で誘電率等を計算する手法 / そのデータを集めた公開データベース。
 
 ## 7. 出典
-- C. C. Yang et al. 2017, *PRB* 96, 035301（ハライドペロブスカイトの Wannier-Mott）。
-- M. Tanaka et al. 2003, *Solid State Commun.* 127, 619（励起子結合の実験）。
-- J. Cho et al. 2019, arXiv:1908.09436（GW-BSE, 実効 ε≈6.1）。
+- C. C. Yang et al. 2017, *PRB* 96, 035301（Wannier-Mott; in-repo 外, 要原典確認）。
+- M. Tanaka et al. 2003, *Solid State Commun.* 127, 619（励起子結合の実験; in-repo 外, 要原典確認）。
+- J. Cho et al. 2019, arXiv:1908.09436（in-repo; 実効 ε=6.1 は 2D 無機層値, μ=0.10 で E_b=37 meV, 実験 7.4–50 meV）。
 - A. Jain et al. 2013, *APL Mater.* 1, 011002（Materials Project, DFPT 誘電率）。
 - R. Kashikar et al. 2021, arXiv:2101.08562（TB モデル）。
 - Production bundles: `results/production/theme_I_effective_mass/2026-05-23_1e9c65c/`,

@@ -1,8 +1,7 @@
 # PI 向け解説: Theme A — ハライドペロブスカイト 9 材料の Landé g 因子マップ
 
 **対象読者:** プロジェクト PI（材料物理・凝縮系が専門ではない方）
-**方針:** 専門用語は初出でその場で定義。数式は最小限、物理的な「絵」を優先。数値はすべて
-Production bundle `results/production/theme_A_g_factor/2026-05-23_31374dc/MANIFEST.json` の `key_numbers` から引用。
+**方針:** 専門用語は初出でその場で定義。数式は最小限、物理的な「絵」を優先。主要数値は Production `results/production/theme_A_g_factor/2026-05-23_31374dc/MANIFEST.json` の `key_numbers`、9 材料の全表は同 bundle の `outputs/raw/g_factor_9material.csv` から引用。
 
 ---
 
@@ -49,7 +48,7 @@ g 因子が精密測定され、**「g 因子はバンドギャップ Eg だけ�
 ## 2. 何を計算したか（手順）
 
 ### 2.1 入力
-- 9 材料 CsBX₃（B∈{Ge,Sn,Pb}, X∈{Cl,Br,I}）の Kashikar-13 軌道 TB パラメータ（出典付き JSON）。
+- 9 材料 CsBX₃ の Kashikar 2021 の **13 軌道 active basis** TB パラメータ（出典付き JSON; 同論文は 4 軌道 minimal も提案、本研究は 13 軌道を採用）。
 - 各材料の R 点（直接ギャップの場所）のバンド構造と波動関数。
 
 ### 2.2 計算手順
@@ -133,8 +132,8 @@ graph TD
 - E. Kirstein et al., **arXiv:2112.15384**（in-repo `references/pdfs/arxiv_2112.15384.pdf`「The Landé factors of electrons
   and holes in lead halide perovskites: universal dependence on the band gap」）。本研究で用いた k·p 普遍式の定数
   （P=6.8 eV·Å, Δ=1.5 eV）と式の詳細は `docs/g-factor-formulation.md`（プロジェクト内で検証済み）を参照。
-- M. O. Nestoklon et al. 2023（TB から g 因子確認）。
+- M. O. Nestoklon et al. 2023（arXiv:2305.10586, in-repo; CsPbX₃ ナノ結晶の ETB+k·p による g 因子の量子閉じ込め拡張）。
 - R. Roth 1960, *Phys. Rev.* 118, 1534（in-repo `references/pdfs/classic_Roth1960_PR118_1534.pdf`; g 因子 k·p 原典）。
   関連: Roth–Lax–Zwerdling 1959（PR 114, 90 — 巻号は要原典確認、in-repo 外）。
-- E. I. Blount 1962, *Phys. Rev.* 126, 1636（TB 位置演算子の限界）。
+- E. I. Blount 1962, *Phys. Rev.* 126, 1636（TB 位置演算子の限界; in-repo 外, 要原典確認）。
 - Production bundle: `results/production/theme_A_g_factor/2026-05-23_31374dc/`、技術報告書: `cowork/reports/theme_A_g_factor.md`。

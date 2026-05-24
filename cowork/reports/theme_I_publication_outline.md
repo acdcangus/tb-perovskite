@@ -27,7 +27,7 @@
 ## 3. Results（~250 字）
 - 有効質量マップ（表 + Eg 依存）: Cl→Br→I 軽量化、Sn 系最軽（μ: 0.015–0.116）。
 - E_b マップ（C', 8 材料, 表 + 図）: CsPbCl₃ 119 > … > CsSnI₃ 4 meV。相対トレンドは μ と ε∞ の競合で理解。
-- 校正点（D'）: CsPbI₃ 実効 ε で 22 meV、実験 ~15–20 meV と整合（C' bare 41 meV の ~1.9× 補正）。
+- 校正点（D'）: CsPbI₃ 実効 ε で 22 meV、実験 7.4–50 meV (Cho 2019) の範囲内（C' bare 41 meV の ~1.9× 補正）。
 
 ## 4. Discussion（~300 字）
 - **bare ε∞ vs 実効 ε_eff**: Wannier-Mott は ε_eff（フォノン込み）を要するが文献は bare ε∞ を報告 → E_b 過大。定量化。

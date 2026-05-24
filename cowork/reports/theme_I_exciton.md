@@ -2,7 +2,7 @@
 
 **ステータス（論文化方針, PI 判断 2026-05-24）:** **主結果 = option C'**（Materials Project DFPT bare ε∞ による
 **8 材料**絶対 E_b マップ）、**校正点として option D' を併記**（Cho 2019 実効 ε_eff による CsPbI₃ 単独 E_b=22 meV、
-実験 ~15–20 meV と整合）。C' の絶対値は bare ε∞ 由来で**上限**、相対トレンドが頑健、と honest に位置づける。
+実験 7.4–50 meV (Cho 2019) の範囲内）。C' の絶対値は bare ε∞ 由来で**上限**、相対トレンドが頑健、と honest に位置づける。
 数値は Production MANIFEST 引用: `theme_I_exciton_MP_DFPT/2026-05-24_118b3ce`（C'）, `theme_I_exciton/2026-05-23_f66690c`（D'）,
 `theme_I_effective_mass/2026-05-23_1e9c65c`（μ）。
 
@@ -49,8 +49,7 @@ bundle `results/production/theme_I_exciton_MP_DFPT/2026-05-24_118b3ce/`（MANIFE
   （ortho/rhombo/monoclinic）の ε∞ を ~相非依存 proxy として使用（μ は cubic）。CsSnCl₃ は除外。
 
 ### 3.2 校正点（option D'）: CsPbI₃ 実効 ε_eff
-bundle `theme_I_exciton/2026-05-23_f66690c`。CsPbI₃ に実効 ε_eff≈6.1（Cho 2019）を使うと **E_b=22 meV**、
-実験 ~15–20 meV と整合。→ C' の CsPbI₃（bare ε=4.43, 41 meV）に対し、**実効 ε で絶対値が実験域に入る**ことを示す校正点。
+bundle `theme_I_exciton/2026-05-23_f66690c`。CsPbI₃ に Cho 2019 の実効 ε=6.1 と本研究 μ=0.0592 を使うと **E_b=22 meV**（Cho 自身は μ=0.10 で 37 meV と報告; 実験範囲 7.4–50 meV, Cho 2019）。→ C' の CsPbI₃（bare ε=4.43, 41 meV）に対し、**実効 ε で絶対値が実験域に入る**ことを示す校正点。
 （C' 41 meV ÷ D' 22 meV ≈ 1.9 倍が bare→実効の補正係数の目安。）
 
 ### 3.3 入力データ: 有効質量マップ（TB, 確定）
@@ -61,7 +60,7 @@ bundle `theme_I_exciton/2026-05-23_f66690c`。CsPbI₃ に実効 ε_eff≈6.1（
 ## 4. Discussion（方法論的考察）
 - **★ bare ε∞ vs 実効 ε_eff**: Wannier-Mott が要するのは励起子が感じる**実効遮蔽 ε_eff**（ε∞ と ε_static の中間、
   フォノン寄与込み）。文献・DFPT が出すのは **bare 電子 ε∞**で、ε∞<ε_eff のため **bare で計算すると E_b 過大**。
-  CsPbI₃ で実証: bare ε=4.43→41 meV vs 実効 ε=6.1→22 meV（実験 ~15–20）。
+  CsPbI₃ で実証: bare ε=4.43→41 meV vs 実効 ε=6.1→22 meV（本研究 μ; 実験 7.4–50 meV, Cho 2019）。
 - **web research の結論（経緯）**: open web には 9 材料の consistent な cubic ε（特に ε_eff）が無い（paywall/相不一致/手法散乱）。
   そこで PI 提供キーで **MP DFPT（単一手法）** に切替え、相対トレンドの defensibility を確保（C'）。
 - **Blount 統一限界**: ε∞ の過小は g 因子・光学 f-sum と同じ Blount 1962（TB 位置演算子の原子内成分欠落）の糸。

@@ -170,4 +170,22 @@
 
 ---
 
-**(EOF)** — Reviewed for hallucination per `07_agent_handoff.md` §0.1; all cited DOIs/arXiv IDs verified 2026-05-24. §6 efficiency changes verified numerically equivalent to the pre-refactor implementation (machine precision).
+## 7. 追加検証タスク（09）— 2026-05-24
+
+`09_additional_validation_tasks.md` の Tier-1/Tier-2 を **全 7 件実施**（テスト 314→**330**, 全 pass）。**コア TB のエネルギー・波動関数で物性を計算**（論文値は検算）。詳細・達成カテゴリ・引用訂正 4 件は **`08_validation_status_quantitative.md` §7** を参照。要約:
+
+| タスク | 達成カテゴリ（honest） | 新規インフラ |
+|---|---|---|
+| T1-1 F5 Blancon トレンド | C→B（減衰指数 15%以内）| — |
+| T1-2 F12 歪み dE_g/dε | C（符号一致）/ D（絶対 過大）| `bandengr.pressure_coefficient` |
+| T1-3 F6 TB-駆動 polaron α | A（公式）/ B | `bandstructure.effective_mass`（全9材料 m\*）|
+| T2-1 F4 Rashba バルク DFT | C（CBM>VBM 順序）/ D（絶対 ~40×小）| — |
+| T2-2 F1/F2 Z₂ parity | B（Wilson-Dirac 相図再現, 「未実装」解消）| `topology.z2_invariant_from_parities` / `parity_delta_at_trim` |
+| T2-3 F14-B 強誘電 ΔP | C→B（符号反転 + DFT と同オーダ）| `polarization.ferroelectric_polarization_difference` |
+| T2-4 F11 χ/σ 比 | B（2D Rashba 解析値 mα/(4μ) 一致）| `edelstein.longitudinal_conductivity` / `edelstein_ratio` |
+
+**V&V カテゴリ更新**: A は F6 polaron（公式 <1% + TB-駆動 α）・F9 WF（0.5%）が中心。多くは SK-TB/Blount の構造限界で符号/順序/トレンド/量子化/τ非依存比（B/C）に留まり、絶対値は honest に D 維持（09 の「全 A 化」想定に対する誠実な現実; 捏造回避）。引用訂正: Blancon(Science→NatCommun), Buin/Grumet 削除（無関係論文）, Sendner(MA 系のみ)。関連 commit: `7eef9b5`(T1-1), `b8baaca`(T1-3), `a4f1fc1`(T1-2), `591b3a9`(T2-2), `163d8d1`(T2-4), `be6dcc0`(T2-1), `251140f`(T2-3)。
+
+---
+
+**(EOF)** — Reviewed for hallucination per `07_agent_handoff.md` §0.1; all cited DOIs/arXiv IDs verified 2026-05-24 (incl. §7 additional references via web/crossref). §6 efficiency changes verified numerically equivalent to the pre-refactor implementation (machine precision).

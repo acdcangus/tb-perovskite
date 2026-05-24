@@ -32,6 +32,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from ._constants import HBAR2_OVER_M0
+
 
 def spin_texture(evecs: np.ndarray, s_op: np.ndarray) -> np.ndarray:
     """Per-band spin expectation <n|S|n> = Re diag(U^dagger S U)."""
@@ -64,7 +66,7 @@ def analytic_rashba_builder(alpha_R: float, meff: float = 1.0):
     """
     sx = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
     sy = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-    c = 7.619964 / meff  # hbar^2/m* (eV.A^2)
+    c = HBAR2_OVER_M0 / meff  # hbar^2/m* (eV.A^2), single source of truth
 
     def H_fn(kvec):
         k = np.asarray(kvec, dtype=float)

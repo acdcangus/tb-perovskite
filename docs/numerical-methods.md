@@ -183,3 +183,22 @@ $|k|>0$ で分裂（TRIM $k=0$ は Kramers 定理で保護され分裂ゼロ）�
 ### honest 限界
 $\alpha_R$ の絶対値は整合するベンチ（文献は**表面** Rashba、本実装は**バルク極性**変形）が無く + Blount 限界 → 対称性（0 vs ≠0）・spin-momentum locking・相対トレンドのみ信頼、絶対値は indicative。
 
+## 13. Edelstein 効果（電流誘起スピン分極） (`edelstein.py`, 仕様 F11)
+
+定緩和時間近似 (CRTA) の線形応答で、電流（電場）が誘起するスピン分極 $\delta S_a=\chi_{ab}E_b$ を計算する
+（**Edelstein, Solid State Commun. 73, 233 (1990)**, DOI 10.1016/0038-1098(90)90963-C）。
+$\chi_{ab}/(e\tau)=-\frac1{N_k}\sum_{n,k}(-\partial f/\partial E)\langle S_a\rangle\,v_b$（Fermi 面平均）。
+`thermo` の Fermi 窓・`berry` のスピン演算子・`rashba` のスピンテクスチャを再利用。
+
+中心反転系では $\langle S\rangle(-k)=\langle S\rangle(k)$（偶）・$v(-k)=-v(k)$（奇）→ 積分が奇 → $\chi=0$。
+Rashba 系では電流に**直交**するスピン応答（$\chi_{yx}\neq0,\chi_{xx}=0$, Rashba-Edelstein）。
+
+### V&V（`tests/test_edelstein.py`, 4 ケース）
+- **中心反転（非縮退）模型 d(k)=(cos kx,cos ky,M)** → $\chi=0$（機械精度）。
+- **Rashba 模型** → $\chi_{yx}\neq0$, $|\chi_{xx}|\ll|\chi_{yx}|$（直交）、$\chi_{yx}(-\alpha)=-\chi_{yx}(\alpha)$（符号反転）。
+- 極性 CsPbI₃（P4mm, 非縮退）で実行整合。
+
+### 適用範囲・限界（honest）
+per-band 公式は**非縮退バンド**前提。立方 Pm-3m は全 k で Kramers 縮退（応答は対称性で 0 だが per-band では gauge 依存）→
+ペロブスカイトは**反転破れ極性 (P4mm)** 相で評価。絶対値は $\tau$ 依存でスコープ外（/eτ で返す）→ 対称性・直交構造・相対のみ信頼。
+

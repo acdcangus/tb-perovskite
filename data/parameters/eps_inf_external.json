@@ -1,24 +1,32 @@
 {
-  "_README": "External high-frequency dielectric constants (eps_inf) for the Wannier-Mott exciton binding (Theme I, option c). Extracted ONLY from cited sources (no fabricated values). In-repo references (references/texts/) yielded only a lead-iodide proxy; the rest are pending Cowork Claude-in-Chrome search (directive supplement 2026-05-24_0735). PI decision (v): Cowork fills missing materials via Chrome (Materials Project / NoMaD / Scholar / arXiv).",
+  "_README": "External dielectric constants for the Wannier-Mott exciton binding (Theme I, option c). Values ONLY from cited sources (no fabrication). Web research done by Claude Code per PI instruction 2026-05-24 ('webresearch自分でやって').",
   "_extraction_date": "2026-05-24",
-  "_searched_texts": "references/texts/*.txt (61 files); keywords: high-frequency/optical dielectric, epsilon_inf, eps_inf, refractive index, varepsilon_infty, per material",
-  "_workflow": "Claude Code marks not-found as pending_cowork_chrome_search and writes *_eps_inf_missing_request.md; Cowork appends cited values here via Chrome; Claude Code re-runs Y1-c-3 next polling cycle.",
+  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment ~64 meV; whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (matches exp ~15-20). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
   "materials": {
     "CsPbI3": {
-      "eps_inf": 6.1,
-      "status": "proxy_lead_iodide_effective",
-      "source": "Cho et al. 2019, arXiv:1908.09436 (text ~line 224, 'epsilon = 6.1'); arXiv:2210.01324 (lines 119/190, 'dielectric constant eps_p = 6.1', stated as bulk MAPbI3 high-frequency dielectric)",
-      "method": "effective exciton screening (eps_p) for lead-iodide perovskite (MAPbI3)",
-      "phase": "reference is MAPbI3, not cubic CsPbI3",
-      "notes": "NOT a measured CsPbI3 eps_inf; effective dielectric (between eps_inf and eps_static). Rough proxy only; Cowork may replace with a CsPbI3-specific cited value."
+      "eps_inf": 6.1, "status": "found_effective",
+      "source": "Cho et al. 2019 arXiv:1908.09436 (effective exciton eps=6.1); crystal static eps~6.22 reported by thin-film optical study (ScienceDirect S1876107018306059); MAPbI3 eps_p=6.1 (arXiv:2210.01324)",
+      "method": "effective exciton dielectric (eps_eff), multiple converging sources",
+      "E_b_meV": 22, "notes": "PHYSICAL: E_b=22 meV matches experiment (~15-20 meV). eps=6.1 is the effective exciton screening (not bare eps_inf)."
     },
-    "CsPbBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric constant", "refractive index"]},
-    "CsPbCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["arxiv_1908.09436", "arxiv_2210.01324", "arxiv_1601.01201", "arxiv_1703.03574", "arxiv_1802.09677"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric constant", "refractive index"]},
-    "CsSnI3":  {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
-    "CsSnBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
-    "CsSnCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsSn"]},
-    "CsGeI3":  {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]},
-    "CsGeBr3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]},
-    "CsGeCl3": {"eps_inf": null, "status": "pending_cowork_chrome_search", "searched_refs": ["all references/texts (61)"], "search_keywords_used": ["eps_inf", "high-frequency dielectric", "optical dielectric", "CsGe"]}
+    "CsPbCl3": {
+      "eps_inf": 2.4, "status": "found_bare_eps_inf",
+      "source": "PMC12757862 (LST: eps_inf=2.40, eps_static=7.2); PMC9071989 (eps~2.513 from real part of eps(w), DFT TB09)",
+      "method": "DFT TB09 bare electronic eps_inf",
+      "E_b_meV_if_used": 273, "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment (~64 meV) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b."
+    },
+    "CsPbBr3": {"eps_inf": null, "status": "web_search_no_reliable_value",
+      "note": "Should lie between CsPbCl3 and CsPbI3 (Cl<Br<I) ~ eps_eff 3.5-4.5; no clean cited cubic eps_inf extracted (ellipsometry papers exist e.g. Ermolaev/Brennan on refractiveindex.info but n not extractable via fetch).",
+      "searched": ["refractiveindex.info Ermolaev/Brennan", "PMC7467746", "nature s41598-021-99551-y", "academia.edu ellipsometry"]},
+    "CsSnI3":  {"eps_inf": null, "status": "web_search_no_reliable_value", "searched": ["academia.edu CsSnI3-xBrx (figs only)", "Springer s11664-024-11683-9 (paywalled)", "arXiv:2310.19693"]},
+    "CsSnBr3": {"eps_inf": null, "status": "web_search_no_reliable_value", "searched": ["academia.edu CsSnI3-xBrx (figs only)", "nature s41598-025-12374-z"]},
+    "CsSnCl3": {"eps_inf": null, "status": "web_search_no_reliable_value", "searched": ["PMC9049885 (doped)"]},
+    "CsGeI3":  {"eps_inf": null, "status": "web_search_no_reliable_value",
+      "note": "OSTI 1328304 / RSC c6ta04685a: CsGeI3 has LARGE static eps (lattice-dominated) but SMALL eps_inf; no eps_inf number given. PMC9833107 is rhombohedral, not cubic.",
+      "searched": ["OSTI 1328304", "RSC c6ta04685a", "PMC9833107 (rhombohedral)"]},
+    "CsGeBr3": {"eps_inf": null, "status": "web_search_no_reliable_value",
+      "note": "Springer s10904-025-03882-6 search snippet states eps_r(w)=5.72 for CsGeBr3 but paywalled (could not confirm whether this is eps_inf, static, or peak).",
+      "searched": ["Springer s10904-025-03882-6 (paywalled)"]},
+    "CsGeCl3": {"eps_inf": null, "status": "web_search_no_reliable_value", "searched": ["researchgate 359058378 CsGeX3 (paywalled)"]}
   }
 }

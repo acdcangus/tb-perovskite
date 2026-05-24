@@ -1,7 +1,7 @@
 # Theme I: Wannier-Mott exciton binding in cubic CsBX₃ (TB effective mass + external ε_∞ hybrid)
 
-**ステータス:** Y1-a（有効質量マップ）Production 完了。Y1-c-3（E_b）は **§3.2 が Cowork の ε_∞ 検索待ち**で暫定
-（CsPbI₃ proxy のみ確定）。本報告書は directive `0715` Y1-d の構成に従い、ε_∞ 充填後に E_b 表を確定する。
+**ステータス:** Y1-a（有効質量マップ）Production 確定。Y1-c（E_b）は web research 実施の結果、**bare ε_∞ では絶対 E_b を
+信頼計算できない**ことが判明（§3.2、要 ε_eff）。確定成果＝有効質量マップ + E_b 相対トレンド + CsPbI₃ 校正点。
 **bundles:** `results/production/theme_I_effective_mass/2026-05-23_1e9c65c/`（masses, 確定）。
 
 ---
@@ -40,17 +40,21 @@
 
 - **CsPbI₃ m_e=0.106/m_h=0.134** は文献（~0.1–0.15 m₀）と整合。質量は **Cl→Br→I で軽量化**、**Sn 系が最軽**（CsSnI₃ μ=0.015）。
 
-### 3.2 E_b（暫定 — Cowork の ε_∞ 充填待ち）
-`data/parameters/eps_inf_external.json` の ε_∞ が確定した材料のみ E_b を Production 化する（`scan_theme_I_binding_energy.py`）。
-現状、in-repo 文献からは **CsPbI₃ の proxy（MAPbI₃ effective ε≈6.1, Cho 2019 / arXiv:2210.01324）のみ**:
+### 3.2 E_b（web research 実施 — ★ bare ε_∞ vs ε_eff の方法論的限界が判明）
+PI 指示で外部 ε_∞ を web research（WebSearch/WebFetch, ~12 件, 出典 `data/parameters/eps_inf_external.json`）。
 
-| 材料 | μ | ε_∞ (source) | E_b (meV) |
-|---|---|---|---|
-| CsPbI₃ | 0.0592 | 6.1（MAPbI₃ proxy） | **22** |
-| 他 8 材料 | （上表） | **pending Cowork Chrome search** | TBD |
+| 材料 | μ | ε (source) | E_b (meV) | 評価 |
+|---|---|---|---|---|
+| CsPbI₃ | 0.0592 | 6.1（Cho 2019 arXiv:1908.09436 effective; crystal static 6.22） | **22** | **実験 ~15–20 と整合（物理的）** |
+| CsPbCl₃ | 0.1155 | 2.4（PMC12757862 LST ε_∞; PMC9071989 ε≈2.51, DFT TB09 **bare** ε_∞） | 273 | 実験 ~64 の **~4× 過大** |
+| 他 7 材料 | — | **open web で信頼値得られず**（paywall/相不一致/method 散乱） | — | — |
 
-- **★ 検証**: proxy ε=6.1 で CsPbI₃ E_b=**22 meV**（実験 ~15–20 meV と整合）。TB-optical ε_∞=3.46 では 67 meV（過大）。
-  → **外部 ε_∞（option c）が絶対 E_b を実験域に戻す**ことを実証。残り 8 材料の cited ε_∞ が入れば 9 材料 E_b マップ確定。
+- **★ 方法論的発見**: 文献が報告するのは **bare 電子 ε_∞**だが、Wannier-Mott が要するのは **effective ε_eff**（ε_∞ と ε_static の中間、フォノン寄与込み）。
+  bare ε_∞ を使うと E_b 過大（CsPbCl₃ 2.4→273 meV ≫ 実験 64）。実験 E_b から逆算すると CsPbCl₃ の ε_eff≈5.0（bare 2.4 ではない）。
+  CsPbI₃ で 22 meV と合うのは、6.1 が **effective ε**（Cho の励起子遮蔽）だから。
+- **結論**: 鉛フリー族の **絶対 E_b は bare ε_∞ からは信頼計算できない**。物理的 ε_eff は CsPbI₃ 型のみ入手可。
+  open web に 9 材料の consistent な cubic ε（特に ε_eff）は無い → **Materials Project DFPT（単一手法の ε_∞）か実験 ε_eff が必要**。
+- → **Theme I の確定成果は §3.1 有効質量マップ（信頼可）+ E_b 相対トレンド + CsPbI₃ 校正点（22 meV）**。絶対 E_b 9 材料マップは ε_eff データ不足のため未確定（要 PI 判断: MP 利用 or 相対のみで確定）。
 
 ## 4. Discussion
 - **信頼性の分離**: μ は TB 由来で信頼可（異方性=1、dk 収束）。ε_∞ は外部依存（出典トレーサビリティを MANIFEST に明記）。E_b は両者の積。

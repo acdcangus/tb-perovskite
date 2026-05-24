@@ -28,10 +28,10 @@ from typing import Callable
 
 import numpy as np
 
-from ._constants import HBAR2_OVER_M0  # eV.A^2 (single source of truth)
+from ._constants import COULOMB_EV_ANG, HBAR2_OVER_M0  # eV.A / eV.A^2 (single source)
 
-# pi * e^2 / eps0 in eV.Angstrom.  e^2/(4 pi eps0) = 14.39964 eV.A (Coulomb const).
-PI_E2_OVER_EPS0 = np.pi * (4.0 * np.pi * 14.39964)  # = 568.41 eV.A
+# pi * e^2 / eps0 in eV.Angstrom.  e^2/(4 pi eps0) = COULOMB_EV_ANG = 14.39964 eV.A.
+PI_E2_OVER_EPS0 = np.pi * (4.0 * np.pi * COULOMB_EV_ANG)  # = 568.41 eV.A
 
 
 def monkhorst_pack(n: int) -> np.ndarray:
@@ -145,7 +145,7 @@ def f_sum_rule_check(omega: np.ndarray, eps_i: np.ndarray, n_occ: int,
     """
     lhs = np.trapezoid(omega * eps_i, omega)
     n_e = n_occ / volume
-    hbar_wp2 = n_e * (4.0 * np.pi * 14.39964) * HBAR2_OVER_M0
+    hbar_wp2 = n_e * (4.0 * np.pi * COULOMB_EV_ANG) * HBAR2_OVER_M0
     rhs = 0.5 * np.pi * hbar_wp2
     return {"integral": float(lhs), "expected": float(rhs),
             "ratio": float(lhs / rhs) if rhs else float("nan")}

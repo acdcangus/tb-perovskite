@@ -16,9 +16,7 @@ import numpy as np
 
 from perovskite_tb import berry, cpge
 
-SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
-SY = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+from _helpers import SX, SY, SZ  # noqa: E402
 
 
 def test_connection_reduces_to_berry_curvature():

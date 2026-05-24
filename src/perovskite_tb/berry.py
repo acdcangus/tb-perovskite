@@ -83,13 +83,23 @@ def berry_curvature_kubo(
     -------
     omega : (n,) real array, Omega^n_{xy} for every band n.
     """
-    E = np.asarray(evals, dtype=float)
     Vx = velocity_matrix(evecs, dHx)
     Vy = velocity_matrix(evecs, dHy)
+    return _kubo_sum(evals, Vx, Vy, degen_tol)
+
+
+def _kubo_sum(evals: np.ndarray, Ax: np.ndarray, Vy: np.ndarray,
+              degen_tol: float) -> np.ndarray:
+    """Band-resolved Kubo curvature sum (Xiao 2010 Eq. 1.13), shared by the
+    charge (Ax = velocity) and spin (Ax = spin current) versions.
+
+    Omega^n = -2 sum_{m != n} Im(Ax[n,m] Vy[m,n]) / (E_n - E_m)^2.  Near-degenerate
+    pairs (|E_n-E_m| < degen_tol) are excluded.  Ax, Vy are band-basis matrices.
+    """
+    E = np.asarray(evals, dtype=float)
     n = E.size
-    dE = E[:, None] - E[None, :]  # dE[n, m] = E_n - E_m
-    # Im( Vx[n,m] * Vy[m,n] ); Vy.T[n,m] = Vy[m,n]
-    num = np.imag(Vx * Vy.T)
+    dE = E[:, None] - E[None, :]            # dE[n, m] = E_n - E_m
+    num = np.imag(Ax * Vy.T)                # Im(Ax[n,m] Vy[m,n]); Vy.T[n,m]=Vy[m,n]
     contrib = np.zeros((n, n), dtype=float)
     mask = np.abs(dE) > degen_tol
     contrib[mask] = num[mask] / dE[mask] ** 2
@@ -115,17 +125,9 @@ def spin_berry_curvature_kubo(
     Same as :func:`berry_curvature_kubo` but the x-vertex is the spin-current
     operator ``j_spin_x`` = (1/2){s_z, v_x} instead of the bare velocity v_x.
     """
-    E = np.asarray(evals, dtype=float)
     Jx = velocity_matrix(evecs, j_spin_x)
     Vy = velocity_matrix(evecs, dHy)
-    n = E.size
-    dE = E[:, None] - E[None, :]
-    num = np.imag(Jx * Vy.T)
-    contrib = np.zeros((n, n), dtype=float)
-    mask = np.abs(dE) > degen_tol
-    contrib[mask] = num[mask] / dE[mask] ** 2
-    np.fill_diagonal(contrib, 0.0)
-    return -2.0 * contrib.sum(axis=1)
+    return _kubo_sum(evals, Jx, Vy, degen_tol)
 
 
 def occupied_curvature_sum(

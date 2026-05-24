@@ -101,14 +101,10 @@ def cpge_tensor(kpts, H_fn, dHk_fn, omega, eta, *, n_occ=None, e_fermi=None,
                 Delta = np.array([V[a][n, n].real - V[a][m, m].real for a in range(3)])
                 r_nm = cross_gap_connection(V, evals, n, m)
                 r_mn = cross_gap_connection(V, evals, m, n)
-                rr = np.array([
-                    -np.imag(sum(_EPS[j, kk, ll] * r_nm[kk] * r_mn[ll]
-                                 for kk in range(3) for ll in range(3)))
-                    for j in range(3)
-                ])  # = Omega^j_n in the Xiao (berry.py) convention: the product
-                # eps_jkl r^k_nm r^l_mn = -i Omega^j_n, so -Im(.) = Omega^j_n.
-                # (Fixes the sign to match berry_curvature_kubo; verified by the
-                #  general == two-band cross-check on a Weyl model.)
+                # eps_jkl r^k_nm r^l_mn = (r_nm x r_mn)_j = -i Omega^j_n, so
+                # -Im(cross) = Omega^j_n in the Xiao (berry.py) convention
+                # (verified by the general == two-band cross-check on a Weyl model).
+                rr = -np.imag(np.cross(r_nm, r_mn))
                 beta += np.pi * np.outer(Delta, rr) * w  # f_nm = +1 (n occ, m empty)
     return beta * measure / nk
 

@@ -11,9 +11,7 @@ import numpy as np
 
 from perovskite_tb import edelstein, rashba
 
-SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
-SY = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+from _helpers import SX, SY, SZ  # noqa: E402
 
 
 def _grid_2d(N=40):

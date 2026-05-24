@@ -37,9 +37,8 @@ from typing import Callable
 
 import numpy as np
 
+from ._constants import G0  # noqa: F401 (free-electron g-factor, re-exported)
 from ._constants import HBAR2_OVER_M0 as C_HBAR2_OVER_M0  # eV*A^2 (single source of truth)
-
-G0 = 2.0023193  # free-electron g-factor
 _LEVI_CIVITA = {  # gamma -> list of (alpha, beta, sign)
     0: [(1, 2, +1.0), (2, 1, -1.0)],  # x
     1: [(2, 0, +1.0), (0, 2, -1.0)],  # y

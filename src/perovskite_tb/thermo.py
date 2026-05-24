@@ -33,8 +33,7 @@ from __future__ import annotations
 import numpy as np
 
 from . import berry
-
-KB_EV = 8.617333262e-5  # Boltzmann constant, eV/K
+from ._constants import KB_EV  # noqa: F401 (Boltzmann constant eV/K, re-exported)
 
 
 def _minus_dfde(egrid: np.ndarray, mu: float, T: float) -> np.ndarray:
@@ -53,12 +52,15 @@ def transport_distribution(
         v_x = dE/dk_x (eV.Angstrom).  eta : Gaussian smearing width (eV).
     """
     E = np.asarray(energies).ravel()
-    v = np.asarray(vx).ravel()
+    v2 = np.asarray(vx).ravel() ** 2
     eg = np.asarray(egrid)
     norm = 1.0 / (eta * np.sqrt(2.0 * np.pi))
-    Sigma = np.zeros_like(eg)
-    for Ei, vi in zip(E, v):
-        Sigma += vi * vi * norm * np.exp(-0.5 * ((eg - Ei) / eta) ** 2)
+    Sigma = np.zeros_like(eg, dtype=float)
+    # Vectorised (eg x samples) Gaussian broadening, chunked to bound memory.
+    chunk = max(1, 4_000_000 // max(eg.size, 1))
+    for s in range(0, E.size, chunk):
+        Es, ws = E[s:s + chunk], v2[s:s + chunk]
+        Sigma += (ws * norm * np.exp(-0.5 * ((eg[:, None] - Es[None, :]) / eta) ** 2)).sum(axis=1)
     return Sigma / E.size
 
 

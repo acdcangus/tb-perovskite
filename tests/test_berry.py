@@ -19,9 +19,7 @@ from perovskite_tb.io_params import get_material, load_parameter_file
 
 K13 = "data/parameters/kashikar2021_cubic_13orb.json"
 
-SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
-SY = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+from _helpers import SX, SY, SZ, qwz_hamiltonian  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
@@ -64,9 +62,7 @@ def test_curvature_is_real():
 # --------------------------------------------------------------------------- #
 # 2. Qi-Wu-Zhang: integer Chern via Fukui method + phase diagram
 # --------------------------------------------------------------------------- #
-def _qwz_H(kx, ky, u):
-    return (np.sin(kx) * SX + np.sin(ky) * SY
-            + (u + np.cos(kx) + np.cos(ky)) * SZ)
+_qwz_H = qwz_hamiltonian  # QWZ Chern-insulator H(k), shared
 
 
 def _qwz_lower_occ_grid(u, N):

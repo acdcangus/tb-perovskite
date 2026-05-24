@@ -12,14 +12,10 @@ import pytest
 
 from perovskite_tb import berry, topology
 
-SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
-SY = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+from _helpers import SX, SY, SZ, qwz_hamiltonian  # noqa: E402
 
 
-def _qwz_H(kx, ky, u):
-    return (np.sin(kx) * SX + np.sin(ky) * SY
-            + (u + np.cos(kx) + np.cos(ky)) * SZ)
+_qwz_H = qwz_hamiltonian  # QWZ Chern-insulator H(k), shared
 
 
 def _qwz_occ_grid(u, N):

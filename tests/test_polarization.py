@@ -13,9 +13,7 @@ import numpy as np
 from perovskite_tb import polarization
 from perovskite_tb.io_params import get_material, load_parameter_file
 
-SX = np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex)
-SY = np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex)
-SZ = np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex)
+from _helpers import SX, SY, SZ  # noqa: E402
 
 
 def _ssh_zak(v, w, delta=0.0, N=200):

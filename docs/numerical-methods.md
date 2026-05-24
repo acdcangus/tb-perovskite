@@ -150,15 +150,19 @@ $F_{12}=\mathrm{Im}\ln[U_1 U_2(k{+}1)U_1(k{+}2)^{-1}U_2^{-1}]$、$C=-\tfrac{1}{2
 **Soluyanov, Vanderbilt, PRB 83, 235401 (2011)**, DOI 10.1103/PhysRevB.83.235401）。
 各 link は SVD 極分解で unitary 化（有限 N でも厳密 unitary, det 位相＝分極は不変）。
 
-### V&V（`tests/test_topology.py`, 12 ケース）
+**Fu-Kane parity Z₂**（追加, T2-2）: 反転対称な絶縁体で $(-1)^\nu=\prod_i\delta_i$（$\delta_i$=TRIM $i$ の占有 Kramers 対のパリティ積）を `z2_invariant_from_parities` / `parity_delta_at_trim` として実装
+（**Fu, Kane, PRB 76, 045302 (2007)**, DOI 10.1103/PhysRevB.76.045302; **Fu, Kane, Mele, PRL 98, 106803 (2007)**, DOI 10.1103/PhysRevLett.98.106803）。
+
+### V&V（`tests/test_topology.py`, 18 ケース）
 - QWZ 模型で **Wilson ループ Chern == Fukui plaquette Chern**（2 独立手法の相互一致, 整数）。
 - QWZ 相図（|C|=1 for |u|<2, u=0 符号反転, |u|>2 で 0）。
 - Wilson ループの unitary 性・分極位相の U(1) gauge 不変性・WCC ∈ (−½,½]。
+- **【追加】Fu-Kane parity Z₂**: 反転対称 3D **Wilson-Dirac (BHZ 型) 模型**で、固有ベクトルから抽出した TRIM パリティが解析値 $-\mathrm{sign}\,M(k^*)$ と一致し、強指数 $\nu_0$ が解析的相図（**$1<|m_0|<3$ で STI $\nu_0$=1**, それ以外 0）を再現。
+- **【追加】Berry 曲率の質量符号反転**: 質量 Dirac で $m\to-m$ により $\Omega$ が符号反転（機械精度）。
 
-### スコープ外（ハルシネーション防止のため意図的に未実装）
-- **Fu-Kane parity Z₂**: Kashikar 軌道基底での**空間反転演算子の表現**が in-repo 情報から確定できない（推測は捏造リスク）→ 反転表現を一次文献で確定するまで保留。
-- **Soluyanov-Vanderbilt 時間反転 Z₂（partner switching）**: 手法は実装可能だが、**検証用の既知 3D-Z₂ 参照模型**が必要 → 保留。
-- → 立方 CsBX₃ の topological 分類（CsPbI₃ の inverted gap 等, Jin 2012）は上記確定後の follow-up。本コミットは**検証済みの Wilson ループ基盤**まで。
+### スコープ（honest）
+- 上記 Fu-Kane parity Z₂ は **手法として実装・検証済**（標準 Wilson-Dirac 模型, カテゴリ B）。
+- **実ペロブスカイト（Kashikar 基底）への適用は保留**: 空間反転演算子の表現が in-repo 情報から確定できない（推測は捏造リスク）。手法は準備済みで、**反転表現を一次文献で確定すれば即適用可能**（立方 CsBX₃ は P·T 対称・大ギャップ trivial で $\nu_0$=0 が予想されるが、主張には演算子が必要）。捏造はしない。
 
 ## 11. Boltzmann 熱電輸送 (`thermo.py`, 仕様 F9)
 

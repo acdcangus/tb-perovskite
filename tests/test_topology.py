@@ -74,3 +74,59 @@ def test_wcc_in_unit_interval():
     grid = _qwz_occ_grid(1.0, 16)
     wcc = topology.wannier_charge_centers(topology.wilson_loop(grid[0]))
     assert np.all(wcc > -0.5 - 1e-12) and np.all(wcc <= 0.5 + 1e-12)
+
+
+# --- Fu-Kane parity Z2 on the inversion-symmetric 3D Wilson-Dirac model -------
+# H(k) = M(k) G0 + sum_i sin(k_i) G_i ,  M(k) = m0 - sum_i cos(k_i)  (t=1)
+# G0 = tz x s0 (= parity P), G_i = tx x s_i.  T = (s0 x i s_y) K, T^2=-1.
+# Strong index: (-1)^nu0 = prod_TRIM sign(M); STI (nu0=1) for 1<|m0|<3.
+_I2 = np.eye(2)
+_G0 = np.kron(SZ, _I2)            # parity operator P
+_G = [np.kron(SX, SX), np.kron(SX, SY), np.kron(SX, SZ)]
+
+
+def _wilson_dirac_H(k, m0):
+    k = np.asarray(k, float)
+    M = m0 - np.sum(np.cos(k))
+    H = M * _G0
+    for i in range(3):
+        H = H + np.sin(k[i]) * _G[i]
+    return H
+
+
+_TRIM3D = np.array([[a, b, c] for a in (0.0, np.pi) for b in (0.0, np.pi)
+                    for c in (0.0, np.pi)])
+
+
+@pytest.mark.parametrize("m0,nu_expected", [(2.0, 1), (4.0, 0), (-2.0, 1), (0.5, 0)])
+def test_wilson_dirac_parity_z2(m0, nu_expected):
+    """Fu-Kane parity Z2 reproduces the Wilson-Dirac strong-TI phase diagram."""
+    deltas, deltas_analytic = [], []
+    for k in _TRIM3D:
+        H = _wilson_dirac_H(k, m0)
+        deltas.append(topology.parity_delta_at_trim(H, _G0, n_occ=2))
+        M = m0 - np.sum(np.cos(k))
+        deltas_analytic.append(-int(np.sign(M)))  # occupied parity = -sign(M)
+    # numerically-extracted parities match the analytic ones
+    assert deltas == deltas_analytic, f"m0={m0}: {deltas} vs {deltas_analytic}"
+    nu = topology.z2_invariant_from_parities(deltas)
+    assert nu == nu_expected, f"m0={m0}: nu={nu} expected {nu_expected}"
+
+
+def test_parity_z2_rejects_odd_occupation():
+    with pytest.raises(ValueError):
+        topology.parity_delta_at_trim(_wilson_dirac_H([0, 0, 0], 2.0), _G0, n_occ=1)
+
+
+def test_berry_curvature_flips_with_dirac_mass():
+    """Mass-term sign change flips the Berry curvature (massive 2D Dirac)."""
+    dHx, dHy = SX, SY
+    for kx, ky in [(0.2, 0.0), (0.1, -0.3), (0.4, 0.25)]:
+        flips = []
+        for m in (+0.5, -0.5):
+            H = m * SZ + kx * SX + ky * SY
+            evals, evecs = np.linalg.eigh(H)
+            om = berry.berry_curvature_kubo(evals, evecs, dHx, dHy)[0]  # lower band
+            flips.append(om)
+        assert np.sign(flips[0]) == -np.sign(flips[1]), f"no flip at ({kx},{ky})"
+        assert np.isclose(flips[0], -flips[1], rtol=1e-9)

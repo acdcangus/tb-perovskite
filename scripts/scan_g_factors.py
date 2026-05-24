@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 tk
 """Theme A / A4 -- k.p g-factor scan over the 9 cubic CsBX3 perovskites.
 
 Method (Cowork directive v2 sec.2): apply the Kirstein 2021 universal k.p

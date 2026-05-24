@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 tk
 """Phase 1.5 / B5 -- optical response of all 9 cubic CsBX3 (Kashikar 13-orbital).
 
 Computes eps(omega), alpha(omega), n(omega) and eps_inf for the 9 materials,

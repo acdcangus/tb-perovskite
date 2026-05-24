@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 tk
 """perovskite_tb - tight-binding band structure of cubic halide perovskites.
 
 All models and parameters are grounded in published literature; see

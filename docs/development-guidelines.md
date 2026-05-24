@@ -60,3 +60,13 @@
 2. `.steering/YYYYMMDD-タイトル/` に requirements → design → tasklist を作成。
 3. 実装と並行して単体テスト・V&V テストを追加。
 4. リント・型チェック・`pytest`・バンド図生成で品質確認。
+
+## ライセンスと SPDX 表記（2026-05-24 追加）
+
+- 本リポジトリは **MIT License**（ルートの `LICENSE` ファイル参照）。
+- 新規ソースファイル（`src/`, `scripts/`, `tests/`）には冒頭に SPDX 識別子を必ず付与:
+  - Python: `# SPDX-License-Identifier: MIT`
+  - Shell / PowerShell: `# SPDX-License-Identifier: MIT`
+- Copyright 行は必須ではないが、ファイル単位で著作権を明示する場合は SPDX 行直後に
+  `# Copyright (c) <year> <holder>` を置く（本リポジトリの holder 表記は `tk`）。
+- 既存ファイルへの一括付与はバッチ作業（別途）。本 directive では主要 entry-point のみ手動付与済み。

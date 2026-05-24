@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 tk
 """Theme A / A6 -- TB-derived Kane parameter P for the 9 CsBX3 (+ Nestoklon CsPbI3).
 
 Extracts the bare Kane momentum parameter P (eV.A) from the analytic TB velocity

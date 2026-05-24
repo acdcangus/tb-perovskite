@@ -1,5 +1,7 @@
 # perovskite-tb — ペロブスカイトのタイトバインディング バンド構造計算
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 立方晶ハライドペロブスカイト `CsBX₃` (B = Ge, Sn, Pb; X = Cl, Br, I) および
 鉛ハライドペロブスカイトの電子バンド構造を、**経験的タイトバインディング (ETB) /
 Slater-Koster 法**で計算する Python パッケージです。
@@ -54,3 +56,8 @@ RESULTS.md           ★ 現在の進捗と再現結果のサマリ（ここを�
 ## ステータス
 
 進捗・再現結果の最新サマリは **[RESULTS.md](RESULTS.md)** を参照してください。
+
+## License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+新規ソースファイルには冒頭に `# SPDX-License-Identifier: MIT` を付与します（[docs/development-guidelines.md](docs/development-guidelines.md) 参照）。

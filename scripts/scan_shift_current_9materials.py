@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 tk
 """F5: shift-current sigma_zzz(omega) scan over the 9 cubic CsBX3 (B=Ge/Sn/Pb,
 X=Cl/Br/I) under a [001] polar B-cation displacement (P4mm), Kashikar-13 model.
 

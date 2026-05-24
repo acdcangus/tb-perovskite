@@ -10,9 +10,16 @@
 ├── .gitignore                 PDF・生成大容量データ・キャッシュを除外
 │
 ├── src/perovskite_tb/         ソースコード（実装本体）
-│   ├── slater_koster.py / _soc.py
+│   ├── slater_koster.py / _soc.py / _constants.py
 │   ├── models_kashikar.py / models_nestoklon.py / models.py
 │   ├── kpath.py / io_params.py / bandstructure.py / plotting.py
+│   ├── velocity.py            速度演算子 dH/dk（物性モジュールの共有基盤）
+│   ├── g_factor.py            Landé g 因子（Theme A）
+│   ├── optical.py             誘電関数 ε(ω)（Phase 1.5）
+│   ├── shift_current.py       シフト電流 / BPVE（Theme F）
+│   ├── exciton.py             Wannier-Mott 励起子（Theme I）
+│   ├── berry.py               Berry 曲率 → AHC / SHC / 離散 Chern（spec F1 / Theme H）
+│   ├── materials_project.py   MP DFPT ε∞ 取得（Theme I, option C'）
 │   ├── cli.py / __main__.py / _meta.py / __init__.py
 │
 ├── tests/                     単体テスト・V&V テスト

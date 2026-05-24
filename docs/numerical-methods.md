@@ -80,3 +80,51 @@
   （k·p や DFT に対し計算が安価）。Kashikar/Nestoklon が立方ペロブスカイトで実証済み。
 - 代替（Wannier 補間, DFTB, k·p）は references に存在するが、初回実装では
   「論文の解析式・数値で厳密検証できる」SK-TB を選定した（ハルシネーション排除のため）。
+
+## 9. Berry 曲率・異常 Hall・スピン Hall (`berry.py`)
+
+仕様 `extention/03_tb-perovskite_spec.md` F1（future_themes Theme H）。既存の velocity operator
+`dH/dk`（§velocity, `velocity.py`）の上に Berry 曲率コアを構築する。
+
+### 9.1 Berry 曲率（Kubo 公式）
+バンド `n` の Berry 曲率は Kubo 公式で計算する（**Xiao, Chang, Niu, Rev. Mod. Phys. 82, 1959 (2010)
+の Eq. (1.13)**, DOI 10.1103/RevModPhys.82.1959）:
+
+$$
+\Omega^{n}_{xy}(\mathbf{k}) = i\sum_{m\neq n}
+\frac{\langle n|\partial_{k_x}H|m\rangle\langle m|\partial_{k_y}H|n\rangle-(x\leftrightarrow y)}{(E_n-E_m)^2}
+= -2\sum_{m\neq n}\frac{\mathrm{Im}\left[V^x_{nm}V^y_{mn}\right]}{(E_n-E_m)^2},
+$$
+
+ここで $V^a = U^\dagger (\partial H/\partial k_a) U$（バンド基底の速度行列）。準縮退対（$|E_n-E_m|<$ `degen_tol`）は
+和から除外する。占有多重項を完全に含む和は射影子 $P_M$ のみに依存し gauge 不変。
+
+### 9.2 異常 Hall 伝導率 (AHC)
+$\sigma_{xy}^{\rm AH}\propto \sum_{\mathbf{k}}\sum_{n\in\text{occ}}\Omega^n_{xy}(\mathbf{k})$。
+立方 CsBX₃ は空間反転 $P$ と時間反転 $T$ をともに持つため、占有多重項の和は **各 $\mathbf{k}$ で 0**
+（$P$: $\Omega(-\mathbf{k})=\Omega(\mathbf{k})$、$T$: $\Omega(-\mathbf{k})=-\Omega(\mathbf{k})$）→ **AHC = 0**。
+本実装はこれを機械精度（~10⁻¹⁵）で再現する（占有は実ギャップ内の Fermi 準位で選び、縮退多重項を割らない）。
+
+### 9.3 スピン Hall 伝導率 (SHC)
+スピン流演算子 $j^{s_z}_x=\tfrac12\{s_z,v_x\}$（**Sinova et al., Rev. Mod. Phys. 87, 1213 (2015)**,
+DOI 10.1103/RevModPhys.87.1213）で速度頂点を置換し、スピン Berry 曲率を計算する。$P\!\cdot\!T$ では
+0 に強制されない（SHC≠0 が許される）。**絶対値は in-repo にベンチマーク材料（Pt 等）が無く未検証**であり、
+TB 位置演算子の Blount 限界（intra-atomic 欠落）も効くため、相対傾向・対称性のみを信頼する
+（g 因子・shift current の絶対値限界と同じ立場）。
+
+### 9.4 離散 Chern 数（Fukui-Hatsugai-Suzuki 法）
+gauge 不変な整数 Chern を、離散 BZ の link 変数で計算する（**Fukui, Hatsugai, Suzuki, J. Phys. Soc.
+Jpn. 74, 1674 (2005)**, DOI 10.1143/JPSJ.74.1674; 非アーベル=行列式形）。プラケット場
+$F_{12}=\mathrm{Im}\ln[U_1 U_2(k{+}1)U_1(k{+}2)^{-1}U_2^{-1}]$、$C=-\tfrac{1}{2\pi}\sum F_{12}$
+（符号は Berry 接続 $A=i\langle u|\partial u\rangle$ 規約で Kubo と整合させた; §V&V で相互検証）。
+
+### 9.5 V&V（`tests/test_berry.py`, 22 ケース）
+- **質量 Dirac** $H=k_x\sigma_x+k_y\sigma_y+m\sigma_z$: 下バンド $\Omega_-=+m/[2(k^2+m^2)^{3/2}]$（解析解、当方で Kubo 規約から導出）に一致。
+- **Qi-Wu-Zhang Chern 絶縁体**（PRB 74, 085308 (2006)）: Fukui 法が整数 Chern、$|C|=1$ for $|u|<2$、$u=0$ で符号反転、$|u|>2$ で $0$。
+- **Kubo ↔ Fukui** 相互一致（QWZ gapped）。
+- **立方 CsBX₃**（CsPbI₃/CsSnI₃/CsGeCl₃, SOC on）で **AHC=0** を機械精度で確認（$P\!\cdot\!T$）。
+- スピン演算子の su(2) 代数 $[S_x,S_y]=iS_z$、$S_z^2=\tfrac14 I$；スピン流 $j$ のエルミート性。
+
+### 9.6 計算量
+1 k 点あたり 26×26 対角化 `O(N³)` + Berry 和 `O(N²)`。9 材料 × BZ メッシュは個人 PC で数分〜1h（GPU 不要）。
+

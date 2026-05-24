@@ -26,7 +26,10 @@
 
 **reports/ で参照する数値は必ず Production モードで出すこと**。Exploratory の数値を引用するときは「[Exploratory]」と明示。
 
-> **5 分自律巡回の前提（2026-05-24 追加）:** Production 実行中も `scripts/cowork_5min_poll.ps1`（層 1, OS スケジューラ）が動作しており、Claude Code は最大 5 分以内に新着 directive を検知できる。**30 分以上を要する Production scan では、`scan_shift_current_9materials.py` の `_check_cowork_progress` を主ループ（k 点ループ等）に組み込み**、生存ログと新着検知の両方を担保する（層 2）。検出のみで scan 本体は止めない（Production 中断防止）。
+> **5 分自律巡回について（2026-05-24 更新: 停止）:** 自律 5 分巡回ループ（`scripts/cowork_5min_poll.ps1`, 層 1）は
+> PI 判断により **停止**（`cowork/progress/2026-05-24_1145_directive_PI_decisions.md` §Part 2）。監視は Cowork supervisor
+> の 15 分巡回が代替。なお長時間 Production scan の主ループに残置した `_check_cowork_progress`（層 2）は無害な liveness
+> ログとして残るが、停止後は新着 detection の主役ではない。
 
 ---
 

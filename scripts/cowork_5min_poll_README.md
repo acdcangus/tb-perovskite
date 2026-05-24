@@ -1,5 +1,11 @@
 # cowork_5min_poll.ps1 — セットアップと運用
 
+> ## ⚠️ DEPRECATED（2026-05-24, PI 判断）
+> 自律 5 分巡回ループは **停止** しました。監視は Cowork supervisor の 15 分巡回が代替します。
+> 経緯: `cowork/progress/2026-05-24_1145_directive_PI_decisions.md` §Part 2。
+> **解除手順**は本書末尾「§ 停止（Unregister）手順」、**再び有効化**する場合は「§ 再開手順」を参照。
+> 以下のセットアップ記述は履歴として保持します。
+
 5 分ごとに `claude --continue` を起動して `cowork/progress/` の新着を確認させる
 Windows Task Scheduler 用スクリプトです。
 
@@ -111,6 +117,23 @@ Set-ScheduledTask -InputObject $task
 - **Cowork 15 分 patrol** は監督役（レビュー、directive 発行、ハルシネーション検出）
 - **本 5 分巡回** は実装役（生存確認、新着 directive 取得、続行判断）
 - 両者は独立に動く。supervisor が新規 directive を書くと、本 5 分巡回が 5 分以内に拾う。
+
+---
+
+## § 停止（Unregister）手順 — 2026-05-24 PI 判断で停止
+
+PI が管理者 PowerShell で 1 行実行（Claude Code は Linux サンドボックスから PowerShell 実行不可のため手動）:
+
+```powershell
+Unregister-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll" -Confirm:$false
+```
+
+完了確認: `Get-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll"` が **ObjectNotFound** を返せば成功。
+
+## § 再開手順（参考 — 将来再び有効化する場合）
+
+本書冒頭「インストール（Register-ScheduledTask）」をそのまま再実行すればよい。スクリプト本体（`cowork_5min_poll.ps1`）は
+履歴として保持されているため改変不要。再開時は `cowork/COWORK_CLAUDECODE_PATTERN.md` の停止注記も解除すること。
 
 ---
 

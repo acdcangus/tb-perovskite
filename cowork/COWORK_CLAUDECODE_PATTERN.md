@@ -287,6 +287,11 @@ Cowork 側:
 
 ## 5 分自律巡回ループ（Claude Code を「叩き起こす」3 層）
 
+> **⚠️ 停止中（2026-05-24 PI 判断）:** 本 5 分自律巡回ループは PI 判断により **停止**しました。監視は Cowork
+> supervisor の 15 分巡回が代替し、Claude Code はイベント駆動（PI chat / `cowork/progress/` 更新）で動きます。
+> 経緯: `cowork/progress/2026-05-24_1145_directive_PI_decisions.md` §Part 2。解除/再開手順は
+> `scripts/cowork_5min_poll_README.md`。以下の設計記述は**履歴として保持**します。
+
 **動機（2026-05-24 追加）:** 2026-05-23 17:40 UTC 以降、Claude Code セッションが約 4 時間沈黙した事例が発生。Cowork supervisor は 15 分粒度で commit と progress/ を verify していたが、Claude Code 側で何も動いていなかったため、Cowork からの nudge directive・低圧 status check ともに応答が得られなかった。**「Claude Code を外部から強制的に起こす」仕組みが必要**との結論。
 
 以下の 3 層構成で堅牢化します。**外側に行くほど強い**（OS レベルが最強）。

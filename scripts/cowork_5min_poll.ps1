@@ -1,5 +1,12 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 tk
+#
+# ⚠️ DEPRECATED 2026-05-24 — PI 判断により自律 5 分巡回ループは停止しました。
+# Cowork supervisor の 15 分巡回（Cowork 側 scheduled task）で監視を代替します。
+# 経緯: cowork/progress/2026-05-24_1145_directive_PI_decisions.md §Part 2
+# 解除: PI が `Unregister-ScheduledTask -TaskName "Cowork-ClaudeCode-5min-poll" -Confirm:$false`
+# 復活させる場合: scripts/cowork_5min_poll_README.md の「再開手順」参照
+#
 # cowork_5min_poll.ps1
 # -----------------------------------------------------------------------------
 # 5 分ごとに Claude Code を起こして cowork/progress/ の新着確認と次タスクの

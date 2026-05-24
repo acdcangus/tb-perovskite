@@ -61,6 +61,14 @@
 - `docs/`: 恒久ドキュメント。理論・数値・V&V の変更時に更新。
 - `.steering/`: 作業ごとに `YYYYMMDD-タイトル` で新規作成（履歴=実験ノート）。
 
+## ルート直下ファイル
+- `LICENSE` — MIT License 全文（2026-05-24 追加。詳細は [development-guidelines.md](development-guidelines.md) 「ライセンスと SPDX 表記」）。
+
+## scripts/ の deprecated 項目
+- `cowork_5min_poll.ps1` — **2026-05-24 deprecate**（PI 判断による自律 5 分巡回停止）。削除せず履歴保持。
+- `cowork_5min_poll_README.md` — 同上。停止/再開手順を同 README に記載。
+- 監視は Cowork supervisor の 15 分巡回が代替。経緯: `cowork/progress/2026-05-24_1145_directive_PI_decisions.md`。
+
 ## 大容量データの取り扱い
 
 - 参照 PDF（計 245 MB, 49 本）は Git 本体にコミットしない（`.gitignore`）。

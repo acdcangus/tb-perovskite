@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "model_id": "kashikar2021_cubic_13orb",
+  "model_kind": "slater_koster_13orbital",
+  "description": "13-orbital Slater-Koster tight-binding model for cubic (alpha-phase, Pm-3m) halide perovskites CsBX3. Basis = {B-s, B-px, B-py, B-pz, and X-{px,py,pz} for the three halides X1(on x), X2(on y), X3(on z)}. Spin-orbit coupling lambda*L.S acts on the B-p manifold. B-X coupling is nearest neighbour (distance a/2); B-B coupling is second neighbour (distance a, simple-cubic B sublattice); X-X coupling is neglected (X-p block is diagonal on-site).",
+  "source": {
+    "authors": "R. Kashikar, M. Gupta, B. R. K. Nanda",
+    "title": "A Generic Slater-Koster Description of the Electronic Structure of Centrosymmetric Halide Perovskites",
+    "arxiv": "2101.08562",
+    "version": "v1 (21 Jan 2021)",
+    "affiliation": "Condensed Matter Theory and Computational Lab, IIT Madras",
+    "parameters_from": "Table II (13-orbital model)",
+    "structural_params_from": "Table I",
+    "units": "eV (energies and hoppings); angstrom (lattice constant)",
+    "dft_reference": "PBE-GGA + Tran-Blaha modified Becke-Johnson (mBJ) potential",
+    "hamiltonian_equations": "Eqs. (1)-(8); analytic R-point eigenvalues in Eq. (9)"
+  },
+  "parameter_keys": {
+    "E_B_s":   "On-site energy of B-s orbital (eps_s)",
+    "E_B_p":   "On-site energy of B-p orbitals (eps_p1)",
+    "E_X_p":   "On-site energy of X-p orbitals (eps_p2); same for all three halides",
+    "t_BX_sp": "B-X nearest-neighbour s-p sigma hopping (t^{B-X}_{sp,sigma})",
+    "t_BX_ppsigma": "B-X nearest-neighbour p-p sigma hopping (t^{B-X}_{pp,sigma})",
+    "t_BX_pppi":    "B-X nearest-neighbour p-p pi hopping (t^{B-X}_{pp,pi})",
+    "t_BB_ss":      "B-B second-neighbour s-s sigma hopping (t^{B-B}_{ss})",
+    "t_BB_spsigma": "B-B second-neighbour s-p sigma hopping (t^{B-B}_{sp,sigma})",
+    "t_BB_ppsigma": "B-B second-neighbour p-p sigma hopping (t^{B-B}_{pp,sigma})",
+    "t_BB_pppi":    "B-B second-neighbour p-p pi hopping (t^{B-B}_{pp,pi})",
+    "lambda_SOC":   "Spin-orbit coupling strength lambda on B-p orbitals"
+  },
+  "lattice_constant_note": "Cubic lattice constant 'a' (angstrom). Band energies at/along high-symmetry directions (in units of pi/a) are independent of the numeric value of 'a'; it is recorded for provenance and for plotting k in absolute units. Values are the DFT-optimized cubic lattice constants from Table I of the same paper (experimental value in 'a_expt').",
+  "materials": {
+    "CsGeCl3": {"a": 5.34, "a_expt": 5.47, "params": {"E_B_s": -3.17, "E_B_p": 5.35, "E_X_p": -0.18, "t_BX_sp": -1.20, "t_BX_ppsigma": 1.94, "t_BX_pppi": -0.58, "t_BB_ss": 0.02, "t_BB_spsigma": -0.16, "t_BB_ppsigma": 0.31, "t_BB_pppi": 0.03, "lambda_SOC": 0.07}},
+    "CsGeBr3": {"a": 5.60, "a_expt": 5.69, "params": {"E_B_s": -3.55, "E_B_p": 4.76, "E_X_p": 0.40, "t_BX_sp": -1.16, "t_BX_ppsigma": 1.94, "t_BX_pppi": -0.56, "t_BB_ss": 0.02, "t_BB_spsigma": -0.15, "t_BB_ppsigma": 0.32, "t_BB_pppi": 0.02, "lambda_SOC": 0.07}},
+    "CsGeI3":  {"a": 6.00, "a_expt": 6.05, "params": {"E_B_s": -3.97, "E_B_p": 4.29, "E_X_p": 0.92, "t_BX_sp": 1.00, "t_BX_ppsigma": 1.92, "t_BX_pppi": -0.52, "t_BB_ss": 0.02, "t_BB_spsigma": -0.15, "t_BB_ppsigma": 0.37, "t_BB_pppi": 0.02, "lambda_SOC": 0.07},
+                "anomaly": "t_BX_sp printed as +1.00 in Table II, whereas every other compound has a negative value (~ -0.94 to -1.29). Transcribed as-printed; treat sign as possibly a typo in the source."},
+    "CsSnCl3": {"a": 5.62, "a_expt": 5.55, "params": {"E_B_s": -0.71, "E_B_p": 6.42, "E_X_p": -0.06, "t_BX_sp": -1.29, "t_BX_ppsigma": 1.94, "t_BX_pppi": -0.52, "t_BB_ss": -0.08, "t_BB_spsigma": -0.20, "t_BB_ppsigma": 0.24, "t_BB_pppi": 0.06, "lambda_SOC": 0.16}},
+    "CsSnBr3": {"a": 5.88, "a_expt": 5.80, "params": {"E_B_s": -1.43, "E_B_p": 5.71, "E_X_p": 0.36, "t_BX_sp": -1.27, "t_BX_ppsigma": 1.96, "t_BX_pppi": -0.53, "t_BB_ss": -0.07, "t_BB_spsigma": -0.19, "t_BB_ppsigma": 0.34, "t_BB_pppi": 0.05, "lambda_SOC": 0.16}},
+    "CsSnI3":  {"a": 6.27, "a_expt": 6.21, "params": {"E_B_s": -2.34, "E_B_p": 4.79, "E_X_p": 0.92, "t_BX_sp": -1.12, "t_BX_ppsigma": 1.90, "t_BX_pppi": -0.53, "t_BB_ss": -0.02, "t_BB_spsigma": -0.17, "t_BB_ppsigma": 0.38, "t_BB_pppi": 0.01, "lambda_SOC": 0.14}},
+    "CsPbCl3": {"a": 5.71, "a_expt": 5.60, "params": {"E_B_s": -1.61, "E_B_p": 7.63, "E_X_p": 0.25, "t_BX_sp": -1.18, "t_BX_ppsigma": 1.88, "t_BX_pppi": -0.57, "t_BB_ss": -0.03, "t_BB_spsigma": -0.13, "t_BB_ppsigma": 0.31, "t_BB_pppi": 0.06, "lambda_SOC": 0.53}},
+    "CsPbBr3": {"a": 5.98, "a_expt": 5.87, "params": {"E_B_s": -3.15, "E_B_p": 5.84, "E_X_p": 0.43, "t_BX_sp": -1.13, "t_BX_ppsigma": 1.86, "t_BX_pppi": -0.53, "t_BB_ss": -0.02, "t_BB_spsigma": -0.12, "t_BB_ppsigma": 0.27, "t_BB_pppi": 0.04, "lambda_SOC": 0.53}},
+    "CsPbI3":  {"a": 6.38, "a_expt": 6.29, "params": {"E_B_s": -4.11, "E_B_p": 4.75, "E_X_p": 0.96, "t_BX_sp": -0.94, "t_BX_ppsigma": 1.82, "t_BX_pppi": -0.45, "t_BB_ss": 0.01, "t_BB_spsigma": 0.12, "t_BB_ppsigma": 0.25, "t_BB_pppi": 0.02, "lambda_SOC": 0.50},
+                "anomaly": "t_BB_ss (+0.01) and t_BB_spsigma (+0.12) printed without the negative sign that the other two Pb compounds carry (Cl: -0.03,-0.13; Br: -0.02,-0.12). Transcribed as-printed; signs of these two small B-B terms may be typos in the source."}
+  }
+}

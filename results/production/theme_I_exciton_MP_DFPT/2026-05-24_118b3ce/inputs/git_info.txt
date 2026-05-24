@@ -1,0 +1,11 @@
+commit: 118b3ce745139849eb1bef4be63448baa9c95202
+branch: main
+dirty: False
+
+commit 118b3ce745139849eb1bef4be63448baa9c95202
+Author:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+AuthorDate: Sun May 24 00:40:34 2026 +0000
+Commit:     Claude (TB Perovskite) <ktmailmg@gmail.com>
+CommitDate: Sun May 24 00:40:34 2026 +0000
+
+    cowork: track 0940 patrol + Cowork-authored PI_explained_overview.md (Part 2 seed)

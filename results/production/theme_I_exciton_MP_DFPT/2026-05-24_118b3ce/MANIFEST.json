@@ -1,0 +1,99 @@
+{
+  "manifest_version": "1.0",
+  "theme": "theme_I_exciton_MP_DFPT",
+  "subtask": "Y1-c-3 (MP_DFPT): Wannier-Mott E_b (TB mu + MP_DFPT eps_inf)",
+  "date_utc": "2026-05-24T00:40:43.051780+00:00",
+  "git_commit": "118b3ce745139849eb1bef4be63448baa9c95202",
+  "git_branch": "main",
+  "git_dirty": false,
+  "executor": "Claude Code (Opus 4.7 via CLI)",
+  "mode": "Production",
+  "retroactive": false,
+  "physics_method": "E_b = (mu/m0)/eps_inf^2 * Ry; mu = TB R-point curvature, eps_inf = Materials Project DFPT (single method)",
+  "convergence": {
+    "mu_convergence": "inherited from theme_I_effective_mass bundle (dk<0.01%, isotropic); E_b formula is closed-form (no extra convergence)"
+  },
+  "inputs": {
+    "cli": "inputs/cli.txt",
+    "git_info": "inputs/git_info.txt",
+    "requirements": "inputs/requirements.txt"
+  },
+  "outputs": {
+    "raw": [
+      "outputs/raw/binding_energy_9materials.csv"
+    ],
+    "figures": [
+      "outputs/figures/binding_energy_summary.png"
+    ]
+  },
+  "key_numbers": {
+    "CsPbI3_E_b_meV": 41.0,
+    "CsPbCl3_E_b_meV": 118.6,
+    "CsPbBr3_E_b_meV": 56.7,
+    "CsSnI3_E_b_meV": 3.7,
+    "CsSnBr3_E_b_meV": 11.6,
+    "CsGeI3_E_b_meV": 22.1,
+    "CsGeBr3_E_b_meV": 19.0,
+    "CsGeCl3_E_b_meV": 99.3,
+    "CsPbI3_mu": 0.0592,
+    "CsPbCl3_mu": 0.1155,
+    "CsPbBr3_mu": 0.0737,
+    "CsSnI3_mu": 0.0146,
+    "CsSnBr3_mu": 0.0298,
+    "CsGeI3_mu": 0.0527,
+    "CsGeBr3_mu": 0.0599,
+    "CsGeCl3_mu": 0.0968,
+    "CsPbI3_eps_inf": 4.432,
+    "CsPbCl3_eps_inf": 3.64,
+    "CsPbBr3_eps_inf": 4.206,
+    "CsSnI3_eps_inf": 7.352,
+    "CsSnBr3_eps_inf": 5.905,
+    "CsGeI3_eps_inf": 5.694,
+    "CsGeBr3_eps_inf": 6.55,
+    "CsGeCl3_eps_inf": 3.642,
+    "materials_included": [
+      "CsPbI3",
+      "CsPbCl3",
+      "CsPbBr3",
+      "CsSnI3",
+      "CsSnBr3",
+      "CsGeI3",
+      "CsGeBr3",
+      "CsGeCl3"
+    ],
+    "materials_pending_eps_inf": [
+      "CsSnCl3"
+    ],
+    "profile": "MP_DFPT"
+  },
+  "checksums_sha256": {
+    "outputs/figures/binding_energy_summary.png": "7b8fb0f086f8c9c0b6cc6e8ee4e4d3b4631debeddfdec73fa243ec82a7a81e56",
+    "outputs/raw/binding_energy_9materials.csv": "e1af38527830845ac34599dd4b36a73c16f8b3c1fe1aade1d0be4790bce0d7ff"
+  },
+  "data_size_total_bytes": 48833,
+  "software": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.10.9"
+  },
+  "machine": {
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  },
+  "notes": "Option C' hybrid production: effective masses (mu) are TB-derived from R-point band curvature (cubic Kashikar-13). eps_inf is the Materials Project DFPT ELECTRONIC (bare) dielectric -- a SINGLE, consistent method across materials, so the RELATIVE E_b trend is maximally defensible. CAVEAT: bare eps_inf < effective exciton eps_eff (no phonon/ionic screening), so the Wannier-Mott E_b=(mu/m0)/eps_inf^2*Ry is an UPPER BOUND (overestimate); e.g. CsPbI3 here ~41 meV vs experiment ~15-20 meV. MP computed DFPT dielectric for the cubic phase for some materials (CsGeBr3/CsSnBr3/CsSnI3) and for ortho/rhombo/monoclinic ground states for others; mu is cubic-phase, so eps_inf is used as a ~phase-insensitive proxy (phase recorded per material in inputs/eps_inf_external.json). CsSnCl3 has no MP dielectric (excluded). API key never stored; provenance = mp-id + URL only.",
+  "references": [
+    "Yang et al. 2017 PRB 96 035301",
+    "Tanaka et al. 2003 SSC 127 619",
+    "Cho et al. 2019 (arXiv:1908.09436)",
+    "Kashikar 2021 (arXiv:2101.08562)",
+    "Materials Project (Jain et al. 2013 APL Mater. 1, 011002), DFPT dielectric",
+    "eps_inf(CsPbI3): Materials Project DFPT, mp-540839",
+    "eps_inf(CsPbCl3): Materials Project DFPT, mp-675022",
+    "eps_inf(CsPbBr3): Materials Project DFPT, mp-567629",
+    "eps_inf(CsSnI3): Materials Project DFPT, mp-614013",
+    "eps_inf(CsSnBr3): Materials Project DFPT, mp-27214",
+    "eps_inf(CsGeI3): Materials Project DFPT, mp-642690",
+    "eps_inf(CsGeBr3): Materials Project DFPT, mp-570223",
+    "eps_inf(CsGeCl3): Materials Project DFPT, mp-22988"
+  ]
+}

@@ -1,0 +1,9 @@
+material,mu,eps_inf,eps_inf_source,status,E_b_meV,phase_note
+CsPbI3,0.0592,4.432,"Materials Project DFPT, mp-540839",MP_DFPT,41.0,no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)
+CsPbCl3,0.1155,3.64,"Materials Project DFPT, mp-675022",MP_DFPT,118.6,no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)
+CsPbBr3,0.0737,4.206,"Materials Project DFPT, mp-567629",MP_DFPT,56.7,no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)
+CsSnI3,0.0146,7.352,"Materials Project DFPT, mp-614013",MP_DFPT,3.7,cubic Pm-3m (DFPT dielectric available)
+CsSnBr3,0.0298,5.905,"Materials Project DFPT, mp-27214",MP_DFPT,11.6,cubic Pm-3m (DFPT dielectric available)
+CsGeI3,0.0527,5.694,"Materials Project DFPT, mp-642690",MP_DFPT,22.1,no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)
+CsGeBr3,0.0599,6.55,"Materials Project DFPT, mp-570223",MP_DFPT,19.0,cubic Pm-3m (DFPT dielectric available)
+CsGeCl3,0.0968,3.642,"Materials Project DFPT, mp-22988",MP_DFPT,99.3,no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)

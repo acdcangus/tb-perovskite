@@ -1,0 +1,1 @@
+PYTHONPATH=src python scripts/scan_theme_I_binding_energy.py production --profile MP_DFPT

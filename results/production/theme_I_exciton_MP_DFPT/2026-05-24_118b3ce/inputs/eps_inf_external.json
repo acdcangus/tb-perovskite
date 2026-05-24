@@ -1,0 +1,169 @@
+{
+  "_README": "External dielectric constants for the Wannier-Mott exciton binding (Theme I, option c). Values ONLY from cited sources (no fabrication). Web research done by Claude Code per PI instruction 2026-05-24 ('webresearch\u81ea\u5206\u3067\u3084\u3063\u3066').",
+  "_extraction_date": "2026-05-24",
+  "_KEY_FINDING": "Web research shows the literature reports the BARE electronic eps_inf, but the Wannier-Mott exciton needs the EFFECTIVE screening eps_eff (between eps_inf and eps_static, including phonon contribution). Bare eps_inf OVERESTIMATES E_b: e.g. CsPbCl3 eps_inf=2.4 -> E_b=273 meV vs experiment ~64 meV; whereas the effective eps=6.1 for CsPbI3 gives E_b=22 meV (matches exp ~15-20). So absolute E_b for the lead-free family cannot be reliably computed from bare eps_inf; eps_eff data is only available for CsPbI3-type. Reliable, consistent cubic-phase eps for all 9 is NOT available via open web (paywalled / phase-mismatched / method-scattered) -> Materials Project DFPT (one method) or experimental exciton eps_eff would be needed.",
+  "materials": {
+    "CsPbI3": {
+      "eps_inf": 6.1,
+      "status": "found_effective",
+      "source": "Cho et al. 2019 arXiv:1908.09436 (effective exciton eps=6.1); crystal static eps~6.22 reported by thin-film optical study (ScienceDirect S1876107018306059); MAPbI3 eps_p=6.1 (arXiv:2210.01324)",
+      "method": "effective exciton dielectric (eps_eff), multiple converging sources",
+      "E_b_meV": 22,
+      "notes": "PHYSICAL: E_b=22 meV matches experiment (~15-20 meV). eps=6.1 is the effective exciton screening (not bare eps_inf).",
+      "eps_inf_MP_DFPT": {
+        "value": 4.432,
+        "mp_id": "mp-540839",
+        "spacegroup": "Pnma",
+        "crystal_system": "Orthorhombic",
+        "eps_total": 14.651,
+        "method": "Materials Project DFPT, mp-540839",
+        "source_url": "https://materialsproject.org/materials/mp-540839",
+        "phase_note": "no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)"
+      }
+    },
+    "CsPbCl3": {
+      "eps_inf": 2.4,
+      "status": "found_bare_eps_inf",
+      "source": "PMC12757862 (LST: eps_inf=2.40, eps_static=7.2); PMC9071989 (eps~2.513 from real part of eps(w), DFT TB09)",
+      "method": "DFT TB09 bare electronic eps_inf",
+      "E_b_meV_if_used": 273,
+      "notes": "BARE eps_inf, NOT eps_eff. E_b(2.4)=273 meV >> experiment (~64 meV) -> bare eps_inf overestimates E_b. Back-solving exp E_b~64 gives eps_eff~5.0. Do NOT use bare 2.4 for physical E_b.",
+      "eps_inf_MP_DFPT": {
+        "value": 3.64,
+        "mp_id": "mp-675022",
+        "spacegroup": "R32",
+        "crystal_system": "Trigonal",
+        "eps_total": 38.417,
+        "method": "Materials Project DFPT, mp-675022",
+        "source_url": "https://materialsproject.org/materials/mp-675022",
+        "phase_note": "no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)"
+      }
+    },
+    "CsPbBr3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "note": "Should lie between CsPbCl3 and CsPbI3 (Cl<Br<I) ~ eps_eff 3.5-4.5; no clean cited cubic eps_inf extracted (ellipsometry papers exist e.g. Ermolaev/Brennan on refractiveindex.info but n not extractable via fetch).",
+      "searched": [
+        "refractiveindex.info Ermolaev/Brennan",
+        "PMC7467746",
+        "nature s41598-021-99551-y",
+        "academia.edu ellipsometry"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 4.206,
+        "mp_id": "mp-567629",
+        "spacegroup": "Pnma",
+        "crystal_system": "Orthorhombic",
+        "eps_total": 27.875,
+        "method": "Materials Project DFPT, mp-567629",
+        "source_url": "https://materialsproject.org/materials/mp-567629",
+        "phase_note": "no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)"
+      }
+    },
+    "CsSnI3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "searched": [
+        "academia.edu CsSnI3-xBrx (figs only)",
+        "Springer s11664-024-11683-9 (paywalled)",
+        "arXiv:2310.19693"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 7.352,
+        "mp_id": "mp-614013",
+        "spacegroup": "Pm-3m",
+        "crystal_system": "Cubic",
+        "eps_total": 169.582,
+        "method": "Materials Project DFPT, mp-614013",
+        "source_url": "https://materialsproject.org/materials/mp-614013",
+        "phase_note": "cubic Pm-3m (DFPT dielectric available)"
+      }
+    },
+    "CsSnBr3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "searched": [
+        "academia.edu CsSnI3-xBrx (figs only)",
+        "nature s41598-025-12374-z"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 5.905,
+        "mp_id": "mp-27214",
+        "spacegroup": "Pm-3m",
+        "crystal_system": "Cubic",
+        "eps_total": 96.243,
+        "method": "Materials Project DFPT, mp-27214",
+        "source_url": "https://materialsproject.org/materials/mp-27214",
+        "phase_note": "cubic Pm-3m (DFPT dielectric available)"
+      }
+    },
+    "CsSnCl3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "searched": [
+        "PMC9049885 (doped)"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": null,
+        "status": "no_dielectric_in_MP",
+        "phase_note": "2 MP phases, none with a DFPT dielectric"
+      }
+    },
+    "CsGeI3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "note": "OSTI 1328304 / RSC c6ta04685a: CsGeI3 has LARGE static eps (lattice-dominated) but SMALL eps_inf; no eps_inf number given. PMC9833107 is rhombohedral, not cubic.",
+      "searched": [
+        "OSTI 1328304",
+        "RSC c6ta04685a",
+        "PMC9833107 (rhombohedral)"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 5.694,
+        "mp_id": "mp-642690",
+        "spacegroup": "Cm",
+        "crystal_system": "Monoclinic",
+        "eps_total": 29.474,
+        "method": "Materials Project DFPT, mp-642690",
+        "source_url": "https://materialsproject.org/materials/mp-642690",
+        "phase_note": "no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)"
+      }
+    },
+    "CsGeBr3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "note": "Springer s10904-025-03882-6 search snippet states eps_r(w)=5.72 for CsGeBr3 but paywalled (could not confirm whether this is eps_inf, static, or peak).",
+      "searched": [
+        "Springer s10904-025-03882-6 (paywalled)"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 6.55,
+        "mp_id": "mp-570223",
+        "spacegroup": "Pm-3m",
+        "crystal_system": "Cubic",
+        "eps_total": 11.073,
+        "method": "Materials Project DFPT, mp-570223",
+        "source_url": "https://materialsproject.org/materials/mp-570223",
+        "phase_note": "cubic Pm-3m (DFPT dielectric available)"
+      }
+    },
+    "CsGeCl3": {
+      "eps_inf": null,
+      "status": "web_search_no_reliable_value",
+      "searched": [
+        "researchgate 359058378 CsGeX3 (paywalled)"
+      ],
+      "eps_inf_MP_DFPT": {
+        "value": 3.642,
+        "mp_id": "mp-22988",
+        "spacegroup": "R3m",
+        "crystal_system": "Trigonal",
+        "eps_total": 13.316,
+        "method": "Materials Project DFPT, mp-22988",
+        "source_url": "https://materialsproject.org/materials/mp-22988",
+        "phase_note": "no Pm-3m dielectric in MP; lowest-Ehull phase with a DFPT dielectric used (eps_inf ~phase-insensitive; mu is cubic-phase)"
+      }
+    }
+  },
+  "_KEY_FINDING_C": "Option C' (Materials Project DFPT eps_inf): single-method, consistent across materials -> RELATIVE E_b trend is maximally defensible. BUT MP eps_inf is the BARE electronic dielectric (no phonon/ionic contribution), i.e. eps_inf < eps_eff, so absolute E_b is an UPPER BOUND (overestimate). Also MP computed the DFPT dielectric only for certain phases (cubic for some, ortho/rhombo/monoclinic for others); mu here is cubic-phase, so eps_inf is used as a ~phase-insensitive proxy (phase recorded per material). Key never stored; provenance = mp-id + URL only."
+}

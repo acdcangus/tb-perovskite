@@ -123,8 +123,8 @@
 - 重要な新着が出たら本ファイルに追記し、ユーザーに通知
 - 必要なら方向転換
 
-最新更新: 2026-05-23
-次回確認予定: 2026-05-30
+最新更新: 2026-05-29
+次回確認予定: 2026-06-01
 
 ---
 
@@ -147,3 +147,114 @@
 - 物理的考察「Δ→0 で g_h 補正項消滅」は数式から自明に正しい
 
 **次回確認予定:** 2026-05-25（月）自動巡回
+
+---
+
+### 2026-05-25 09:00 — 定期自動巡回（Theme A, C, D, F, G 一括）
+
+**実施:** Cowork scheduled task。arXiv recent 2 ページ + 各テーマ 4 クエリ WebSearch。詳細レポート: `cowork/progress/2026-05-25_0900_novelty_check.md`
+
+**判定サマリ:**
+
+| テーマ | 判定 | 前回比 |
+|---|---|---|
+| A | ✅ 堅持 | 不変 |
+| C | ✅ 堅持 | 不変 |
+| D | 🟡 **要注意（格下げ）** | ✅→🟡 |
+| F | 🟡 **要注意（新規評価）** | 初判定 |
+| G | ✅ 堅持 | 初判定 |
+
+**Theme D 格下げ理由:**
+- **arXiv:2511.19753 (2025-11-24)** "Full Minimal Coupling GW-BSE Framework for CD in Solids" 登場。(S-NEA)₂PbBr₄ と (S-MBA)₂PbI₄ に適用。Apergi TB の精度的後継候補
+- **Coccia 2024 Angew. Chem.** (ClMBA₂SnI₄) + **MATSUSFall24 nanoGe** (ClMBA₂GeI₄, ClMBA₃GeI₅) で **2D 層状 Sn/Ge chiral perovskite の DFT 計算は既に着手**
+- 3D CsSnX₃/CsGeX₃ の lone-pair 起源 chiral 歪みによる CD はまだ未開拓 → **テーマを「3D CsBX₃ lone-pair chiral CD」へリフレーミング推奨**
+
+**Theme F 警告理由:**
+- **PMC9833107 (2023)** で **CsGeI₃ shift current** は第一原理レベルで既に計算済み（40 μA/V² in visible）
+- **CsPbI₃ 圧力下 shift current** も既報（band inversion との連動）
+- ただし **9 材料系統スキャン + lone-pair vs shift current 相関** は未報告 → リフレーミングして進めれば novel
+
+**Theme G 確認内容:**
+- **ACS Nano 2026 (5c18264)** で 2D (PEA)₂GeI₄ が **small polaron hopping** を示すと報告。3D CsGeX₃ は未調査
+- Frost 2017 / Bouhassoune 2019 の手法を 9 材料に展開する余地は依然大きい
+
+**緊急通知:** なし（⚠️/❌ 該当なし）
+
+**追加収集推奨:** 2511.19753, 2510.24874, 2508.04861（arXiv）+ PMC9833107（OA）+ Coccia 2024 + ACS Nano 2026（要検討）
+
+**次回確認予定:** 2026-05-28（木）09:00 自動巡回
+
+---
+
+### 2026-05-29 09:00 — 定期自動巡回（Theme A, C, D, F, G 一括）
+
+**実施:** Cowork scheduled task。arXiv recent 2 ページ + 各テーマ 4 クエリ WebSearch。詳細レポート: `cowork/progress/2026-05-29_0900_novelty_check.md`
+
+**判定サマリ:**
+
+| テーマ | 判定 | 前回比 |
+|---|---|---|
+| A | ✅ 堅持 | 不変 |
+| C | ✅ 堅持 | 不変 |
+| D | 🟡 要注意 | 不変（🟡 維持） |
+| F | 🟡 要注意 | 不変（🟡 維持） |
+| G | ✅ 堅持 | 不変 |
+
+**Theme D 補強情報:**
+- **arXiv:2401.07978 (Berquist 2024 JACS)** "Noncollinear Electric Dipoles in a Polar Chiral Phase of CsSnBr₃" — CsSnBr₃ Phase II は ferroaxial（カイラル）相。SHG は観測済み、**CD 計算は未実施**。3D Sn 系の chiral CD は構造的下地が固まっており、Apergi TB 適用論文が出る前に着手する緊急度が上昇
+
+**Theme G 補強情報:**
+- **arXiv:2505.20092 (Phys. Rev. B 2025-05)** "Impact of anharmonicity on CsSnBr₃ carrier mobility" — TDEP + ab initio BTE で CsSnBr₃ 単体の μ_e/μ_h を計算。**9 材料スキャンではないが、9 材料拡張版が登場する可能性あり**。着手は早めが望ましい
+- **PMC11173484 (2024)** 9 材料 CsBX₃ の DFT bands/defects 系統スキャンが既存だが mobility は未計算 → Theme G と棲み分け可能
+
+**Theme A 補強情報:**
+- **Adv. Funct. Mater. 2026 (Nikiforov, 2D PEPI Rydberg g-factor)** — 2D Pb のみ、3D 9 材料 Sn/Ge は依然空白
+- **arXiv:2604.28081 (Ge/SiGe QD g-tensor optimization, 2026-04)** — 半導体 Ge 量子ドット、ハライドペロブスカイトではないが手法的関連
+
+**緊急通知:** なし（⚠️/❌ 該当なし）
+
+**次回確認予定:** 2026-06-01（月）09:00 JST 自動巡回
+
+---
+
+### 2026-06-01 09:00 — 定期自動巡回（Theme A, C, D, F, G 一括）
+
+**実施:** Cowork scheduled task。arXiv recent 2 ページ（100 件）+ 各テーマ 4 クエリ WebSearch。詳細レポート: `cowork/progress/2026-06-01_0900_novelty_check.md`
+
+**判定サマリ:**
+
+| テーマ | 判定 | 前回比 |
+|---|---|---|
+| A | ✅ 堅持 | 不変 |
+| C | ✅ 堅持 | 不変 |
+| D | 🟡 要注意 | 不変 |
+| F | 🟡 要注意 | 不変 |
+| **G** | **🟡 要注意（降格）** | **✅→🟡** |
+
+**Theme G 降格の理由（重要）:**
+
+**JPCL 2026** "Exploring the Polaron Landscape in Germanium Halide Perovskites: CsGeCl₃, CsGeBr₃, CsGeI₃" (DOI: 10.1021/acs.jpclett.5c02516, PMC12908147) が登場。**3D CsGeX₃ 3 材料の polaron 系統計算がすでに発表済み**。
+
+- Pb 系（Frost 2017 等）+ Sn 系（arXiv:2505.20092 で CsSnBr₃ 単独）+ Ge 系（JPCL 2026 で 3 材料）が個別には埋まり始めている
+- ただし **9 材料一貫 + TB / Slater-Koster ベース + 一貫した手法での Pb/Sn/Ge 比較** はまだ未報告
+- Theme G を素朴に「9 材料 polaron mobility 計算」とすると Ge セクションが scoop されてしまう
+
+**推奨リフレーミング:**
+- 「**TB ベース 9 材料一貫 Fröhlich coupling + bandgap-mobility-effective mass 系統相関**」へ
+- 既存 Pb/Ge の独立研究との接続・差別化を明確化
+- JPCL 2026 を取得して手法詳細を確認、TB ベースとの比較余地を見極めることが必須
+
+**Theme D / F 状況:**
+- D: 新たな脅威論文なし。ChemPhysChem 2025 / JACS 2025 は Pb/Bi 中心、Sn/Ge は未着手のまま
+- F: NbOBr₂ shift current（Nat. Commun. 2025）は登場したが対象がペロブスカイトでない。9 材料 CsBX₃ TB スキャンは依然空白
+
+**Theme A / C 状況:**
+- A: g 因子 TB は Pb 系のみ。鉛フリー系統計算は依然ゼロ。Phase 1 最優先継続
+- C: TB パラメータ自体の ML 内挿は依然未開拓。arXiv:2602.06893 (Cs₂KInI₆ symmetry) は二重ペロ DFT で重複なし
+
+**緊急通知:** あり（Theme G リフレーミング推奨）。⚠️/❌ レベルの scoop ではない
+
+**追加収集推奨（🔴 高優先）:**
+- JPCL 2026 acs.jpclett.5c02516 (Ge 3 材料 polaron landscape) — Theme G 判断のため必須
+
+**次回確認予定:** 2026-06-04（木）09:00 JST 自動巡回
